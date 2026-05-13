@@ -62,6 +62,13 @@ vi.mock("./widget", () => ({
 
 import Item from "./item";
 
+async function flushLazyImports() {
+  await act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+}
+
 describe("components/services/item", () => {
   it("renders the service title as a link when href is provided", () => {
     renderWithProviders(
@@ -107,7 +114,7 @@ describe("components/services/item", () => {
     expect(screen.getByTestId("resolved-icon")).toBeInTheDocument();
   });
 
-  it("toggles container stats on click when stats are hidden by default", () => {
+  it("toggles container stats on click when stats are hidden by default", async () => {
     renderWithProviders(
       <Item
         groupName="G"
@@ -132,12 +139,12 @@ describe("components/services/item", () => {
     expect(screen.getByTestId("site-monitor")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "View container stats" }));
-    expect(screen.getByTestId("docker-widget")).toBeInTheDocument();
+    expect(await screen.findByTestId("docker-widget")).toBeInTheDocument();
 
     expect(screen.getAllByTestId("service-widget")).toHaveLength(2);
   });
 
-  it("shows stats by default when settings.showStats is enabled, unless overridden by the service", () => {
+  it("shows stats by default when settings.showStats is enabled, unless overridden by the service", async () => {
     const baseService = {
       id: "svc1",
       name: "My Service",
@@ -150,7 +157,7 @@ describe("components/services/item", () => {
     renderWithProviders(<Item groupName="G" useEqualHeights={false} service={baseService} />, {
       settings: { showStats: true, statusStyle: "basic" },
     });
-    expect(screen.getByTestId("docker-widget")).toBeInTheDocument();
+    expect(await screen.findByTestId("docker-widget")).toBeInTheDocument();
 
     renderWithProviders(
       <Item groupName="G" useEqualHeights={false} service={{ ...baseService, id: "svc2", showStats: false }} />,
@@ -164,39 +171,42 @@ describe("components/services/item", () => {
   it("closes stats after a short delay when toggled closed", async () => {
     vi.useFakeTimers();
 
-    renderWithProviders(
-      <Item
-        groupName="G"
-        useEqualHeights={false}
-        service={{
-          id: "svc1",
-          name: "My Service",
-          description: "Desc",
-          container: "c",
-          server: "s",
-          widgets: [],
-        }}
-      />,
-      { settings: { showStats: false, statusStyle: "basic" } },
-    );
+    try {
+      renderWithProviders(
+        <Item
+          groupName="G"
+          useEqualHeights={false}
+          service={{
+            id: "svc1",
+            name: "My Service",
+            description: "Desc",
+            container: "c",
+            server: "s",
+            widgets: [],
+          }}
+        />,
+        { settings: { showStats: false, statusStyle: "basic" } },
+      );
 
-    const btn = screen.getByRole("button", { name: "View container stats" });
-    fireEvent.click(btn);
-    expect(screen.getByTestId("docker-widget")).toBeInTheDocument();
+      const btn = screen.getByRole("button", { name: "View container stats" });
+      fireEvent.click(btn);
+      await flushLazyImports();
+      expect(screen.getByTestId("docker-widget")).toBeInTheDocument();
 
-    fireEvent.click(btn);
-    // Still rendered while the close animation runs.
-    expect(screen.getByTestId("docker-widget")).toBeInTheDocument();
+      fireEvent.click(btn);
+      // Still rendered while the close animation runs.
+      expect(screen.getByTestId("docker-widget")).toBeInTheDocument();
 
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-    expect(screen.queryByTestId("docker-widget")).not.toBeInTheDocument();
-
-    vi.useRealTimers();
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+      expect(screen.queryByTestId("docker-widget")).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it("toggles app and proxmox stats using their respective status tags", () => {
+  it("toggles app and proxmox stats using their respective status tags", async () => {
     renderWithProviders(
       <Item
         groupName="G"
@@ -219,12 +229,12 @@ describe("components/services/item", () => {
     const appBtn = screen.getByTestId("kubernetes-status").closest("button");
     expect(appBtn).toBeTruthy();
     fireEvent.click(appBtn);
-    expect(screen.getByTestId("kubernetes-widget")).toBeInTheDocument();
+    expect(await screen.findByTestId("kubernetes-widget")).toBeInTheDocument();
 
     const proxmoxBtn = screen.getByTestId("proxmox-status").closest("button");
     expect(proxmoxBtn).toBeTruthy();
     fireEvent.click(proxmoxBtn);
-    expect(screen.getByTestId("proxmoxvm-widget")).toBeInTheDocument();
+    expect(await screen.findByTestId("proxmoxvm-widget")).toBeInTheDocument();
   });
 
   it("does not render the app status tag when the service is marked external", () => {

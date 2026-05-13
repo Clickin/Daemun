@@ -13,7 +13,7 @@ const { providers, getSettings, widgetsFromConfig, cachedRequest } = vi.hoisted(
   cachedRequest: vi.fn(),
 }));
 
-vi.mock("components/widgets/search/search", () => ({
+vi.mock("components/widgets/search/providers", () => ({
   searchProviders: {
     custom: providers.custom,
     google: providers.google,

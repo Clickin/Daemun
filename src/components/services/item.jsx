@@ -2,9 +2,7 @@ import classNames from "classnames";
 import ResolvedIcon from "components/resolvedicon";
 import { useContext, useState } from "react";
 import { SettingsContext } from "utils/contexts/settings";
-import Docker from "widgets/docker/component";
-import Kubernetes from "widgets/kubernetes/component";
-import ProxmoxVM from "widgets/proxmoxvm/component";
+import dynamic from "utils/dynamic";
 
 import KubernetesStatus from "./kubernetes-status";
 import Ping from "./ping";
@@ -12,6 +10,10 @@ import ProxmoxStatus from "./proxmox-status";
 import SiteMonitor from "./site-monitor";
 import Status from "./status";
 import Widget from "./widget";
+
+const Docker = dynamic(() => import("widgets/docker/component"));
+const Kubernetes = dynamic(() => import("widgets/kubernetes/component"));
+const ProxmoxVM = dynamic(() => import("widgets/proxmoxvm/component"));
 
 export default function Item({ service, groupName, useEqualHeights }) {
   const hasLink = service.href && service.href !== "#";

@@ -8,7 +8,7 @@ import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
 
-const { state, i18n, useSWR, useWindowFocus } = vi.hoisted(() => {
+const { state, i18n, loadLanguage, useSWR, useWindowFocus } = vi.hoisted(() => {
   const state = {
     throwIn: null,
     validateData: [],
@@ -23,6 +23,7 @@ const { state, i18n, useSWR, useWindowFocus } = vi.hoisted(() => {
   };
 
   const i18n = { language: "en", changeLanguage: vi.fn() };
+  const loadLanguage = vi.fn(async (language) => language);
 
   const useSWR = vi.fn((key) => {
     if (key === "/api/validate") return { data: state.validateData };
@@ -38,6 +39,7 @@ const { state, i18n, useSWR, useWindowFocus } = vi.hoisted(() => {
   return {
     state,
     i18n,
+    loadLanguage,
     useSWR,
     useWindowFocus,
   };
@@ -61,6 +63,10 @@ vi.mock("swr", () => ({
 
 vi.mock("utils/hooks/window-focus", () => ({
   default: useWindowFocus,
+}));
+
+vi.mock("utils/i18n", () => ({
+  loadLanguage,
 }));
 
 vi.mock("components/bookmarks/group", () => ({
@@ -392,7 +398,10 @@ describe("pages/index Home behavior", () => {
     await waitFor(() => {
       expect(setSettings).toHaveBeenCalled();
     });
-    expect(i18n.changeLanguage).toHaveBeenCalledWith("en");
+    await waitFor(() => {
+      expect(loadLanguage).toHaveBeenCalledWith("en");
+      expect(i18n.changeLanguage).toHaveBeenCalledWith("en");
+    });
     expect(setTheme).toHaveBeenCalledWith("light");
     expect(setColor).toHaveBeenCalledWith("emerald");
 

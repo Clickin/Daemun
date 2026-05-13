@@ -27,7 +27,7 @@ vi.mock("./resolvedicon", () => ({
   },
 }));
 
-vi.mock("./widgets/search/search", () => ({
+vi.mock("./widgets/search/providers", () => ({
   getStoredProvider,
   searchProviders: {
     duckduckgo: {

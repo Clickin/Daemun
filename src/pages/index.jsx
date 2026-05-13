@@ -18,6 +18,7 @@ import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
 import dynamic from "utils/dynamic";
 import useWindowFocus from "utils/hooks/window-focus";
+import { loadLanguage } from "utils/i18n";
 import { normalizeLanguage } from "utils/i18n/language";
 
 const ThemeToggle = dynamic(() => import("components/toggles/theme"), {
@@ -169,9 +170,14 @@ function Home({ initialSettings }) {
   );
 
   useEffect(() => {
+    let cancelled = false;
     const language = normalizeLanguage(settings.language);
     if (language) {
-      i18n.changeLanguage(language);
+      loadLanguage(language).then((loadedLanguage) => {
+        if (!cancelled) {
+          i18n.changeLanguage(loadedLanguage);
+        }
+      });
     }
 
     if (settings.theme && theme !== settings.theme) {
@@ -181,6 +187,10 @@ function Home({ initialSettings }) {
     if (settings.color && color !== settings.color) {
       setColor(settings.color);
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [i18n, settings, color, setColor, theme, setTheme]);
 
   const [searching, setSearching] = useState(false);

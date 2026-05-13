@@ -1,4 +1,4 @@
-import { searchProviders } from "components/widgets/search/search";
+import { searchProviders } from "components/widgets/search/providers";
 
 import { getSettings } from "utils/config/config";
 import { widgetsFromConfig } from "utils/config/widget-helpers";

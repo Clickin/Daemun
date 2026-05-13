@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { SettingsContext } from "utils/contexts/settings";
 
 import ResolvedIcon from "./resolvedicon";
-import { getStoredProvider, searchProviders } from "./widgets/search/search";
+import { getStoredProvider, searchProviders } from "./widgets/search/providers";
 
 const MOBILE_BUTTON_POSITIONS = {
   "top-left": "top-4 left-4",

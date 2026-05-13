@@ -1,18 +1,40 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+import enCommon from "../../../public/locales/en/common.json";
+
 import { homepageFormatterPlugin } from "./formatters";
 
 const localeModules = import.meta.glob("../../../public/locales/*/common.json", {
-  eager: true,
+  query: "?raw",
+  import: "default",
 });
 
-const resources = Object.fromEntries(
-  Object.entries(localeModules).map(([file, module]) => {
-    const language = file.match(/public\/locales\/([^/]+)\/common\.json$/)?.[1];
-    return [language, { common: module.default }];
-  }),
-);
+const fallbackLanguage = "en";
+const namespace = "common";
+
+function localeModulePath(language) {
+  return `../../../public/locales/${language}/${namespace}.json`;
+}
+
+export async function loadLanguage(language = fallbackLanguage) {
+  const requestedLanguage = language || fallbackLanguage;
+
+  if (i18n.hasResourceBundle(requestedLanguage, namespace)) {
+    return requestedLanguage;
+  }
+
+  const loadModule = localeModules[localeModulePath(requestedLanguage)];
+
+  if (!loadModule) {
+    return fallbackLanguage;
+  }
+
+  const rawTranslations = await loadModule();
+  i18n.addResourceBundle(requestedLanguage, namespace, JSON.parse(rawTranslations), true, true);
+
+  return requestedLanguage;
+}
 
 if (!i18n.isInitialized) {
   i18n
@@ -20,13 +42,17 @@ if (!i18n.isInitialized) {
     .use(initReactI18next)
     .init({
       defaultNS: "common",
-      fallbackLng: "en",
+      fallbackLng: fallbackLanguage,
       interpolation: {
         escapeValue: false,
       },
-      lng: "en",
-      ns: ["common"],
-      resources,
+      lng: fallbackLanguage,
+      ns: [namespace],
+      resources: {
+        [fallbackLanguage]: {
+          [namespace]: enCommon,
+        },
+      },
     });
 }
 
