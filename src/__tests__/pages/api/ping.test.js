@@ -17,6 +17,7 @@ vi.mock("utils/logger", () => ({
 }));
 
 vi.mock("ping", () => ({
+  default: { promise: ping },
   promise: ping,
 }));
 

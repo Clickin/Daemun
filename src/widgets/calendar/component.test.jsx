@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-vi.mock("next/dynamic", () => ({
+vi.mock("utils/dynamic", () => ({
   default: () => (props) => (
     <div
       data-testid="calendar-integration"

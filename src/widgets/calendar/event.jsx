@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { DateTime } from "luxon";
-import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 export default function Event({ event, colorVariants, showDate = false, showTime = false, showDateColumn = true }) {

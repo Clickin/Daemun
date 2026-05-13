@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { useContext } from "react";
 import { SettingsContext } from "utils/contexts/settings";
 import { ThemeContext } from "utils/contexts/theme";
+import Image from "utils/image";
 
 const iconSetURLs = {
   mdi: "https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/",

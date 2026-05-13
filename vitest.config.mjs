@@ -31,7 +31,7 @@ export default defineConfig({
       include: ["src/**/*.{js,jsx,ts,tsx}"],
       exclude: [
         // Ignore build artifacts / generated reports
-        ".next/**",
+        "dist/**",
         "coverage/**",
         // Exclude tests and test harness code from coverage totals.
         "src/**/*.test.{js,jsx,ts,tsx}",
@@ -41,8 +41,6 @@ export default defineConfig({
         "src/widgets/widgets.js",
         "src/widgets/components.js",
         "src/skeleton/custom.js",
-        "next-i18next.config.js",
-        "next.config.js",
         "postcss.config.js",
         "tailwind.config.js",
         "eslint.config.mjs",

@@ -7,7 +7,7 @@ import { renderWithProviders } from "test-utils/render-with-providers";
 
 const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
-vi.mock("next/dynamic", () => ({ default: () => () => null }));
+vi.mock("utils/dynamic", () => ({ default: () => () => null }));
 
 import Component from "./cpu";
 

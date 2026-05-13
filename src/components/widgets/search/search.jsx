@@ -10,8 +10,8 @@ import {
   Transition,
 } from "@headlessui/react";
 import classNames from "classnames";
-import { useTranslation } from "next-i18next";
 import { Fragment, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BiLogoBing } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
 import { SiBaidu, SiBrave, SiDuckduckgo, SiGoogle } from "react-icons/si";
@@ -168,6 +168,7 @@ export default function Search({ options }) {
           <Combobox value={query}>
             <ComboboxInput
               type="text"
+              name="homepage-search"
               className="
               overflow-hidden w-full h-full rounded-md
               text-xs text-theme-900 dark:text-white

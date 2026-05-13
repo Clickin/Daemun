@@ -1,12 +1,20 @@
 import Container from "components/services/widget/container";
 import { DateTime } from "luxon";
-import { useTranslation } from "next-i18next";
-import dynamic from "next/dynamic";
 import { useContext, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SettingsContext } from "utils/contexts/settings";
+import dynamic from "utils/dynamic";
 
 import Agenda from "./agenda";
 import Monthly from "./monthly";
+
+const integrationComponents = {
+  ical: dynamic(() => import("./integrations/ical")),
+  lidarr: dynamic(() => import("./integrations/lidarr")),
+  radarr: dynamic(() => import("./integrations/radarr")),
+  readarr: dynamic(() => import("./integrations/readarr")),
+  sonarr: dynamic(() => import("./integrations/sonarr")),
+};
 
 const colorVariants = {
   // https://tailwindcss.com/docs/content-configuration#dynamic-class-names
@@ -70,16 +78,9 @@ export default function Component({ service }) {
   const integrations = useMemo(
     () =>
       widget.integrations
-        ?.filter((integration) => integration?.type)
+        ?.filter((integration) => integration?.type && integrationComponents[integration.type])
         .map((integration) => ({
-          // Include the extension so Vite/Vitest can statically validate the import base.
-          service: dynamic(
-            () =>
-              import(
-                /* webpackExclude: /\.test\.jsx$/ */
-                `./integrations/${integration.type}.jsx`
-              ),
-          ),
+          service: integrationComponents[integration.type],
           widget: { ...widget, ...integration },
         })) ?? [],
     [widget],

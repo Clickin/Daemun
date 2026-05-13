@@ -37,7 +37,7 @@ describe("pages/api/hash", () => {
 
     // Return deterministic contents based on file name.
     readFileSync.mockImplementation((filePath) => {
-      const name = filePath.split("/").pop();
+      const name = filePath.split(/[\\/]/).pop();
       return `content:${name}`;
     });
 

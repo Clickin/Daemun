@@ -23,7 +23,7 @@ const { dynamic } = vi.hoisted(() => {
   return { dynamic };
 });
 
-vi.mock("next/dynamic", () => ({
+vi.mock("utils/dynamic", () => ({
   default: dynamic,
 }));
 

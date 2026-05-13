@@ -1,9 +1,10 @@
-import { promise as ping } from "ping";
+import pingPackage from "ping";
 
 import { getServiceItem } from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 
 const logger = createLogger("ping");
+const { promise: ping } = pingPackage;
 
 export default async function handler(req, res) {
   const { groupName, serviceName } = req.query;

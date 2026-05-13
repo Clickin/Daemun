@@ -1,5 +1,5 @@
-import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FaChartLine } from "react-icons/fa6";
 import useSWR from "swr";
 

@@ -8,19 +8,7 @@ import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
 
-const {
-  state,
-  router,
-  i18n,
-  getSettings,
-  servicesResponse,
-  bookmarksResponse,
-  widgetsResponse,
-  serverSideTranslations,
-  logger,
-  useSWR,
-  useWindowFocus,
-} = vi.hoisted(() => {
+const { state, i18n, useSWR, useWindowFocus } = vi.hoisted(() => {
   const state = {
     throwIn: null,
     validateData: [],
@@ -34,30 +22,7 @@ const {
     windowFocused: false,
   };
 
-  const router = { asPath: "/" };
   const i18n = { language: "en", changeLanguage: vi.fn() };
-
-  const getSettings = vi.fn(() => ({
-    providers: {},
-    language: "en",
-    title: "Homepage",
-  }));
-
-  const servicesResponse = vi.fn(async () => {
-    if (state.throwIn === "services") throw new Error("services failed");
-    return [{ name: "svc" }];
-  });
-  const bookmarksResponse = vi.fn(async () => {
-    if (state.throwIn === "bookmarks") throw new Error("bookmarks failed");
-    return [{ name: "bm" }];
-  });
-  const widgetsResponse = vi.fn(async () => {
-    if (state.throwIn === "widgets") throw new Error("widgets failed");
-    return [{ type: "search" }];
-  });
-
-  const serverSideTranslations = vi.fn(async (language) => ({ _translations: language }));
-  const logger = { error: vi.fn() };
 
   const useSWR = vi.fn((key) => {
     if (key === "/api/validate") return { data: state.validateData };
@@ -72,54 +37,26 @@ const {
 
   return {
     state,
-    router,
     i18n,
-    getSettings,
-    servicesResponse,
-    bookmarksResponse,
-    widgetsResponse,
-    serverSideTranslations,
-    logger,
     useSWR,
     useWindowFocus,
   };
 });
 
-vi.mock("next/dynamic", () => ({
+vi.mock("utils/dynamic", () => ({
   default: () => () => null,
 }));
-vi.mock("next/head", () => ({ default: ({ children }) => children }));
-vi.mock("next/script", () => ({ default: () => null }));
-vi.mock("next/router", () => ({ useRouter: () => router }));
 
-vi.mock("next-i18next", () => ({
+vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     i18n,
     t: (k) => k,
   }),
 }));
 
-vi.mock("next-i18next/serverSideTranslations", () => ({
-  serverSideTranslations,
-}));
-
 vi.mock("swr", () => ({
   default: useSWR,
   SWRConfig: ({ children }) => children,
-}));
-
-vi.mock("utils/logger", () => ({
-  default: () => logger,
-}));
-
-vi.mock("utils/config/config", () => ({
-  getSettings,
-}));
-
-vi.mock("utils/config/api-response", () => ({
-  servicesResponse,
-  bookmarksResponse,
-  widgetsResponse,
 }));
 
 vi.mock("utils/hooks/window-focus", () => ({
@@ -166,61 +103,6 @@ vi.mock("components/toggles/revalidate", () => ({
   default: () => null,
 }));
 
-describe("pages/index getStaticProps", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    state.throwIn = null;
-    state.validateData = [];
-    state.hashData = null;
-    state.servicesData = [];
-    state.bookmarksData = [];
-    state.widgetsData = [];
-    state.quickLaunchProps = null;
-    state.widgetCalls = [];
-    state.windowFocused = false;
-    router.asPath = "/";
-    i18n.changeLanguage.mockClear();
-  });
-
-  it("returns initial settings and api fallbacks for swr", async () => {
-    getSettings.mockReturnValueOnce({ providers: { x: 1 }, language: "en", title: "Homepage" });
-
-    const { getStaticProps } = await import("pages/index.jsx");
-    const result = await getStaticProps();
-
-    expect(result.props.initialSettings).toEqual({ language: "en", title: "Homepage" });
-    expect(result.props.fallback["/api/services"]).toEqual([{ name: "svc" }]);
-    expect(result.props.fallback["/api/bookmarks"]).toEqual([{ name: "bm" }]);
-    expect(result.props.fallback["/api/widgets"]).toEqual([{ type: "search" }]);
-    expect(result.props.fallback["/api/hash"]).toBe(false);
-    expect(serverSideTranslations).toHaveBeenCalledWith("en");
-  });
-
-  it("normalizes legacy language codes before requesting translations", async () => {
-    getSettings.mockReturnValueOnce({ providers: {}, language: "zh-CN" });
-
-    const { getStaticProps } = await import("pages/index.jsx");
-    await getStaticProps();
-
-    expect(serverSideTranslations).toHaveBeenCalledWith("zh-Hans");
-  });
-
-  it("falls back to empty settings and en translations on errors", async () => {
-    getSettings.mockReturnValueOnce({ providers: {}, language: "de" });
-    state.throwIn = "services";
-
-    const { getStaticProps } = await import("pages/index.jsx");
-    const result = await getStaticProps();
-
-    expect(result.props.initialSettings).toEqual({});
-    expect(result.props.fallback["/api/services"]).toEqual([]);
-    expect(result.props.fallback["/api/bookmarks"]).toEqual([]);
-    expect(result.props.fallback["/api/widgets"]).toEqual([]);
-    expect(serverSideTranslations).toHaveBeenCalledWith("en");
-    expect(logger.error).toHaveBeenCalled();
-  });
-});
-
 async function renderIndex({
   initialSettings = { title: "Homepage", layout: {} },
   fallback = {},
@@ -261,6 +143,8 @@ describe("pages/index Wrapper", () => {
     state.widgetsData = [];
     state.widgetCalls = [];
     document.documentElement.className = "dark theme-slate";
+    window.location.hash = "";
+    i18n.changeLanguage.mockClear();
   });
 
   it("applies theme/color classes and renders a background overlay when configured", async () => {

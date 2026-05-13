@@ -23,7 +23,7 @@ describe("pages/api/theme", () => {
     getSettings.mockReturnValueOnce({});
 
     const res = createMockRes();
-    handler({ res });
+    handler({}, res);
 
     expect(checkAndCopyConfig).toHaveBeenCalledWith("settings.yaml");
     expect(res.statusCode).toBe(200);
@@ -34,7 +34,7 @@ describe("pages/api/theme", () => {
     getSettings.mockReturnValueOnce({ color: "red", theme: "light" });
 
     const res = createMockRes();
-    handler({ res });
+    handler({}, res);
 
     expect(res.body).toEqual({ color: "red", theme: "light" });
   });

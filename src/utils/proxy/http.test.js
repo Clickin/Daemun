@@ -81,9 +81,14 @@ vi.mock("follow-redirects", async () => {
     };
   }
 
-  return {
+  const redirects = {
     http: { request: makeRequest(), Agent },
     https: { request: makeRequest(), Agent },
+  };
+
+  return {
+    ...redirects,
+    default: redirects,
   };
 });
 

@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+import dynamic from "utils/dynamic";
 
 const components = {
   adguard: dynamic(() => import("./adguard/component")),

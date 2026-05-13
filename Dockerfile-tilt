@@ -1,16 +1,14 @@
 # syntax = docker/dockerfile:latest
-FROM docker.io/node:18-alpine
+FROM docker.io/node:26-alpine
 
 WORKDIR /app
 
-COPY --link package.json pnpm-lock.yaml* ./
+COPY --link package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 
 RUN <<EOF
     set -xe
-    apk add libc6-compat
     apk add --virtual .gyp python3 make g++
-    npm install -g pnpm
-    pnpm install -g next
+    npm install -g pnpm@10.32.1
 EOF
 
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm fetch | grep -v "cross-device link not permitted\|Falling back to copying packages from store"
@@ -19,4 +17,4 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm i
 
 COPY . .
 
-CMD ["npx", "next", "dev"]
+CMD ["pnpm", "run", "dev"]

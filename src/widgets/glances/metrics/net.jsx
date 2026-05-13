@@ -1,6 +1,6 @@
-import { useTranslation } from "next-i18next";
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import dynamic from "utils/dynamic";
 
 import Block from "../components/block";
 import Container from "../components/container";

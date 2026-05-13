@@ -3,12 +3,11 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-// next/image requires Next runtime features; stub it for component tests.
-vi.mock("next/image", () => ({
+// Stub the local image wrapper for component tests.
+vi.mock("utils/image", () => ({
   default: (props) => {
     const { src, alt, objectFit, className, onError } = props;
-    // This is a unit-test stub for next/image; using <img> is intentional here.
-    // eslint-disable-next-line @next/next/no-img-element
+    // This is a unit-test stub for utils/image; using <img> is intentional here.
     return <img alt={alt} src={src} data-object-fit={objectFit} className={className} onError={onError} />;
   },
 }));

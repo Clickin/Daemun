@@ -1,5 +1,5 @@
-import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import Container from "../widget/container";
 import Raw from "../widget/raw";

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { fixupConfigRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
+import importPlugin from "eslint-plugin-import";
 import prettier from "eslint-plugin-prettier";
 import { defineConfig, globalIgnores } from "eslint/config";
 
@@ -17,18 +18,28 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   {
-    extends: fixupConfigRules(compat.extends("next/core-web-vitals", "prettier", "plugin:react-hooks/recommended")),
+    extends: fixupConfigRules(
+      compat.extends(
+        "plugin:react/recommended",
+        "plugin:react/jsx-runtime",
+        "prettier",
+        "plugin:react-hooks/recommended",
+      ),
+    ),
 
     plugins: {
+      import: importPlugin,
       prettier,
     },
 
     languageOptions: {
-      ecmaVersion: 6,
+      ecmaVersion: "latest",
       sourceType: "module",
 
       parserOptions: {
+        ecmaVersion: "latest",
         ecmaFeatures: {
+          jsx: true,
           modules: true,
         },
       },
@@ -39,6 +50,9 @@ export default defineConfig([
         node: {
           paths: ["src"],
         },
+      },
+      react: {
+        version: "detect",
       },
     },
 
@@ -63,6 +77,8 @@ export default defineConfig([
           allowElseIf: true,
         },
       ],
+
+      "react/prop-types": "off",
     },
   },
   // Vitest tests often intentionally place imports after `vi.mock(...)` to ensure
@@ -72,7 +88,8 @@ export default defineConfig([
     files: ["src/**/*.test.{js,jsx}", "src/**/*.spec.{js,jsx}"],
     rules: {
       "import/order": "off",
+      "react/no-unknown-property": "off",
     },
   },
-  globalIgnores(["./config/", "./coverage/", "./.venv/", "./.next/", "./site/"]),
+  globalIgnores(["./config/", "./coverage/", "./.venv/", "./dist/", "./site/"]),
 ]);

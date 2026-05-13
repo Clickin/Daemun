@@ -1,6 +1,7 @@
 import checkAndCopyConfig, { getSettings } from "utils/config/config";
 
-export default function handler({ res }) {
+export default function handler(req, response) {
+  const res = response || req.res;
   checkAndCopyConfig("settings.yaml");
   const settings = getSettings();
 

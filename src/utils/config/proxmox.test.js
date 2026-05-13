@@ -36,6 +36,6 @@ describe("utils/config/proxmox", () => {
 
     expect(getProxmoxConfig()).toEqual({ pve: { url: "http://pve" } });
     expect(checkAndCopyConfig).toHaveBeenCalledWith("proxmox.yaml");
-    expect(fs.readFileSync).toHaveBeenCalledWith("/conf/proxmox.yaml", "utf8");
+    expect(fs.readFileSync).toHaveBeenCalledWith(expect.stringMatching(/[\\/]conf[\\/]proxmox\.yaml$/), "utf8");
   });
 });

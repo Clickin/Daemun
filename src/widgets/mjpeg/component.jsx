@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "utils/image";
 
 export default function Component({ service }) {
   const { widget } = service;

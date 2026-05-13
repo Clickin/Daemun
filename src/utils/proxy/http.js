@@ -2,7 +2,7 @@ import dns from "node:dns";
 import net from "node:net";
 import { createUnzip, constants as zlibConstants } from "node:zlib";
 
-import { http, https } from "follow-redirects";
+import followRedirects from "follow-redirects";
 import cache from "memory-cache";
 
 import { sanitizeErrorURL } from "./api-helpers";
@@ -11,6 +11,7 @@ import { addCookieToJar, setCookieHeader } from "./cookie-jar";
 import createLogger from "utils/logger";
 
 const logger = createLogger("httpProxy");
+const { http, https } = followRedirects;
 
 function addCookieHandler(url, params) {
   setCookieHeader(url, params);

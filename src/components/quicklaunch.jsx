@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FiSearch } from "react-icons/fi";
 import useSWR from "swr";
 import { SettingsContext } from "utils/contexts/settings";
@@ -273,6 +273,7 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
           <div className="flex min-h-full min-w-full items-start justify-center text-center">
             <dialog className="mt-[10%] mx-auto min-w-[90%] max-w-[90%] md:min-w-[40%] md:max-w-[40%] rounded-md p-0 block font-medium text-theme-700 dark:text-theme-200 dark:hover:text-theme-300 shadow-md shadow-theme-900/10 dark:shadow-theme-900/20 bg-theme-50 dark:bg-theme-800">
               <input
+                name="homepage-quicklaunch"
                 placeholder="Search"
                 className={classNames(
                   results.length > 0 && "rounded-t-md",

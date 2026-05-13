@@ -1,5 +1,5 @@
-import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdLocationDisabled, MdLocationSearching } from "react-icons/md";
 import { WiCloudDown } from "react-icons/wi";
 import useSWR from "swr";

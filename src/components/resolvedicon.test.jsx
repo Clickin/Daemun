@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { SettingsContext } from "utils/contexts/settings";
 import { ThemeContext } from "utils/contexts/theme";
 
-vi.mock("next/image", () => ({
+vi.mock("utils/image", () => ({
   default: ({ src, alt }) => <div data-testid="next-image" data-src={src} data-alt={alt} />,
 }));
 
@@ -21,12 +21,12 @@ function renderWithContexts(ui, { settings = {}, theme = "dark" } = {}) {
 }
 
 describe("components/resolvedicon", () => {
-  it("renders direct URL icons via next/image", () => {
+  it("renders direct URL icons via utils/image", () => {
     renderWithContexts(<ResolvedIcon icon="http://example.com/x.png" alt="x" />);
     expect(screen.getByTestId("next-image").getAttribute("data-src")).toBe("http://example.com/x.png");
   });
 
-  it("renders relative URL icons via next/image", () => {
+  it("renders relative URL icons via utils/image", () => {
     renderWithContexts(<ResolvedIcon icon="/icons/x.png" alt="x" />);
     expect(screen.getByTestId("next-image").getAttribute("data-src")).toBe("/icons/x.png");
   });

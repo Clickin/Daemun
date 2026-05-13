@@ -8,7 +8,8 @@ export PGID=${PGID:-0}
 
 # This is in attempt to preserve the original behavior of the Dockerfile,
 # while also supporting the lscr.io /config directory
-[ ! -d "/app/config" ] && ln -s /config /app/config
+mkdir -p /config
+[ ! -e "/app/config" ] && ln -s /config /app/config
 
 export HOMEPAGE_BUILDTIME=$(date +%s)
 
@@ -55,17 +56,17 @@ elif [ -n "$PUID" ] && [ -n "$PGID" ]; then
   fi
 fi
 
-if [ -d /app/.next ]; then
-  CURRENT_UID=$(stat -c %u /app/.next)
-  CURRENT_GID=$(stat -c %g /app/.next)
+if [ -d /app/dist ]; then
+  CURRENT_UID=$(stat -c %u /app/dist)
+  CURRENT_GID=$(stat -c %g /app/dist)
 
   if [ "$PUID" -ne 0 ] && ([ "$CURRENT_UID" -ne "$PUID" ] || [ "$CURRENT_GID" -ne "$PGID" ]); then
-    echo "Fixing ownership of /app/.next"
-    if ! chown -R "$PUID:$PGID" /app/.next 2>/dev/null; then
-      echo "Warning: Could not chown /app/.next; continuing anyway"
+    echo "Fixing ownership of /app/dist"
+    if ! chown -R "$PUID:$PGID" /app/dist 2>/dev/null; then
+      echo "Warning: Could not chown /app/dist; continuing anyway"
     fi
   else
-    echo "/app/.next already owned by correct UID/GID or running as root, skipping chown"
+    echo "/app/dist already owned by correct UID/GID or running as root, skipping chown"
   fi
 fi
 

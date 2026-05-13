@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import { useTranslation } from "next-i18next";
 import { useContext } from "react";
+import { useTranslation } from "react-i18next";
 import { FaMemory, FaRegClock, FaThermometerHalf } from "react-icons/fa";
 import { FiCpu, FiHardDrive } from "react-icons/fi";
 import useSWR from "swr";

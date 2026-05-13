@@ -1,31 +1,24 @@
 /* eslint-disable react/no-array-index-key */
 import classNames from "classnames";
 import BookmarksGroup from "components/bookmarks/group";
+import DocumentHead from "components/document-head";
 import ErrorBoundary from "components/errorboundry";
 import QuickLaunch from "components/quicklaunch";
 import ServicesGroup from "components/services/group";
 import Tab, { slugifyAndEncode } from "components/tab";
 import Revalidate from "components/toggles/revalidate";
 import Widget from "components/widgets/widget";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import dynamic from "next/dynamic";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import Script from "next/script";
 import { useContext, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BiError } from "react-icons/bi";
 import useSWR, { SWRConfig } from "swr";
 import { ColorContext } from "utils/contexts/color";
 import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
-
-import { bookmarksResponse, servicesResponse, widgetsResponse } from "utils/config/api-response";
-import { getSettings } from "utils/config/config";
+import dynamic from "utils/dynamic";
 import useWindowFocus from "utils/hooks/window-focus";
-import createLogger from "utils/logger";
-import themes from "utils/styles/themes";
+import { normalizeLanguage } from "utils/i18n/language";
 
 const ThemeToggle = dynamic(() => import("components/toggles/theme"), {
   ssr: false,
@@ -40,59 +33,6 @@ const Version = dynamic(() => import("components/version"), {
 });
 
 const rightAlignedWidgets = ["weatherapi", "openweathermap", "weather", "openmeteo", "search", "datetime"];
-
-// Normalize language codes so older config values like zh-CN still point to Crowdin-provided ones
-const LANGUAGE_ALIASES = {
-  "zh-cn": "zh-Hans",
-};
-
-const normalizeLanguage = (language) => {
-  if (!language) return "en";
-  const alias = LANGUAGE_ALIASES[language.toLowerCase()];
-  return alias || language;
-};
-
-export async function getStaticProps() {
-  let logger;
-  try {
-    logger = createLogger("index");
-    const { providers, ...settings } = getSettings();
-
-    const services = await servicesResponse();
-    const bookmarks = await bookmarksResponse();
-    const widgets = await widgetsResponse();
-    const language = normalizeLanguage(settings.language);
-
-    return {
-      props: {
-        initialSettings: settings,
-        fallback: {
-          "/api/services": services,
-          "/api/bookmarks": bookmarks,
-          "/api/widgets": widgets,
-          "/api/hash": false,
-        },
-        ...(await serverSideTranslations(language)),
-      },
-    };
-  } catch (e) {
-    if (logger && e) {
-      logger.error(e);
-    }
-    return {
-      props: {
-        initialSettings: {},
-        fallback: {
-          "/api/services": [],
-          "/api/bookmarks": [],
-          "/api/widgets": [],
-          "/api/hash": false,
-        },
-        ...(await serverSideTranslations("en")),
-      },
-    };
-  }
-}
 
 function Index({ initialSettings, fallback }) {
   const windowFocused = useWindowFocus();
@@ -215,7 +155,6 @@ function Home({ initialSettings }) {
   const { color, setColor } = useContext(ColorContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const { activeTab, setActiveTab } = useContext(TabContext);
-  const { asPath } = useRouter();
 
   useEffect(() => {
     setSettings(initialSettings);
@@ -287,7 +226,8 @@ function Home({ initialSettings }) {
 
   useEffect(() => {
     if (!activeTab) {
-      const initialTab = asPath.substring(asPath.indexOf("#") + 1);
+      const currentHash = typeof window !== "undefined" ? (window.location.hash || "").substring(1) : "";
+      const initialTab = currentHash || "/";
       setActiveTab(initialTab === "/" ? slugifyAndEncode(tabs["0"]) : initialTab);
     }
   });
@@ -404,37 +344,7 @@ function Home({ initialSettings }) {
 
   return (
     <>
-      <Head>
-        <title>{initialSettings.title || "Homepage"}</title>
-        <meta
-          name="description"
-          content={
-            initialSettings.description ||
-            "A highly customizable homepage (or startpage / application dashboard) with Docker and service API integrations."
-          }
-        />
-        {settings.disableIndexing && <meta name="robots" content="noindex, nofollow" />}
-        {settings.base && <base href={settings.base} />}
-        {settings.favicon ? (
-          <>
-            <link rel="icon" href={settings.favicon} />
-            <link rel="apple-touch-icon" sizes="180x180" href={settings.favicon} />
-          </>
-        ) : (
-          <>
-            <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
-            <link rel="shortcut icon" href="/homepage.ico" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=4" />
-            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=4" />
-            <link rel="mask-icon" href="/safari-pinned-tab.svg?v=4" color="#1e9cd7" />
-          </>
-        )}
-        <meta name="msapplication-TileColor" content={themes[settings.color || "slate"][settings.theme || "dark"]} />
-        <meta name="theme-color" content={themes[settings.color || "slate"][settings.theme || "dark"]} />
-        <meta name="color-scheme" content="dark light"></meta>
-      </Head>
-
-      <Script src="/api/config/custom.js" />
+      <DocumentHead settings={{ ...initialSettings, ...settings }} />
 
       <div
         className={classNames(
