@@ -66,14 +66,14 @@ Create a new file for your widgets component, named `component.jsx`, in the `src
 First, we'll import the necessary dependencies:
 
 ```js title="src/widgets/yourwidget/component.jsx" linenums="1"
-import { useTranslation } from "next-i18next"; // (1)!
+import { useTranslation } from "react-i18next"; // (1)!
 
 import Container from "components/services/widget/container"; // (2)!
 import Block from "components/services/widget/block"; // (3)!
 import useWidgetAPI from "utils/proxy/use-widget-api"; // (4)!
 ```
 
-1. `#!js useTranslation()` is a hook provided by `next-i18next` that allows us to access the translation strings
+1. `#!js useTranslation()` is a hook provided by `react-i18next` that allows us to access the translation strings
 2. `#!jsx <Container>` and `#!jsx <Block>` are custom components that we'll use to structure our widget.
 3. `#!jsx <Container>` and `#!jsx <Block>` are custom components that we'll use to structure our widget.
 4. `#!js useWidgetAPI(widget, endpoint)` is a custom hook that we'll use to fetch data from an API.
@@ -177,7 +177,7 @@ return (
 Here's the complete `component.jsx` file:
 
 ```js title="src/widgets/yourwidget/component.jsx" linenums="1"
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 
 import Container from "components/services/widget/container";
 import Block from "components/services/widget/block";

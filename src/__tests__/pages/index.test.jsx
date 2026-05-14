@@ -110,7 +110,7 @@ vi.mock("components/toggles/revalidate", () => ({
 }));
 
 async function renderIndex({
-  initialSettings = { title: "Homepage", layout: {} },
+  initialSettings = { title: "Daemun", layout: {} },
   fallback = {},
   theme = "dark",
   color = "slate",
@@ -156,7 +156,7 @@ describe("pages/index Wrapper", () => {
   it("applies theme/color classes and renders a background overlay when configured", async () => {
     await renderIndex({
       initialSettings: {
-        title: "Homepage",
+        title: "Daemun",
         color: "slate",
         background: { image: "https://example.com/bg.jpg", opacity: 10, blur: true, saturate: 150, brightness: 125 },
         layout: {},
@@ -181,7 +181,7 @@ describe("pages/index Wrapper", () => {
   it("supports legacy string backgrounds in settings", async () => {
     await renderIndex({
       initialSettings: {
-        title: "Homepage",
+        title: "Daemun",
         color: "slate",
         background: "https://example.com/bg.jpg",
         layout: {},
@@ -207,7 +207,7 @@ describe("pages/index Index routing + SWR branches", () => {
   it("renders the validation error screen when /api/validate returns an error", async () => {
     state.validateData = { error: "bad config" };
 
-    await renderIndex({ initialSettings: { title: "Homepage", layout: {} }, settings: { layout: {} } });
+    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
 
     expect(screen.getByText("Error")).toBeInTheDocument();
     expect(screen.getByText("bad config")).toBeInTheDocument();
@@ -216,7 +216,7 @@ describe("pages/index Index routing + SWR branches", () => {
   it("renders config errors when /api/validate returns a list of errors", async () => {
     state.validateData = [{ config: "services.yaml", reason: "broken", mark: { snippet: "x: y" } }];
 
-    await renderIndex({ initialSettings: { title: "Homepage", layout: {} }, settings: { layout: {} } });
+    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
 
     expect(screen.getByText("services.yaml")).toBeInTheDocument();
     expect(screen.getByText("broken")).toBeInTheDocument();
@@ -241,7 +241,7 @@ describe("pages/index Index routing + SWR branches", () => {
       reloadSpy = vi.spyOn(window.location, "reload").mockImplementation(() => {});
     }
 
-    await renderIndex({ initialSettings: { title: "Homepage", layout: {} }, settings: { layout: {} } });
+    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith("/api/revalidate");
@@ -257,7 +257,7 @@ describe("pages/index Index routing + SWR branches", () => {
     state.hashData = { hash: "h" };
     state.windowFocused = true;
 
-    await renderIndex({ initialSettings: { title: "Homepage", layout: {} }, settings: { layout: {} } });
+    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
 
     await waitFor(() => {
       expect(state.mutateHash).toHaveBeenCalled();
@@ -269,7 +269,7 @@ describe("pages/index Index routing + SWR branches", () => {
     state.hashData = { hash: "first-hash" };
     localStorage.removeItem("hash");
 
-    await renderIndex({ initialSettings: { title: "Homepage", layout: {} }, settings: { layout: {} } });
+    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
 
     await waitFor(() => {
       expect(localStorage.getItem("hash")).toBe("first-hash");
@@ -297,8 +297,8 @@ describe("pages/index Home behavior", () => {
 
   it("passes href-bearing services and bookmarks to QuickLaunch and toggles search on keydown", async () => {
     await renderIndex({
-      initialSettings: { title: "Homepage", layout: {} },
-      settings: { title: "Homepage", layout: {}, language: "en" },
+      initialSettings: { title: "Daemun", layout: {} },
+      settings: { title: "Daemun", layout: {}, language: "en" },
     });
 
     await waitFor(() => {
@@ -317,8 +317,8 @@ describe("pages/index Home behavior", () => {
 
   it("renders services and bookmark groups when present", async () => {
     await renderIndex({
-      initialSettings: { title: "Homepage", layout: {} },
-      settings: { title: "Homepage", layout: {}, language: "en" },
+      initialSettings: { title: "Daemun", layout: {} },
+      settings: { title: "Daemun", layout: {}, language: "en" },
     });
 
     expect(await screen.findByTestId("services-group")).toHaveTextContent("Services");
@@ -330,8 +330,8 @@ describe("pages/index Home behavior", () => {
     state.bookmarksData = [{ name: "Bookmarks", bookmarks: [] }];
 
     await renderIndex({
-      initialSettings: { title: "Homepage", layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } } },
-      settings: { title: "Homepage", layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } } },
+      initialSettings: { title: "Daemun", layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } } },
+      settings: { title: "Daemun", layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } } },
       activeTab: "main",
     });
 
@@ -345,9 +345,9 @@ describe("pages/index Home behavior", () => {
     state.bookmarksData = [{ name: "Bookmarks", bookmarks: [] }];
 
     await renderIndex({
-      initialSettings: { title: "Homepage", layout: {} },
+      initialSettings: { title: "Daemun", layout: {} },
       // Missing layout triggers the temporary `<div />` return to avoid eager widget fetches.
-      settings: { title: "Homepage" },
+      settings: { title: "Daemun" },
     });
 
     expect(screen.queryByTestId("services-group")).toBeNull();
@@ -360,9 +360,9 @@ describe("pages/index Home behavior", () => {
     state.widgetsData = [{ type: "search" }];
 
     await renderIndex({
-      initialSettings: { title: "Homepage", layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } } },
+      initialSettings: { title: "Daemun", layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } } },
       settings: {
-        title: "Homepage",
+        title: "Daemun",
         layout: { Services: { tab: "Main" }, Bookmarks: { tab: "Main" } },
         headerStyle: "boxed",
         cardBlur: "sm",
@@ -380,9 +380,9 @@ describe("pages/index Home behavior", () => {
     state.widgetsData = [];
 
     const { setTheme, setColor, setSettings } = await renderIndex({
-      initialSettings: { title: "Homepage", layout: {} },
+      initialSettings: { title: "Daemun", layout: {} },
       settings: {
-        title: "Homepage",
+        title: "Daemun",
         layout: {},
         language: "en",
         theme: "light",
@@ -412,8 +412,8 @@ describe("pages/index Home behavior", () => {
 
   it("marks information widgets as right-aligned for known widget types", async () => {
     await renderIndex({
-      initialSettings: { title: "Homepage", layout: {} },
-      settings: { title: "Homepage", layout: {}, language: "en" },
+      initialSettings: { title: "Daemun", layout: {} },
+      settings: { title: "Daemun", layout: {}, language: "en" },
     });
 
     await waitFor(() => {

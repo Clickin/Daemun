@@ -9,11 +9,9 @@ const LATEST_RELEASE_CACHE_KEY = "latestRelease";
 export default function Version({ disableUpdateCheck = false }) {
   const { t, i18n } = useTranslation();
 
-  const buildTime = process.env.NEXT_PUBLIC_BUILDTIME?.length
-    ? process.env.NEXT_PUBLIC_BUILDTIME
-    : new Date().toISOString();
-  const revision = process.env.NEXT_PUBLIC_REVISION?.length ? process.env.NEXT_PUBLIC_REVISION : "dev";
-  const version = process.env.NEXT_PUBLIC_VERSION?.length ? process.env.NEXT_PUBLIC_VERSION : "dev";
+  const buildTime = process.env.VITE_BUILDTIME?.length ? process.env.VITE_BUILDTIME : new Date().toISOString();
+  const revision = process.env.VITE_REVISION?.length ? process.env.VITE_REVISION : "dev";
+  const version = process.env.VITE_VERSION?.length ? process.env.VITE_VERSION : "dev";
 
   // use Intl.DateTimeFormat to format the date
   const formatDate = (date) => {
@@ -44,7 +42,7 @@ export default function Version({ disableUpdateCheck = false }) {
           </>
         ) : (
           <a
-            href={`https://github.com/gethomepage/homepage/releases/tag/${version}`}
+            href={`https://github.com/Clickin/Daemun/releases/tag/${version}`}
             target="_blank"
             rel="noopener noreferrer"
             className="ml-2 text-xs text-theme-500 dark:text-theme-400 flex flex-row items-center"

@@ -47,9 +47,9 @@ export function siteWebmanifest() {
         type: "image/png",
       },
     ],
-    name: settings.title || "Homepage",
+    name: settings.title || "Daemun",
     shortcuts: pwa.shortcuts,
-    short_name: settings.title || "Homepage",
+    short_name: settings.title || "Daemun",
     start_url: settings.startUrl || "/",
     theme_color: themes[color][theme],
   };

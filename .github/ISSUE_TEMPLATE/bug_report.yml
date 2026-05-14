@@ -6,8 +6,8 @@ body:
     attributes:
       value: |
         ## ⚠️ Please note
-        The starting point for a bug report should always be a [GitHub discussion](https://github.com/gethomepage/homepage/discussions/new?category=support)
-        Thank you for contributing to homepage! ✊
+        The starting point for a bug report should always be a GitHub discussion in the Daemun repository.
+        Thank you for contributing to Daemun.
   - type: checkboxes
     id: pre-flight
     attributes:

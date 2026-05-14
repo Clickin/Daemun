@@ -56,7 +56,7 @@ function getFileLogger() {
       winston.format.timestamp(),
       winston.format.printf(messageFormatter),
     ),
-    filename: `${logpath}/logs/homepage.log`,
+    filename: `${logpath}/logs/daemun.log`,
     handleExceptions: true,
     handleRejections: true,
   });

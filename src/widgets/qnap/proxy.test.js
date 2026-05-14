@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import createMockRes from "test-utils/create-mock-res";
 
-const { httpProxy, getServiceWidget, cache, xml2json, logger } = vi.hoisted(() => {
+const { httpProxy, getServiceWidget, cache, logger } = vi.hoisted(() => {
   const store = new Map();
   return {
     httpProxy: vi.fn(),
@@ -13,23 +13,6 @@ const { httpProxy, getServiceWidget, cache, xml2json, logger } = vi.hoisted(() =
       del: vi.fn((k) => store.delete(k)),
       _reset: () => store.clear(),
     },
-    xml2json: vi.fn((xml) => {
-      if (xml === "login") {
-        return JSON.stringify({ QDocRoot: { authSid: { _cdata: "sid1" } } });
-      }
-      if (xml === "system") {
-        return JSON.stringify({
-          QDocRoot: {
-            authPassed: { _cdata: "1" },
-            func: { ownContent: { root: { cpu: 1 } } },
-          },
-        });
-      }
-      if (xml === "volume") {
-        return JSON.stringify({ QDocRoot: { authPassed: { _cdata: "1" }, volume: { ok: true } } });
-      }
-      return JSON.stringify({ QDocRoot: { authPassed: { _cdata: "1" } } });
-    }),
     logger: { debug: vi.fn(), error: vi.fn() },
   };
 });
@@ -37,9 +20,6 @@ const { httpProxy, getServiceWidget, cache, xml2json, logger } = vi.hoisted(() =
 vi.mock("memory-cache", () => ({
   default: cache,
   ...cache,
-}));
-vi.mock("xml-js", () => ({
-  xml2json,
 }));
 vi.mock("utils/logger", () => ({
   default: () => logger,
@@ -62,13 +42,22 @@ describe("widgets/qnap/proxy", () => {
   it("logs in and returns system + volume data", async () => {
     getServiceWidget.mockResolvedValue({ url: "http://qnap", username: "u", password: "p" });
 
+    const loginXml = "<QDocRoot><authSid><![CDATA[sid1]]></authSid></QDocRoot>";
+    const systemXml = [
+      "<QDocRoot>",
+      "<authPassed><![CDATA[1]]></authPassed>",
+      "<func><ownContent><root><cpu><![CDATA[1]]></cpu></root></ownContent></func>",
+      "</QDocRoot>",
+    ].join("");
+    const volumeXml = "<QDocRoot><authPassed><![CDATA[1]]></authPassed><volume><ok>true</ok></volume></QDocRoot>";
+
     httpProxy
       // login
-      .mockResolvedValueOnce([200, "application/xml", Buffer.from("login")])
+      .mockResolvedValueOnce([200, "application/xml", Buffer.from(loginXml)])
       // system
-      .mockResolvedValueOnce([200, "application/xml", Buffer.from("system")])
+      .mockResolvedValueOnce([200, "application/xml", Buffer.from(systemXml)])
       // volume
-      .mockResolvedValueOnce([200, "application/xml", Buffer.from("volume")]);
+      .mockResolvedValueOnce([200, "application/xml", Buffer.from(volumeXml)]);
 
     const req = { query: { group: "g", service: "svc", index: "0" } };
     const res = createMockRes();
@@ -76,7 +65,11 @@ describe("widgets/qnap/proxy", () => {
     await qnapProxyHandler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.system).toEqual({ cpu: 1 });
-    expect(res.body.volume).toEqual(expect.objectContaining({ authPassed: { _cdata: "1" } }));
+    expect(res.body.system).toEqual({ cpu: { _text: "1", _cdata: "1" } });
+    expect(res.body.volume).toEqual(
+      expect.objectContaining({
+        authPassed: expect.objectContaining({ _cdata: "1" }),
+      }),
+    );
   });
 });

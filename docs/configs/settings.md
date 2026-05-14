@@ -33,7 +33,7 @@ startUrl: https://custom.url
 
 !!! warning "Heads Up!"
 
-    You will need to restart the container any time you add new images, this is a limitation of the Next.js static site server.
+    You will need to restart the container any time you add new images so the server can pick up the updated public assets.
 
 !!! warning "Heads Up!"
 

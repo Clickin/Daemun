@@ -4,8 +4,8 @@ body:
       value: |
         ### ⚠️ Before opening a discussion:
 
-        - [Check the troubleshooting guide](https://gethomepage.dev/troubleshooting/) and include the output of all steps below.
-        - [Search existing issues](https://github.com/gethomepage/homepage/search?q=&type=issues) [and discussions](https://github.com/gethomepage/homepage/search?q=&type=discussions) (including closed ones!).
+        - Check the inherited troubleshooting guide under `docs/troubleshooting/` and include the output of all relevant steps below.
+        - Search existing issues and discussions in this repository, including closed ones.
   - type: textarea
     id: description
     attributes:
@@ -16,7 +16,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: homepage version
+      label: Daemun version
       placeholder: e.g. v0.4.18 (4ea2798)
     validations:
       required: true
@@ -51,7 +51,7 @@ body:
     id: troubleshooting
     attributes:
       label: Troubleshooting
-      description: Please include output from your [troubleshooting steps](https://gethomepage.dev/troubleshooting/#service-widget-errors), if relevant.
+      description: Please include output from the troubleshooting steps, if relevant.
     validations:
       required: true
   - type: markdown

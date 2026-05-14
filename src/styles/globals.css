@@ -1,9 +1,22 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@config '../../tailwind.config.js';
+@plugin "@tailwindcss/forms";
+@plugin "tailwind-scrollbar";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --breakpoint-3xl: 112rem;
+  --color-theme-50: rgb(var(--color-50));
+  --color-theme-100: rgb(var(--color-100));
+  --color-theme-200: rgb(var(--color-200));
+  --color-theme-300: rgb(var(--color-300));
+  --color-theme-400: rgb(var(--color-400));
+  --color-theme-500: rgb(var(--color-500));
+  --color-theme-600: rgb(var(--color-600));
+  --color-theme-700: rgb(var(--color-700));
+  --color-theme-800: rgb(var(--color-800));
+  --color-theme-900: rgb(var(--color-900));
 }
 
 /*
@@ -96,5 +109,5 @@ dialog ::-webkit-scrollbar {
 
 .service-container + .chart {
   margin-top: 2.5rem;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }

@@ -28,7 +28,7 @@ export default async function jellyfinProxyHandler(req, res, map) {
   const deviceId = encodeURIComponent(deviceIdRaw);
   const authHeader = `MediaBrowser Token="${encodeURIComponent(
     widget.key,
-  )}", Client="Homepage", Device="Homepage", DeviceId="${deviceId}", Version="1.0.0"`;
+  )}", Client="Daemun", Device="Daemun", DeviceId="${deviceId}", Version="1.0.0"`;
 
   const headers = {
     Authorization: authHeader,

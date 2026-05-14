@@ -83,7 +83,7 @@ export function httpRequest(url, params) {
   return handleRequest(http, url, params);
 }
 
-export async function cachedRequest(url, duration = 5, ua = "homepage") {
+export async function cachedRequest(url, duration = 5, ua = "daemun") {
   const cached = cache.get(url);
 
   if (cached) {
@@ -114,7 +114,7 @@ export async function cachedRequest(url, duration = 5, ua = "homepage") {
 // Fixes DNS resolution issues with Alpine/musl libc in k8s
 const FALLBACK_CODES = new Set(["ENOTFOUND", "EAI_NONAME"]);
 
-function homepageDNSLookupFn() {
+function daemunDNSLookupFn() {
   const normalizeOptions = (options) => {
     if (typeof options === "number") {
       return { family: options, all: false, lookupOptions: { family: options } };
@@ -225,7 +225,7 @@ function homepageDNSLookupFn() {
   };
 }
 
-const homepageLookup = homepageDNSLookupFn();
+const daemunLookup = daemunDNSLookupFn();
 const agentCache = new Map();
 
 function getAgent(protocol, disableIpv6) {
@@ -238,7 +238,7 @@ function getAgent(protocol, disableIpv6) {
   const agentOptions = {
     keepAlive: true,
     ...(disableIpv6 ? { family: 4, autoSelectFamily: false } : { autoSelectFamilyAttemptTimeout: 500 }),
-    lookup: homepageLookup,
+    lookup: daemunLookup,
   };
 
   const agent =

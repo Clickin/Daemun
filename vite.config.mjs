@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
 
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -16,9 +17,9 @@ const resolvedAliases = Object.fromEntries(
   Object.entries(aliases).map(([key, value]) => [key, fileURLToPath(new URL(value, import.meta.url))]),
 );
 
-const buildTime = process.env.NEXT_PUBLIC_BUILDTIME || process.env.BUILDTIME || "";
-const revision = process.env.NEXT_PUBLIC_REVISION || process.env.REVISION || "";
-const version = process.env.NEXT_PUBLIC_VERSION || process.env.VERSION || "";
+const buildTime = process.env.VITE_BUILDTIME || process.env.BUILDTIME || "";
+const revision = process.env.VITE_REVISION || process.env.REVISION || "";
+const version = process.env.VITE_VERSION || process.env.VERSION || "";
 
 function clientManualChunks(id) {
   const normalizedId = id.replaceAll("\\", "/");
@@ -112,11 +113,11 @@ export default defineConfig((configEnv) => {
           },
         },
     define: {
-      "process.env.NEXT_PUBLIC_BUILDTIME": JSON.stringify(buildTime),
-      "process.env.NEXT_PUBLIC_REVISION": JSON.stringify(revision),
-      "process.env.NEXT_PUBLIC_VERSION": JSON.stringify(version),
+      "process.env.VITE_BUILDTIME": JSON.stringify(buildTime),
+      "process.env.VITE_REVISION": JSON.stringify(revision),
+      "process.env.VITE_VERSION": JSON.stringify(version),
     },
-    plugins: [react()],
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: resolvedAliases,
     },

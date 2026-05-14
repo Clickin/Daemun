@@ -63,7 +63,7 @@ describe("widgets/jellyfin/proxy", () => {
     expect(httpProxy).toHaveBeenCalledTimes(1);
     expect(httpProxy.mock.calls[0][0].toString()).toBe("http://jf/Users");
     expect(httpProxy.mock.calls[0][1].headers.Authorization).toBe(
-      'MediaBrowser Token="abc", Client="Homepage", Device="Homepage", DeviceId="mygroup-myservice", Version="1.0.0"',
+      'MediaBrowser Token="abc", Client="Daemun", Device="Daemun", DeviceId="mygroup-myservice", Version="1.0.0"',
     );
     expect(validateWidgetData).toHaveBeenCalledWith(expect.objectContaining({ type: "jellyfin" }), "Users", {
       items: [1],

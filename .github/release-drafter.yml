@@ -80,8 +80,6 @@ autolabeler:
     files:
       - 'package.json'
       - 'pnpm-lock.yaml'
-      - 'pyproject.toml'
-      - 'uv.lock'
 
   - label: 'translation'
     files:

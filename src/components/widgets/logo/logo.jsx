@@ -15,7 +15,7 @@ export default function Logo({ options }) {
             <ResolvedIcon icon={options.icon} width={48} height={48} />
           </div>
         ) : (
-          // fallback to homepage logo
+          // fallback to Daemun logo
           <div className="fallback w-12 h-12">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +39,7 @@ export default function Logo({ options }) {
                   }}
                 />
                 <linearGradient
-                  id="homepage_logo_gradient"
+                  id="daemun_logo_gradient"
                   gradientUnits="userSpaceOnUse"
                   x1={200.746}
                   y1={225.015}
@@ -62,7 +62,7 @@ export default function Logo({ options }) {
                 <path
                   d="M721.8 250.3c0-32.7 22.4-59.3 50.1-59.3H253.1c-27.7 0-50.1 26.5-50.1 59.3v582.2l90.2-75.7-.1-130.3H375v61.8l88-73.8 258.8 217.9V250.6"
                   style={{
-                    fill: "url(#homepage_logo_gradient)",
+                    fill: "url(#daemun_logo_gradient)",
                   }}
                 />
               </g>

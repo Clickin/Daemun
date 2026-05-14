@@ -11,12 +11,12 @@ describe("utils/config/config", () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...originalEnv };
-    cache.del("homepageEnvironmentVariables");
+    cache.del("daemunEnvironmentVariables");
   });
 
   afterEach(() => {
     process.env = originalEnv;
-    cache.del("homepageEnvironmentVariables");
+    cache.del("daemunEnvironmentVariables");
   });
 
   it("substituteEnvironmentVars replaces HOMEPAGE_VAR_* placeholders", async () => {
@@ -27,7 +27,7 @@ describe("utils/config/config", () => {
   });
 
   it("substituteEnvironmentVars replaces HOMEPAGE_FILE_* placeholders with file contents", async () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "homepage-config-test-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "daemun-config-test-"));
     const secretPath = path.join(dir, "secret.txt");
     writeFileSync(secretPath, "secret", "utf8");
 
@@ -38,7 +38,7 @@ describe("utils/config/config", () => {
   });
 
   it("getSettings reads from HOMEPAGE_CONFIG_DIR and converts layout list to an object", async () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "homepage-settings-test-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "daemun-settings-test-"));
     process.env.HOMEPAGE_CONFIG_DIR = dir;
     process.env.HOMEPAGE_VAR_TITLE = "MyTitle";
 

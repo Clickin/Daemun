@@ -1,9 +1,7 @@
 {
-  "projectName": "homepage",
-  "projectOwner": "benphelps",
-  "files": [
-    "README.md"
-  ],
+  "projectName": "Daemun",
+  "projectOwner": "Clickin",
+  "files": ["README.md"],
   "imageSize": 100,
   "contributors": []
 }

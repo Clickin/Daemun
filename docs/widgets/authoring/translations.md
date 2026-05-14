@@ -7,12 +7,12 @@ All text and numerical content in widgets should be translated and localized. En
 
 ## Translations
 
-Homepage uses the [next-i18next](https://github.com/i18next/next-i18next) library to handle translations. This library provides a set of hooks and utilities to help you localize your widgets, and Homepage has extended this library to support additional features.
+Homepage uses [i18next](https://www.i18next.com/) with [react-i18next](https://react.i18next.com/) to handle translations. These libraries provide hooks and utilities to help you localize your widgets, and Homepage has extended this stack to support additional features.
 
 === "component.jsx"
 
     ```js
-    import { useTranslation } from "next-i18next";
+    import { useTranslation } from "react-i18next";
 
     import Container from "components/services/widget/container";
     import Block from "components/services/widget/block";

@@ -95,7 +95,7 @@ function relativeDate(date, formatter) {
   return formatter.format(Math.floor(delta / divisor), units[unitIndex]);
 }
 
-export function addHomepageFormatters(i18next) {
+export function addDaemunFormatters(i18next) {
   i18next.services.formatter.add("bytes", (value, lng, options) =>
     prettyBytes(parseFloat(value), { locale: lng, ...options }),
   );
@@ -135,7 +135,7 @@ export function addHomepageFormatters(i18next) {
   i18next.services.formatter.add("duration", (value, lng) => duration(value, i18next));
 }
 
-export const homepageFormatterPlugin = {
-  init: addHomepageFormatters,
+export const daemunFormatterPlugin = {
+  init: addDaemunFormatters,
   type: "3rdParty",
 };

@@ -2,7 +2,7 @@
 
 These configs and scripts attempt to simplify spinning up a kubernetes cluster
 for development and testing purposes. It leverages [k3d](https://k3d.io) to create
-a [k3s](https://k3s.io) cluster in Docker. Homepage can then be deployed either via
+a [k3s](https://k3s.io) cluster in Docker. Daemun can then be deployed either via
 the `k3d-deploy.sh` script, or [tilt](https://tilt.dev) can be used to spin up a
 local CI loop that will automatically update the deployment.
 
@@ -34,10 +34,10 @@ Build and deploy:
 ./k3d-deploy.sh
 ```
 
-Open the Homepage deployment:
+Open the Daemun deployment:
 
 ```sh
-xdg-open http://homepage.k3d.localhost:8080/
+xdg-open http://daemun.k3d.localhost:8080/
 ```
 
 ## Continuous Deployment
@@ -56,8 +56,8 @@ tilt up
 
 Press space bar to open the tilt web UI, which is quite informative.
 
-Finally, open the Homepage deployment:
+Finally, open the Daemun deployment:
 
 ```sh
-xdg-open http://homepage.k3d.localhost:8080/
+xdg-open http://daemun.k3d.localhost:8080/
 ```

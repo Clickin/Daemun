@@ -1,4 +1,4 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_text", "_cdata"] }] */
+/* oxlint-disable no-underscore-dangle */
 
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";

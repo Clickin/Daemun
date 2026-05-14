@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/alt-text */
+/* oxlint-disable jsx-a11y/alt-text */
 export default function Image({ layout, objectFit, style, width, height, ...props }) {
   const fill = layout === "fill";
   const imageStyle = {

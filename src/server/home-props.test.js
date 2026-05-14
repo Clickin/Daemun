@@ -9,7 +9,7 @@ const { state, getSettings, servicesResponse, bookmarksResponse, widgetsResponse
       if (state.throwIn === "bookmarks") throw new Error("bookmarks failed");
       return [{ name: "bm" }];
     }),
-    getSettings: vi.fn(() => ({ language: "en", providers: {}, title: "Homepage" })),
+    getSettings: vi.fn(() => ({ language: "en", providers: {}, title: "Daemun" })),
     logger,
     servicesResponse: vi.fn(async () => {
       if (state.throwIn === "services") throw new Error("services failed");
@@ -44,12 +44,12 @@ describe("loadHomePageProps", () => {
   });
 
   it("returns initial settings and API fallbacks for Inertia props", async () => {
-    getSettings.mockReturnValueOnce({ language: "en", providers: { x: 1 }, title: "Homepage" });
+    getSettings.mockReturnValueOnce({ language: "en", providers: { x: 1 }, title: "Daemun" });
 
     const { loadHomePageProps } = await import("./home-props");
     const result = await loadHomePageProps();
 
-    expect(result.initialSettings).toEqual({ language: "en", title: "Homepage" });
+    expect(result.initialSettings).toEqual({ language: "en", title: "Daemun" });
     expect(result.fallback["/api/services"]).toEqual([{ name: "svc" }]);
     expect(result.fallback["/api/bookmarks"]).toEqual([{ name: "bm" }]);
     expect(result.fallback["/api/widgets"]).toEqual([{ type: "search" }]);

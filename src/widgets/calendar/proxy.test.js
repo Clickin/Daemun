@@ -25,11 +25,11 @@ vi.mock("utils/proxy/http", () => ({
 import calendarProxyHandler from "./proxy";
 
 describe("widgets/calendar/proxy", () => {
-  const envVersion = process.env.NEXT_PUBLIC_VERSION;
+  const envVersion = process.env.VITE_VERSION;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NEXT_PUBLIC_VERSION = envVersion;
+    process.env.VITE_VERSION = envVersion;
   });
 
   it("returns 400 when integration is missing", async () => {
@@ -57,7 +57,7 @@ describe("widgets/calendar/proxy", () => {
   });
 
   it("adds a User-Agent for Outlook integrations and returns string data", async () => {
-    process.env.NEXT_PUBLIC_VERSION = "1.2.3";
+    process.env.VITE_VERSION = "1.2.3";
     getServiceWidget.mockResolvedValue({
       integrations: [{ name: "outlook", url: "https://example.com/outlook.ics" }],
     });
@@ -70,7 +70,7 @@ describe("widgets/calendar/proxy", () => {
     await calendarProxyHandler(req, res);
 
     expect(httpProxy).toHaveBeenCalledWith("https://example.com/outlook.ics", {
-      headers: { "User-Agent": "gethomepage/1.2.3" },
+      headers: { "User-Agent": "daemun/1.2.3" },
     });
     expect(res.setHeader).toHaveBeenCalledWith("Content-Type", "text/calendar");
     expect(res.statusCode).toBe(200);

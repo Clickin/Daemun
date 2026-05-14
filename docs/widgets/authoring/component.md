@@ -10,7 +10,7 @@ Homepage widgets are built using React components. These components are responsi
 Here is an example of a basic widget component:
 
 ```js
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 
 import Container from "components/services/widget/container";
 import Block from "components/services/widget/block";

@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* oxlint-disable camelcase */
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";

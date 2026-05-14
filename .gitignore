@@ -2,16 +2,13 @@
 
 # dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.js
 .pnpm-store
 
 # testing
 /coverage
-
-# next.js
-/.next/
-/out/
 
 # production
 /build
@@ -23,7 +20,7 @@
 
 # log files
 error.log
-homepage.log
+daemun.log
 
 # debug
 npm-debug.log*
@@ -39,20 +36,18 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
-# homepage
+# daemun config
 /config
 
 # IDEs
 /.idea/
 
-# Zensical documentation
+# docs build output
 site*/
+dist-docs/
+.astro/
 .cache/
 
 # OMX runtime state
 /.omx/
-
-# venv
-.venv/

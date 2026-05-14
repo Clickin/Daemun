@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 
 import enCommon from "../../../public/locales/en/common.json";
 
-import { homepageFormatterPlugin } from "./formatters";
+import { daemunFormatterPlugin } from "./formatters";
 
 const localeModules = import.meta.glob("../../../public/locales/*/common.json", {
   query: "?raw",
@@ -38,7 +38,7 @@ export async function loadLanguage(language = fallbackLanguage) {
 
 if (!i18n.isInitialized) {
   i18n
-    .use(homepageFormatterPlugin)
+    .use(daemunFormatterPlugin)
     .use(initReactI18next)
     .init({
       defaultNS: "common",

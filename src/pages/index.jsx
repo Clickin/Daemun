@@ -1,4 +1,4 @@
-/* eslint-disable react/no-array-index-key */
+/* oxlint-disable react/no-array-index-key */
 import classNames from "classnames";
 import BookmarksGroup from "components/bookmarks/group";
 import DocumentHead from "components/document-head";

@@ -116,7 +116,7 @@ export default function Search({ options }) {
           <Combobox value={query}>
             <ComboboxInput
               type="text"
-              name="homepage-search"
+              name="daemun-search"
               className="
               overflow-hidden w-full h-full rounded-md
               text-xs text-theme-900 dark:text-white
@@ -133,7 +133,7 @@ export default function Search({ options }) {
               autoCapitalize="off"
               autoCorrect="off"
               autoComplete="off"
-              // eslint-disable-next-line jsx-a11y/no-autofocus
+              // oxlint-disable-next-line jsx-a11y/no-autofocus
               autoFocus={options.focus}
               onBlur={(e) => e.preventDefault()}
               onKeyDown={handleSearchKeyDown}

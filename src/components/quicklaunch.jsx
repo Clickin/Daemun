@@ -147,7 +147,7 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
         let descriptionMatch;
         if (searchDescriptions) {
           descriptionMatch = r.description?.toLowerCase().includes(searchString);
-          r.priority = nameMatch ? 2 * +nameMatch : +descriptionMatch; // eslint-disable-line no-param-reassign
+          r.priority = nameMatch ? 2 * +nameMatch : +descriptionMatch; // oxlint-disable-line no-param-reassign
         }
         return nameMatch || descriptionMatch;
       });
@@ -216,7 +216,7 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
     return () => {
       abortController.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchString, servicesAndBookmarks, searchDescriptions, hideVisitURL, searchSuggestions, searchProvider, url]);
 
   const [hidden, setHidden] = useState(true);
@@ -244,7 +244,7 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
       <span>
         {parts.map((part, i) =>
           part.toLowerCase() === searchString.toLowerCase() ? (
-            // eslint-disable-next-line react/no-array-index-key
+            // oxlint-disable-next-line react/no-array-index-key
             <span key={`${searchString}_${i}`} className="bg-theme-300/10">
               {part}
             </span>
@@ -273,7 +273,7 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
           <div className="flex min-h-full min-w-full items-start justify-center text-center">
             <dialog className="mt-[10%] mx-auto min-w-[90%] max-w-[90%] md:min-w-[40%] md:max-w-[40%] rounded-md p-0 block font-medium text-theme-700 dark:text-theme-200 dark:hover:text-theme-300 shadow-md shadow-theme-900/10 dark:shadow-theme-900/20 bg-theme-50 dark:bg-theme-800">
               <input
-                name="homepage-quicklaunch"
+                name="daemun-quicklaunch"
                 placeholder="Search"
                 className={classNames(
                   results.length > 0 && "rounded-t-md",

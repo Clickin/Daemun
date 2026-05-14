@@ -33,7 +33,7 @@ export function ThemeProvider({ initialTheme, children }) {
 
   useEffect(() => {
     if (initialTheme !== undefined) setTheme(initialTheme ?? getInitialTheme());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [initialTheme]);
 
   useEffect(() => {

@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  A modern, <em>fully static, fast</em>, secure <em>fully proxied</em>, highly customizable application dashboard with integrations for over 100 services and translations into multiple languages. Easily configured via YAML files or through docker label discovery.
+  Daemun is a lightweight Hono/Vite application dashboard with proxied service integrations, YAML configuration, Docker label discovery, and translations into multiple languages.
 </p>
 
 <p align="center">
@@ -14,28 +14,22 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/gethomepage/homepage/actions/workflows/docker-publish.yml"><img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/gethomepage/homepage/docker-publish.yml"></a>
+  <a href="https://github.com/Clickin/Daemun/actions/workflows/docker-publish.yml"><img alt="Docker workflow status" src="https://img.shields.io/github/actions/workflow/status/Clickin/Daemun/docker-publish.yml"></a>
   &nbsp;
-  <a href="https://codecov.io/gh/gethomepage/homepage"><img src="https://codecov.io/gh/gethomepage/homepage/graph/badge.svg?token=7SKFL4D9K7"/></a>
+  <a href="https://github.com/Clickin/Daemun/actions/workflows/test.yml"><img alt="Test workflow status" src="https://img.shields.io/github/actions/workflow/status/Clickin/Daemun/test.yml?label=tests"></a>
   &nbsp;
-  <a href="https://crowdin.com/project/gethomepage" target="_blank"><img src="https://badges.crowdin.net/gethomepage/localized.svg"></a>
-  &nbsp;
-  <a href="https://discord.gg/k4ruYNrudu"><img alt="Discord" src="https://img.shields.io/discord/1019316731635834932"></a>
-  &nbsp;
-  <a href="https://gethomepage.dev/" title="Docs"><img title="Docs" src="https://github.com/gethomepage/homepage/actions/workflows/docs-publish.yml/badge.svg"/></a>
-  &nbsp;
-  <a href="https://paypal.me/phelpsben" title="Donate"><img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/benphelps"></a>
+  <a href="https://github.com/Clickin/Daemun/actions/workflows/docs-publish.yml"><img alt="Docs workflow status" src="https://img.shields.io/github/actions/workflow/status/Clickin/Daemun/docs-publish.yml?label=docs"></a>
 </p>
 
 # Features
 
-With features like quick search, bookmarks, weather support, a wide range of integrations and widgets, an elegant and modern design, and a focus on performance, Homepage is your ideal start to the day and a handy companion throughout it.
+With features like quick search, bookmarks, weather support, a wide range of integrations and widgets, and a focus on a compact runtime, Daemun is your home entry point for self-hosted services.
 
-- **Fast** - The site is statically generated at build time for instant load times.
+- **Fast** - The app runs on a compact Hono server with Vite-built client assets.
 - **Secure** - All API requests to backend services are proxied, keeping your API keys hidden. Constantly reviewed for security by the community.
 - **For Everyone** - Images built for AMD64, ARM64.
 - **Full i18n** - Support for over 40 languages.
-- **Service & Web Bookmarks** - Add custom links to the homepage.
+- **Service & Web Bookmarks** - Add custom links to the dashboard.
 - **Docker Integration** - Container status and stats. Automatic service discovery via labels.
 - **Service Integration** - Over 100 service integrations, including popular starr and self-hosted apps.
 - **Information & Utility Widgets** - Weather, time, date, search, and more.
@@ -43,27 +37,27 @@ With features like quick search, bookmarks, weather support, a wide range of int
 
 ## Docker Integration
 
-Homepage has built-in support for Docker, and can automatically discover and add services to the homepage based on labels. See the [Docker Service Discovery](https://gethomepage.dev/configs/docker/#automatic-service-discovery) page for more information.
+Daemun has built-in support for Docker, and can automatically discover and add services based on labels.
 
 ## Service Widgets
 
-Homepage also has support for hundreds of 3rd-party services, including all popular \*arr apps, and most popular self-hosted apps. Some examples include: Radarr, Sonarr, Lidarr, Bazarr, Ombi, Tautulli, Plex, Jellyfin, Emby, Transmission, qBittorrent, Deluge, Jackett, NZBGet, SABnzbd, etc. As well as service integrations, Homepage also has a number of information providers, sourcing information from a variety of external 3rd-party APIs. See the [Service](https://gethomepage.dev/widgets/) page for more information.
+Daemun keeps the inherited service widget catalog, including popular \*arr apps and self-hosted apps such as Plex, Jellyfin, Emby, Transmission, qBittorrent, Deluge, Jackett, NZBGet, and SABnzbd.
 
 ## Information Widgets
 
-Homepage has built-in support for a number of information providers, including weather, time, date, search, glances and more. System and status information presented at the top of the page. See the [Information Providers](https://gethomepage.dev/widgets/) page for more information.
+Daemun has built-in support for information providers including weather, time, date, search, Glances, and more.
 
 ## Customization
 
-Homepage is highly customizable, with support for custom themes, custom CSS & JS, custom layouts, formatting, localization and more. See the [Settings](https://gethomepage.dev/configs/settings/) page for more information.
+Daemun remains highly customizable, with support for custom themes, custom CSS and JavaScript, layouts, formatting, and localization.
 
 # Getting Started
 
-For configuration options, examples and more, [please check out the homepage documentation](http://gethomepage.dev).
+This fork is Daemun. Some inherited documentation still uses the upstream project name while the docs content is migrated.
 
 ## Security Notice 🔒
 
-Please note that when using features such as widgets, Homepage can access personal information (for example from your home automation system) and Homepage currently does not (and is not planned to) include any authentication layer itself. If Homepage is reachable from any untrusted network, it **must** sit behind a reverse proxy (and/or VPN) that enforces authentication, TLS, and strictly validates Host headers. The built-in host check in Homepage is a best-effort guard and should not be treated as security when exposed publicly.
+Please note that when using features such as widgets, Daemun can access personal information (for example from your home automation system) and Daemun currently does not include an authentication layer itself. If Daemun is reachable from any untrusted network, it **must** sit behind a reverse proxy (and/or VPN) that enforces authentication, TLS, and strictly validates Host headers. The built-in host check is a best-effort guard and should not be treated as security when exposed publicly.
 
 ## With Docker
 
@@ -71,11 +65,11 @@ Using docker compose:
 
 ```yaml
 services:
-  homepage:
-    image: ghcr.io/gethomepage/homepage:latest
-    container_name: homepage
+  daemun:
+    image: ghcr.io/clickin/daemun:latest
+    container_name: daemun
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      HOMEPAGE_ALLOWED_HOSTS: daemun.example.com # required, may need port
       PUID: 1000 # optional, your user id
       PGID: 1000 # optional, your group id
     ports:
@@ -89,15 +83,15 @@ services:
 or docker run:
 
 ```bash
-docker run --name homepage \
-  -e HOMEPAGE_ALLOWED_HOSTS=gethomepage.dev \
+docker run --name daemun \
+  -e HOMEPAGE_ALLOWED_HOSTS=daemun.example.com \
   -e PUID=1000 \
   -e PGID=1000 \
   -p 3000:3000 \
   -v /path/to/config:/app/config \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
   --restart unless-stopped \
-  ghcr.io/gethomepage/homepage:latest
+  ghcr.io/clickin/daemun:latest
 ```
 
 ## From Source
@@ -105,7 +99,7 @@ docker run --name homepage \
 First, clone the repository:
 
 ```bash
-git clone https://github.com/gethomepage/homepage.git
+git clone https://github.com/Clickin/Daemun.git
 ```
 
 Then install dependencies and build the production bundle:
@@ -125,7 +119,7 @@ pnpm start
 
 # Configuration
 
-Please refer to the [homepage documentation website](https://gethomepage.dev/) for more information. Everything you need to know about configuring Homepage is there. Please read everything carefully before asking for help, as most questions are answered there or are simple YAML configuration issues.
+Inherited configuration guides remain under `docs/` while they are migrated into the Astro Starlight documentation site.
 
 # Development
 
@@ -143,31 +137,26 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) to start.
 
-This is a [Next.js](https://nextjs.org/) application, see their documentation for more information.
+This is a Hono application with Vite-built React/Inertia client assets.
 
 # Documentation
 
-The homepage documentation is available at [https://gethomepage.dev/](https://gethomepage.dev/).
-
-Homepage uses Zensical for documentation. To run the documentation locally, first install the dependencies:
+Astro Starlight is the documentation runtime:
 
 ```bash
-uv sync
+pnpm docs:dev
+pnpm docs:build
 ```
 
-Then run the development server:
-
-```bash
-uv run zensical serve # or build, to build the static site
-```
+The legacy Markdown source is still under `docs/` during the content migration. The Starlight entrypoint is under `docs-site/`.
 
 # Support & Suggestions
 
-If you have any questions, suggestions, or general issues, please start a discussion on the [Discussions](https://github.com/gethomepage/homepage/discussions) page.
+If you have any questions, suggestions, or general issues, please start a discussion in the fork repository.
 
 ## Troubleshooting
 
-In addition to the docs, the [troubleshooting guide](https://gethomepage.dev/troubleshooting/) can help reveal many basic config or network issues. If you're having a problem, it's a good place to start.
+In addition to the docs, the inherited troubleshooting content under `docs/troubleshooting/` can help reveal many basic config or network issues while the Starlight migration continues.
 
 ## Contributing & Contributors
 

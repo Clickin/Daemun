@@ -9,7 +9,7 @@ function appendTag(tagName, attributes) {
       element.setAttribute(key, String(value));
     }
   });
-  element.setAttribute("data-homepage-head", "true");
+  element.setAttribute("data-daemun-head", "true");
   document.head.appendChild(element);
 }
 
@@ -23,7 +23,7 @@ function iconTags(settings) {
 
   return [
     ["link", { href: "/apple-touch-icon.png?v=4", rel: "apple-touch-icon", sizes: "180x180" }],
-    ["link", { href: "/homepage.ico", rel: "shortcut icon" }],
+    ["link", { href: "/daemun.ico", rel: "shortcut icon" }],
     ["link", { href: "/favicon-32x32.png?v=4", rel: "icon", sizes: "32x32", type: "image/png" }],
     ["link", { href: "/favicon-16x16.png?v=4", rel: "icon", sizes: "16x16", type: "image/png" }],
     ["link", { color: "#1e9cd7", href: "/safari-pinned-tab.svg?v=4", rel: "mask-icon" }],
@@ -32,12 +32,12 @@ function iconTags(settings) {
 
 export default function DocumentHead({ settings }) {
   useEffect(() => {
-    document.querySelectorAll("[data-homepage-head]").forEach((node) => node.remove());
+    document.querySelectorAll("[data-daemun-head]").forEach((node) => node.remove());
 
-    const title = settings.title || "Homepage";
+    const title = settings.title || "Daemun";
     const description =
       settings.description ||
-      "A highly customizable homepage (or startpage / application dashboard) with Docker and service API integrations.";
+      "A compact self-hosted dashboard with Docker and service API integrations.";
     const color = settings.color || "slate";
     const theme = settings.theme || "dark";
     const themeColor = themes[color]?.[theme] || themes.slate.dark;

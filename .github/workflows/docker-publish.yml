@@ -15,14 +15,14 @@ on:
   merge_group:
 
 env:
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: clickin/daemun
 
 jobs:
 
 
   build:
     name: Docker Build & Push
-    if: github.repository == 'gethomepage/homepage'
+    if: github.repository == 'Clickin/Daemun'
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -52,14 +52,6 @@ jobs:
           flavor: |
             latest=auto
 
-      - name: Next.js build cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        with:
-          path: .next/cache
-          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx') }}
-          restore-keys: |
-            nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
       - name: Install pnpm
         uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
         with:
@@ -69,7 +61,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: 24
+          node-version: 26
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -77,9 +69,9 @@ jobs:
 
       - name: Build app
         run: |
-          NEXT_PUBLIC_BUILDTIME="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}" \
-          NEXT_PUBLIC_VERSION="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}" \
-          NEXT_PUBLIC_REVISION="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}" \
+          VITE_BUILDTIME="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}" \
+          VITE_VERSION="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}" \
+          VITE_REVISION="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}" \
           pnpm run build
 
       - name: Log into registry ${{ env.REGISTRY }}

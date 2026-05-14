@@ -1,0 +1,14 @@
+{
+  "name": "@daemun/docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "@astrojs/starlight": "^0.39.2",
+    "astro": "^6.3.2"
+  }
+}

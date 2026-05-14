@@ -1,15 +1,15 @@
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 
-import { honoNextApiHandler, splitCatchAll } from "./next-api-adapter";
+import { honoApiHandler, splitCatchAll } from "./api-handler-adapter";
 
-describe("honoNextApiHandler", () => {
-  it("passes mutable Next-style req/res objects to an API handler", async () => {
+describe("honoApiHandler", () => {
+  it("passes mutable req/res objects to an API handler", async () => {
     const app = new Hono();
 
     app.all(
       "/api/example/:service",
-      honoNextApiHandler(
+      honoApiHandler(
         async (req, res) => {
           req.query.endpoint = `${req.query.service}:${req.query.endpoint}`;
 
@@ -47,7 +47,7 @@ describe("honoNextApiHandler", () => {
 
     app.get(
       "/api/text",
-      honoNextApiHandler((req, res) => {
+      honoApiHandler((req, res) => {
         res.setHeader("Content-Type", "text/plain");
         return res.status(201).end("created");
       }),
@@ -60,16 +60,16 @@ describe("honoNextApiHandler", () => {
     expect(await response.text()).toBe("created");
   });
 
-  it("keeps Next catch-all route params as decoded arrays", () => {
+  it("keeps catch-all route params as decoded arrays", () => {
     expect(splitCatchAll("group/service%20name/widget")).toEqual(["group", "service name", "widget"]);
   });
 
-  it("lets route params override query-string values like Next dynamic routes", async () => {
+  it("lets route params override query-string values like dynamic routes", async () => {
     const app = new Hono();
 
     app.get(
       "/api/config/:path",
-      honoNextApiHandler(
+      honoApiHandler(
         (req, res) =>
           res.json({
             path: req.query.path,

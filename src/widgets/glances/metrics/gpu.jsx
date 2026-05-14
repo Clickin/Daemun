@@ -28,7 +28,7 @@ export default function Component({ service }) {
 
   useEffect(() => {
     if (data && !data.error) {
-      // eslint-disable-next-line eqeqeq
+      // oxlint-disable-next-line eqeqeq
       const gpuData = data.find((item) => item[item.key] == gpuName);
 
       if (gpuData) {
@@ -56,7 +56,7 @@ export default function Component({ service }) {
     );
   }
 
-  // eslint-disable-next-line eqeqeq
+  // oxlint-disable-next-line eqeqeq
   const gpuData = data.find((item) => item[item.key] == gpuName);
 
   if (!gpuData) {

@@ -4,9 +4,9 @@ import { join } from "path";
 import yaml from "js-yaml";
 import cache from "memory-cache";
 
-const cacheKey = "homepageEnvironmentVariables";
-const homepageVarPrefix = "HOMEPAGE_VAR_";
-const homepageFilePrefix = "HOMEPAGE_FILE_";
+const cacheKey = "daemunEnvironmentVariables";
+const daemunVarPrefix = "HOMEPAGE_VAR_";
+const daemunFilePrefix = "HOMEPAGE_FILE_";
 
 export const CONF_DIR = process.env.HOMEPAGE_CONFIG_DIR
   ? process.env.HOMEPAGE_CONFIG_DIR
@@ -54,7 +54,7 @@ function getCachedEnvironmentVars() {
   if (!cachedVars) {
     // initialize cache
     cachedVars = Object.entries(process.env).filter(
-      ([key]) => key.includes(homepageVarPrefix) || key.includes(homepageFilePrefix),
+      ([key]) => key.includes(daemunVarPrefix) || key.includes(daemunFilePrefix),
     );
     cache.put(cacheKey, cachedVars);
   }
@@ -67,9 +67,9 @@ export function substituteEnvironmentVars(str) {
     // crude check if we have vars to replace
     const cachedVars = getCachedEnvironmentVars();
     cachedVars.forEach(([key, value]) => {
-      if (key.startsWith(homepageVarPrefix)) {
+      if (key.startsWith(daemunVarPrefix)) {
         result = result.replaceAll(`{{${key}}}`, value);
-      } else if (key.startsWith(homepageFilePrefix)) {
+      } else if (key.startsWith(daemunFilePrefix)) {
         const filename = value;
         const fileContents = readFileSync(filename, "utf8");
         result = result.replaceAll(`{{${key}}}`, fileContents);

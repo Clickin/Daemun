@@ -1,12 +1,12 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_text", "_cdata"] }] */
+/* oxlint-disable no-underscore-dangle */
 
 import cache from "memory-cache";
-import { xml2json } from "xml-js";
 
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 import { formatApiCall } from "utils/proxy/api-helpers";
 import { httpProxy } from "utils/proxy/http";
+import { parseXml, xmlNodeText } from "utils/xml";
 
 const proxyName = "qnapProxyHandler";
 const sessionTokenCacheKey = `${proxyName}__sessionToken`;
@@ -27,9 +27,8 @@ async function login(widget, service) {
   });
 
   try {
-    const dataDecoded = xml2json(data.toString(), { compact: true });
-    const jsonData = JSON.parse(dataDecoded);
-    const token = jsonData.QDocRoot.authSid._cdata;
+    const jsonData = parseXml(data);
+    const token = xmlNodeText(jsonData.QDocRoot?.authSid);
     cache.put(`${sessionTokenCacheKey}.${service}`, token);
     return { token };
   } catch (e) {
@@ -57,9 +56,9 @@ async function apiCall(widget, endpoint, service) {
     return { status, contentType, data: null, responseHeaders };
   }
 
-  let dataDecoded = JSON.parse(xml2json(data.toString(), { compact: true }).toString());
+  let dataDecoded = parseXml(data);
 
-  if (dataDecoded.QDocRoot.authPassed._cdata === "0") {
+  if (xmlNodeText(dataDecoded.QDocRoot?.authPassed) === "0") {
     logger.error("QNAP API rejected the request, attempting to obtain new session token");
     key = await login(widget, service);
     apiUrl = new URL(formatApiCall(`${endpoint}&sid=${key}`, widget));
@@ -70,7 +69,7 @@ async function apiCall(widget, endpoint, service) {
       return { status, contentType, data: null, responseHeaders };
     }
 
-    dataDecoded = JSON.parse(xml2json(data.toString(), { compact: true }).toString());
+    dataDecoded = parseXml(data);
   }
 
   return { status, contentType, data: dataDecoded, responseHeaders };

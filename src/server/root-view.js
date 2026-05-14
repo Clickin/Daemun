@@ -58,25 +58,25 @@ function defaultIconTags(settings) {
   if (settings.favicon) {
     const favicon = escapeAttribute(settings.favicon);
     return [
-      `<link data-homepage-head rel="icon" href="${favicon}">`,
-      `<link data-homepage-head rel="apple-touch-icon" sizes="180x180" href="${favicon}">`,
+      `<link data-daemun-head rel="icon" href="${favicon}">`,
+      `<link data-daemun-head rel="apple-touch-icon" sizes="180x180" href="${favicon}">`,
     ];
   }
 
   return [
-    '<link data-homepage-head rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4">',
-    '<link data-homepage-head rel="shortcut icon" href="/homepage.ico">',
-    '<link data-homepage-head rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=4">',
-    '<link data-homepage-head rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=4">',
-    '<link data-homepage-head rel="mask-icon" href="/safari-pinned-tab.svg?v=4" color="#1e9cd7">',
+    '<link data-daemun-head rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4">',
+    '<link data-daemun-head rel="shortcut icon" href="/daemun.ico">',
+    '<link data-daemun-head rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=4">',
+    '<link data-daemun-head rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=4">',
+    '<link data-daemun-head rel="mask-icon" href="/safari-pinned-tab.svg?v=4" color="#1e9cd7">',
   ];
 }
 
 function headTags(settings) {
-  const title = settings.title || "Homepage";
+  const title = settings.title || "Daemun";
   const description =
     settings.description ||
-    "A highly customizable homepage (or startpage / application dashboard) with Docker and service API integrations.";
+    "A compact self-hosted dashboard with Docker and service API integrations.";
   const color = settings.color || "slate";
   const theme = settings.theme || "dark";
   const themeColor = themes[color]?.[theme] || themes.slate.dark;
@@ -85,16 +85,16 @@ function headTags(settings) {
     `<title>${escapeText(title)}</title>`,
     '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">',
     '<meta name="mobile-web-app-capable" content="yes">',
-    `<meta data-homepage-head name="description" content="${escapeAttribute(description)}">`,
-    settings.disableIndexing ? '<meta data-homepage-head name="robots" content="noindex, nofollow">' : "",
-    settings.base ? `<base data-homepage-head href="${escapeAttribute(settings.base)}">` : "",
+    `<meta data-daemun-head name="description" content="${escapeAttribute(description)}">`,
+    settings.disableIndexing ? '<meta data-daemun-head name="robots" content="noindex, nofollow">' : "",
+    settings.base ? `<base data-daemun-head href="${escapeAttribute(settings.base)}">` : "",
     '<link rel="manifest" href="/site.webmanifest?v=4" crossorigin="use-credentials">',
     '<link rel="preload" href="/api/config/custom.css" as="style">',
     '<link rel="stylesheet" href="/api/config/custom.css">',
     ...defaultIconTags(settings),
-    `<meta data-homepage-head name="msapplication-TileColor" content="${escapeAttribute(themeColor)}">`,
-    `<meta data-homepage-head name="theme-color" content="${escapeAttribute(themeColor)}">`,
-    '<meta data-homepage-head name="color-scheme" content="dark light">',
+    `<meta data-daemun-head name="msapplication-TileColor" content="${escapeAttribute(themeColor)}">`,
+    `<meta data-daemun-head name="theme-color" content="${escapeAttribute(themeColor)}">`,
+    '<meta data-daemun-head name="color-scheme" content="dark light">',
     ...assetTags(),
   ].filter(Boolean);
 }

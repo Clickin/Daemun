@@ -38,8 +38,8 @@ export default function Component({ service }) {
   const lan = defaultSite.health.find((h) => h.subsystem === "lan");
   const wlan = defaultSite.health.find((h) => h.subsystem === "wlan");
   [wan, lan, wlan].forEach((s) => {
-    s.up = s.status === "ok"; // eslint-disable-line no-param-reassign
-    s.show = s.status !== "unknown"; // eslint-disable-line no-param-reassign
+    s.up = s.status === "ok"; // oxlint-disable-line no-param-reassign
+    s.show = s.status !== "unknown"; // oxlint-disable-line no-param-reassign
   });
 
   const uptime = wan["gw_system-stats"]

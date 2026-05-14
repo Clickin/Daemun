@@ -14,7 +14,7 @@ describe("rootView", () => {
 
     const html = rootView({
       component: "Home",
-      props: { initialSettings: { title: "Homepage" } },
+      props: { initialSettings: { title: "Daemun" } },
       url: "/",
       version: "test",
     });

@@ -60,7 +60,7 @@ export default function Component({ service }) {
     metrics.slice(0, 4).map((metric) => {
       // disable the rule that hooks should not be called from a callback,
       // because we don't need a strong guarantee of hook execution order here.
-      // eslint-disable-next-line react-hooks/rules-of-hooks
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       const { data: resultData, error: resultError } = useWidgetAPI(widget, "query", {
         query: metric.query,
         refreshInterval: Math.max(1000, metric.refreshInterval ?? refreshInterval),

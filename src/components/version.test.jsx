@@ -33,9 +33,9 @@ import Version from "./version";
 describe("components/version", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NEXT_PUBLIC_VERSION = "dev";
-    process.env.NEXT_PUBLIC_REVISION = "abcdef012345";
-    process.env.NEXT_PUBLIC_BUILDTIME = "2020-01-01T00:00:00.000Z";
+    process.env.VITE_VERSION = "dev";
+    process.env.VITE_REVISION = "abcdef012345";
+    process.env.VITE_BUILDTIME = "2020-01-01T00:00:00.000Z";
   });
 
   it("renders non-link version text for dev/main/nightly", () => {
@@ -50,7 +50,7 @@ describe("components/version", () => {
   });
 
   it("renders tag link and shows update available when a newer release exists", () => {
-    process.env.NEXT_PUBLIC_VERSION = "1.2.3";
+    process.env.VITE_VERSION = "1.2.3";
     cv.validate.mockReturnValue(true);
     cache.get.mockReturnValue(null);
     useSWR.mockReturnValue({
@@ -65,11 +65,11 @@ describe("components/version", () => {
     expect(links.find((a) => a.getAttribute("href") === "http://example.com/release")).toBeTruthy();
   });
 
-  it("falls back build time to the current date when NEXT_PUBLIC_BUILDTIME is missing", () => {
+  it("falls back build time to the current date when VITE_BUILDTIME is missing", () => {
     vi.useFakeTimers();
     try {
       vi.setSystemTime(new Date("2021-01-02T12:00:00.000Z"));
-      process.env.NEXT_PUBLIC_BUILDTIME = "";
+      process.env.VITE_BUILDTIME = "";
 
       cv.validate.mockReturnValue(false);
       cache.get.mockReturnValue(null);

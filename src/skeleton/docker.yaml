@@ -1,6 +1,6 @@
 ---
 # For configuration options and examples, please see:
-# https://gethomepage.dev/configs/docker/
+# https://github.com/Clickin/Daemun/tree/main/docs/configs/docker.md
 
 # my-docker:
 #   host: 127.0.0.1

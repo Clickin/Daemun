@@ -152,7 +152,7 @@ describe("utils/proxy/http cachedRequest", () => {
   });
 });
 
-describe("utils/proxy/http homepageDNSLookupFn", () => {
+describe("utils/proxy/http daemunDNSLookupFn", () => {
   const getLookupFn = async () => {
     const httpMod = await import("./http");
     await httpMod.httpProxy("http://example.com");

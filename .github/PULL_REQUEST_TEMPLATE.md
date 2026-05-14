@@ -23,7 +23,7 @@ Closes # (issue)
 ## Type of change
 
 <!--
-What type of change does your PR introduce to Homepage?
+What type of change does your PR introduce to Daemun?
 -->
 
 - [ ] New service widget
@@ -35,8 +35,8 @@ What type of change does your PR introduce to Homepage?
 ## Checklist:
 
 - [ ] If applicable, I have added corresponding documentation changes.
-- [ ] If applicable, I have added or updated tests for new features and bug fixes (see [testing](https://gethomepage.dev/widgets/authoring/getting-started/#testing)).
-- [ ] If applicable, I have reviewed the [feature / enhancement](https://gethomepage.dev/widgets/authoring/getting-started/#new-feature-guidelines) and / or [service widget guidelines](https://gethomepage.dev/widgets/authoring/getting-started/#service-widget-guidelines).
-- [ ] I have checked that all code style checks pass using [pre-commit hooks](https://gethomepage.dev/widgets/authoring/getting-started/#code-formatting-with-pre-commit-hooks) and [linting checks](https://gethomepage.dev/widgets/authoring/getting-started/#code-linting).
+- [ ] If applicable, I have added or updated tests for new features and bug fixes.
+- [ ] If applicable, I have reviewed the feature, enhancement, and service widget guidelines in the local docs.
+- [ ] I have checked that code style and tests pass using the pnpm toolchain.
 - [ ] If applicable, I have tested my code for new features & regressions on both mobile & desktop devices, using the latest version of major browsers.
 - [ ] In the description above I have disclosed the use of AI tools in the coding of this PR.

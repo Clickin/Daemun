@@ -2,39 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import createMockRes from "test-utils/create-mock-res";
 
-const { httpProxy, getServiceWidget, xml2json, logger } = vi.hoisted(() => ({
+const { httpProxy, getServiceWidget, logger } = vi.hoisted(() => ({
   httpProxy: vi.fn(),
   getServiceWidget: vi.fn(),
-  xml2json: vi.fn((xml) => {
-    const xmlString = Buffer.isBuffer(xml) ? xml.toString() : xml;
-    if (xmlString === "GetStatusInfo") {
-      return JSON.stringify({
-        elements: [
-          {
-            elements: [
-              {
-                elements: [
-                  {
-                    elements: [
-                      { name: "NewConnectionStatus", elements: [{ text: "Connected" }] },
-                      { name: "NewUptime", elements: [{ text: "42" }] },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      });
-    }
-    return JSON.stringify({ elements: [] });
-  }),
   logger: { debug: vi.fn() },
 }));
 
-vi.mock("xml-js", () => ({
-  xml2json,
-}));
 vi.mock("utils/logger", () => ({
   default: () => logger,
 }));
@@ -58,7 +31,23 @@ describe("widgets/fritzbox/proxy", () => {
       fields: ["connectionStatus", "uptime"],
     });
 
-    httpProxy.mockResolvedValueOnce([200, "text/xml", Buffer.from("GetStatusInfo")]);
+    httpProxy.mockResolvedValueOnce([
+      200,
+      "text/xml",
+      Buffer.from(
+        [
+          "<?xml version='1.0' encoding='utf-8'?>",
+          "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>",
+          "<s:Body>",
+          "<u:GetStatusInfoResponse xmlns:u='urn:schemas-upnp-org:service:WANIPConnection:1'>",
+          "<NewConnectionStatus>Connected</NewConnectionStatus>",
+          "<NewUptime>42</NewUptime>",
+          "</u:GetStatusInfoResponse>",
+          "</s:Body>",
+          "</s:Envelope>",
+        ].join(""),
+      ),
+    ]);
 
     const req = { query: { group: "g", service: "svc", index: "0" } };
     const res = createMockRes();

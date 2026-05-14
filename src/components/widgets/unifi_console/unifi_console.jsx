@@ -14,7 +14,7 @@ import useWidgetAPI from "utils/proxy/use-widget-api";
 export default function Widget({ options }) {
   const { t } = useTranslation();
 
-  // eslint-disable-next-line no-param-reassign, no-multi-assign
+  // oxlint-disable-next-line no-param-reassign, no-multi-assign
   options.service_group = options.service_name = "unifi_console";
   const { data: statsData, error: statsError } = useWidgetAPI(options, "stat/sites", { index: options.index });
 
@@ -39,8 +39,8 @@ export default function Widget({ options }) {
   const lan = defaultSite.health.find((h) => h.subsystem === "lan");
   const wlan = defaultSite.health.find((h) => h.subsystem === "wlan");
   [wan, lan, wlan].forEach((s) => {
-    s.up = s.status === "ok"; // eslint-disable-line no-param-reassign
-    s.show = s.status !== "unknown"; // eslint-disable-line no-param-reassign
+    s.up = s.status === "ok"; // oxlint-disable-line no-param-reassign
+    s.show = s.status !== "unknown"; // oxlint-disable-line no-param-reassign
   });
   const name = wan.gw_name ?? defaultSite.desc;
   const uptime = wan["gw_system-stats"] ? wan["gw_system-stats"].uptime : null;

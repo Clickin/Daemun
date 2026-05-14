@@ -23,7 +23,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) to start.
 
-This is a [Next.js](https://nextjs.org/) application, see their documentation for more information.
+This is a Hono application with Vite-built React/Inertia client assets.
 
 ## Code Linting
 
@@ -57,15 +57,16 @@ pnpm test:coverage
   - request construction (URL, query params, headers/auth)
   - response mapping (what the widget consumes)
   - error pathways (upstream error, unexpected payloads)
-- Avoid placing test files under `src/pages/**` (Next.js treats files there as routes). Page tests should live under `src/__tests__/pages/**`.
+- Avoid placing test files under `src/pages/**` to keep route handlers and page tests clearly separated. Page tests should live under `src/__tests__/pages/**`.
 
-## Code formatting with pre-commit hooks
+## Code Formatting
 
-To ensure a consistent style and formatting across the project source, the project utilizes Git [`pre-commit`](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) hooks to perform some formatting and linting before a commit is allowed.
+To ensure a consistent style and formatting across the project source, run the JavaScript toolchain checks before committing.
 
-Once installed, hooks will run when you commit. If the formatting isn't quite right, the commit will be rejected and you'll need to look at the output and fix the issue. Most hooks will automatically format failing files, so all you need to do is `git add` those files again and retry your commit.
-
-See the [pre-commit documentation](https://pre-commit.com/#install) to get started.
+```bash
+pnpm lint
+pnpm test
+```
 
 ## Preferring self-hosted open-source software
 

@@ -6,7 +6,7 @@ import { ThemeProvider } from "utils/contexts/theme";
 
 /*
 Tailwind safelist for dynamic classes used by YAML-driven settings.
-Keep this comment in a file matched by tailwind.config.js content globs, but do
+Keep this comment in source scanned by Tailwind CSS v4, but do
 not export it into the browser bundle.
 
   "backdrop-blur",

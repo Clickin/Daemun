@@ -8,7 +8,7 @@ const { loadHomePageProps } = vi.hoisted(() => ({
       "/api/services": [],
       "/api/widgets": [],
     },
-    initialSettings: { title: "Homepage" },
+    initialSettings: { title: "Daemun" },
     locale: "en",
   })),
 }));
@@ -65,7 +65,7 @@ describe("Hono app", () => {
         "/api/services": [],
         "/api/widgets": [],
       },
-      initialSettings: { title: "Homepage" },
+      initialSettings: { title: "Daemun" },
       locale: "en",
     });
   });

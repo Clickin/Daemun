@@ -1,10 +1,9 @@
-import { xml2json } from "xml-js";
-
 import { fritzboxDefaultFields } from "./component";
 
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 import { httpProxy } from "utils/proxy/http";
+import { parseSoapBody } from "utils/xml";
 
 const logger = createLogger("fritzboxProxyHandler");
 
@@ -32,11 +31,7 @@ async function requestEndpoint(apiBaseUrl, service, action) {
   }
   const response = {};
   try {
-    const jsonData = JSON.parse(xml2json(data));
-    const responseElements = jsonData?.elements?.[0]?.elements?.[0]?.elements?.[0]?.elements || [];
-    responseElements.forEach((element) => {
-      response[element.name] = element.elements?.[0].text || "";
-    });
+    Object.assign(response, parseSoapBody(data));
   } catch (e) {
     logger.debug(`Failed parsing ${service}->${action} response:`, data);
     throw new Error(`Failed parsing '${action}' response`);

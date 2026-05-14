@@ -1,10 +1,10 @@
 import cache from "memory-cache";
-import { xml2json } from "xml-js";
 
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 import { formatApiCall } from "utils/proxy/api-helpers";
 import { httpProxy } from "utils/proxy/http";
+import { parseXml } from "utils/xml";
 import widgets from "widgets/widgets";
 
 const proxyName = "plexProxyHandler";
@@ -53,8 +53,7 @@ async function fetchFromPlexAPI(endpoint, widget) {
   }
 
   try {
-    const dataDecoded = xml2json(data.toString(), { compact: true });
-    return [status, JSON.parse(dataDecoded), contentType];
+    return [status, parseXml(data), contentType];
   } catch (e) {
     logger.error("Error decoding Plex API data. Data: %s", data.toString());
     return [status, null];

@@ -38,7 +38,7 @@ async function readBody(c) {
   return text.length ? text : undefined;
 }
 
-function createNextResponse() {
+function createApiResponse() {
   const headers = new Headers();
 
   const res = {
@@ -121,7 +121,7 @@ export function splitCatchAll(value) {
     .map((segment) => decodeURIComponent(segment));
 }
 
-export function honoNextApiHandler(handler, getRouteQuery = () => ({})) {
+export function honoApiHandler(handler, getRouteQuery = () => ({})) {
   return async (c) => {
     const req = {
       body: await readBody(c),
@@ -133,7 +133,7 @@ export function honoNextApiHandler(handler, getRouteQuery = () => ({})) {
       },
       url: new URL(c.req.url).pathname + new URL(c.req.url).search,
     };
-    const res = createNextResponse();
+    const res = createApiResponse();
 
     await handler(req, res);
 
@@ -141,4 +141,4 @@ export function honoNextApiHandler(handler, getRouteQuery = () => ({})) {
   };
 }
 
-export { createNextResponse };
+export { createApiResponse };

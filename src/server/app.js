@@ -35,7 +35,7 @@ import widgetsWeather from "../pages/api/widgets/weather.js";
 
 import { getAssetVersion } from "./build-info.js";
 import { loadHomePageProps } from "./home-props.js";
-import { honoNextApiHandler, splitCatchAll } from "./next-api-adapter.js";
+import { honoApiHandler, splitCatchAll } from "./api-handler-adapter.js";
 import { rootView } from "./root-view.js";
 import { browserConfigXml, robotsTxt, siteWebmanifest } from "./static-pages.js";
 
@@ -77,40 +77,40 @@ export function createApp() {
     }),
   );
 
-  app.get("/api/bookmarks", honoNextApiHandler(bookmarks));
-  app.get("/api/hash", honoNextApiHandler(hash));
-  app.get("/api/healthcheck", honoNextApiHandler(healthcheck));
-  app.get("/api/ping", honoNextApiHandler(ping));
-  app.get("/api/releases", honoNextApiHandler(releases));
-  app.all("/api/revalidate", honoNextApiHandler(revalidate));
-  app.get("/api/siteMonitor", honoNextApiHandler(siteMonitor));
-  app.get("/api/theme", honoNextApiHandler(theme));
-  app.get("/api/validate", honoNextApiHandler(validate));
+  app.get("/api/bookmarks", honoApiHandler(bookmarks));
+  app.get("/api/hash", honoApiHandler(hash));
+  app.get("/api/healthcheck", honoApiHandler(healthcheck));
+  app.get("/api/ping", honoApiHandler(ping));
+  app.get("/api/releases", honoApiHandler(releases));
+  app.all("/api/revalidate", honoApiHandler(revalidate));
+  app.get("/api/siteMonitor", honoApiHandler(siteMonitor));
+  app.get("/api/theme", honoApiHandler(theme));
+  app.get("/api/validate", honoApiHandler(validate));
   app.get(
     "/api/config/:path",
-    honoNextApiHandler(configFile, (c) => ({ path: c.req.param("path") })),
+    honoApiHandler(configFile, (c) => ({ path: c.req.param("path") })),
   );
-  app.all("/api/services/proxy", honoNextApiHandler(servicesProxy));
-  app.get("/api/services", honoNextApiHandler(services));
-  app.get("/api/search/searchSuggestion", honoNextApiHandler(searchSuggestion));
-  app.get("/api/widgets/glances", honoNextApiHandler(widgetsGlances));
-  app.get("/api/widgets/kubernetes", honoNextApiHandler(widgetsKubernetes));
-  app.get("/api/widgets/longhorn", honoNextApiHandler(widgetsLonghorn));
-  app.get("/api/widgets/openmeteo", honoNextApiHandler(widgetsOpenmeteo));
-  app.get("/api/widgets/openweathermap", honoNextApiHandler(widgetsOpenweathermap));
-  app.get("/api/widgets/resources", honoNextApiHandler(widgetsResources));
-  app.get("/api/widgets/stocks", honoNextApiHandler(widgetsStocks));
-  app.get("/api/widgets/weather", honoNextApiHandler(widgetsWeather));
-  app.get("/api/widgets", honoNextApiHandler(widgets));
-  app.get("/api/docker/status/*", honoNextApiHandler(dockerStatus, catchAllService));
-  app.get("/api/docker/stats/*", honoNextApiHandler(dockerStats, catchAllService));
-  app.get("/api/kubernetes/status/*", honoNextApiHandler(kubernetesStatus, catchAllService));
-  app.get("/api/kubernetes/stats/*", honoNextApiHandler(kubernetesStats, catchAllService));
-  app.get("/api/proxmox/stats/*", honoNextApiHandler(proxmoxStats, catchAllService));
+  app.all("/api/services/proxy", honoApiHandler(servicesProxy));
+  app.get("/api/services", honoApiHandler(services));
+  app.get("/api/search/searchSuggestion", honoApiHandler(searchSuggestion));
+  app.get("/api/widgets/glances", honoApiHandler(widgetsGlances));
+  app.get("/api/widgets/kubernetes", honoApiHandler(widgetsKubernetes));
+  app.get("/api/widgets/longhorn", honoApiHandler(widgetsLonghorn));
+  app.get("/api/widgets/openmeteo", honoApiHandler(widgetsOpenmeteo));
+  app.get("/api/widgets/openweathermap", honoApiHandler(widgetsOpenweathermap));
+  app.get("/api/widgets/resources", honoApiHandler(widgetsResources));
+  app.get("/api/widgets/stocks", honoApiHandler(widgetsStocks));
+  app.get("/api/widgets/weather", honoApiHandler(widgetsWeather));
+  app.get("/api/widgets", honoApiHandler(widgets));
+  app.get("/api/docker/status/*", honoApiHandler(dockerStatus, catchAllService));
+  app.get("/api/docker/stats/*", honoApiHandler(dockerStats, catchAllService));
+  app.get("/api/kubernetes/status/*", honoApiHandler(kubernetesStatus, catchAllService));
+  app.get("/api/kubernetes/stats/*", honoApiHandler(kubernetesStats, catchAllService));
+  app.get("/api/proxmox/stats/*", honoApiHandler(proxmoxStats, catchAllService));
 
   app.get("/browserconfig.xml", (c) => c.body(browserConfigXml(), 200, { "content-type": "text/xml" }));
   app.get("/favicon.ico", (c) =>
-    c.body(readFileSync(path.join(publicRoot, "homepage.ico")), 200, { "content-type": "image/x-icon" }),
+    c.body(readFileSync(path.join(publicRoot, "daemun.ico")), 200, { "content-type": "image/x-icon" }),
   );
   app.get("/robots.txt", (c) => c.body(robotsTxt(), 200, { "content-type": "text/plain" }));
   app.get("/site.webmanifest", (c) => c.json(siteWebmanifest(), 200, { "content-type": "application/manifest+json" }));

@@ -1,18 +1,18 @@
 ---
 # For configuration options and examples, please see:
-# https://gethomepage.dev/configs/services/
+# https://github.com/Clickin/Daemun/tree/main/docs/configs/services.md
 
 - My First Group:
     - My First Service:
         href: http://localhost/
-        description: Homepage is awesome
+        description: Daemun is awesome
 
 - My Second Group:
     - My Second Service:
         href: http://localhost/
-        description: Homepage is the best
+        description: Daemun is the best
 
 - My Third Group:
     - My Third Service:
         href: http://localhost/
-        description: Homepage is 😎
+        description: Daemun is 😎
