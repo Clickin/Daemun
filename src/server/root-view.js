@@ -2,7 +2,9 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  BAKED_PAGE_PROPS_ELEMENT_ID,
   BAKED_QUERY_DATA_ELEMENT_ID,
+  compactInitialPageProps,
   compactInitialQueryData,
   isBakedInitialQueryPath,
 } from "utils/query/initial-data";
@@ -111,14 +113,25 @@ function bakedInitialQueryDataScript(fallback) {
   return `<script id="${BAKED_QUERY_DATA_ELEMENT_ID}" type="application/json">${serializePage(compactQueryData)}</script>`;
 }
 
+function bakedInitialPagePropsScript(pageProps) {
+  const compactPageProps = compactInitialPageProps(pageProps);
+  if (Object.keys(compactPageProps).length === 0) return "";
+
+  return `<script id="${BAKED_PAGE_PROPS_ELEMENT_ID}" type="application/json">${serializePage(compactPageProps)}</script>`;
+}
+
 function clientPageForHtml(page) {
   const fallback = page.props?.fallback;
-  if (!fallback || typeof fallback !== "object") return page;
+  const props = { ...page.props };
+
+  delete props.initialSettings;
+  delete props.locale;
+
+  if (!fallback || typeof fallback !== "object") return { ...page, props };
 
   const remainingFallback = Object.fromEntries(
     Object.entries(fallback).filter(([pathName]) => !isBakedInitialQueryPath(pathName)),
   );
-  const props = { ...page.props };
 
   if (Object.keys(remainingFallback).length > 0) {
     props.fallback = remainingFallback;
@@ -133,6 +146,7 @@ export function rootView(page, options = {}) {
   const settings = page.props?.initialSettings || {};
   const theme = settings.theme || "dark";
   const color = settings.color || "slate";
+  const initialPagePropsScript = bakedInitialPagePropsScript(page.props);
   const initialQueryDataScript = bakedInitialQueryDataScript(page.props?.fallback);
   const clientPage = clientPageForHtml(page);
   const appHtml = options.appHtml || "";
@@ -143,6 +157,7 @@ export function rootView(page, options = {}) {
     ${headTags(settings).join("\n    ")}
   </head>
   <body>
+    ${initialPagePropsScript}
     ${initialQueryDataScript}
     <script data-page="app" type="application/json">${serializePage(clientPage)}</script>
     <div id="app">${appHtml}</div>

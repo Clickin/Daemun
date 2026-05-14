@@ -7,20 +7,37 @@ import "styles/theme.css";
 import "utils/i18n";
 import { AppProviders } from "./app";
 import Home from "./pages/index";
-import { readBakedInitialQueryData } from "./utils/query/initial-data";
+import { readBakedInitialPageProps, readBakedInitialQueryData } from "./utils/query/initial-data";
 
 const pages = {
   Home,
 };
 
+function mergeBakedInitialPageProps(props) {
+  const bakedPageProps = readBakedInitialPageProps();
+  if (!bakedPageProps || !props.initialPage) return props;
+
+  return {
+    ...props,
+    initialPage: {
+      ...props.initialPage,
+      props: {
+        ...bakedPageProps,
+        ...(props.initialPage.props ?? {}),
+      },
+    },
+  };
+}
+
 createInertiaApp({
   resolve: (name) => pages[name],
   setup({ el, App, props }) {
-    const initialSettings = props.initialPage?.props?.initialSettings;
-    const initialQueryData = props.initialPage?.props?.fallback ?? readBakedInitialQueryData();
+    const mergedProps = mergeBakedInitialPageProps(props);
+    const initialSettings = mergedProps.initialPage?.props?.initialSettings;
+    const initialQueryData = mergedProps.initialPage?.props?.fallback ?? readBakedInitialQueryData();
     const app = (
       <AppProviders initialQueryData={initialQueryData} initialSettings={initialSettings}>
-        <App {...props} />
+        <App {...mergedProps} />
       </AppProviders>
     );
 

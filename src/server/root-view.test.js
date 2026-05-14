@@ -53,7 +53,7 @@ describe("rootView", () => {
     const html = rootView({
       component: "Home",
       props: {
-        initialSettings: { title: "Lab" },
+        initialSettings: { color: "emerald", title: "Lab" },
         fallback: {
           "/api/services": [{ name: "Service One" }],
           "/api/bookmarks": [{ name: "Bookmark One" }],
@@ -62,14 +62,20 @@ describe("rootView", () => {
           "/api/hash": "abc123",
           "/api/future": { keep: true },
         },
+        locale: "en",
       },
       url: "/",
       version: "test",
     });
 
+    const bakedPageProps = readScriptJson(html, 'id="daemun-page-props"');
     const bakedQueryData = readScriptJson(html, 'id="daemun-query-data"');
     const inertiaPage = readScriptJson(html, 'data-page="app"');
 
+    expect(bakedPageProps).toEqual({
+      i: { color: "emerald", title: "Lab" },
+      l: "en",
+    });
     expect(bakedQueryData).toEqual({
       s: [{ name: "Service One" }],
       b: [{ name: "Bookmark One" }],
@@ -78,8 +84,11 @@ describe("rootView", () => {
       h: "abc123",
     });
     expect(inertiaPage.props.fallback).toEqual({ "/api/future": { keep: true } });
+    expect(inertiaPage.props.initialSettings).toBeUndefined();
+    expect(inertiaPage.props.locale).toBeUndefined();
     expect(JSON.stringify(inertiaPage)).not.toContain("Service One");
     expect(JSON.stringify(inertiaPage)).not.toContain("Bookmark One");
+    expect(JSON.stringify(inertiaPage)).not.toContain("Lab");
     expect(html).toContain('link rel="stylesheet" href="/api/config/custom.css"');
     expect(html).toContain('<script src="/api/config/custom.js"></script>');
   });

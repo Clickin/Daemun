@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  compactInitialPageProps,
   compactInitialQueryData,
+  expandInitialPageProps,
   expandInitialQueryData,
+  readBakedInitialPageProps,
   readBakedInitialQueryData,
 } from "./initial-data";
 
@@ -48,6 +51,39 @@ describe("initial query data helpers", () => {
     expect(readBakedInitialQueryData(documentRef)).toEqual({
       "/api/services": [{ name: "Service One" }],
       "/api/hash": "abc123",
+    });
+  });
+
+  it("compacts and expands baked page props", () => {
+    const compact = compactInitialPageProps({
+      fallback: { "/api/services": [] },
+      initialSettings: { theme: "dark", title: "Lab" },
+      locale: "en",
+    });
+
+    expect(compact).toEqual({
+      i: { theme: "dark", title: "Lab" },
+      l: "en",
+    });
+    expect(expandInitialPageProps(compact)).toEqual({
+      initialSettings: { theme: "dark", title: "Lab" },
+      locale: "en",
+    });
+  });
+
+  it("reads baked initial page props from the document", () => {
+    const documentRef = {
+      getElementById: () => ({
+        textContent: JSON.stringify({
+          i: { theme: "dark", title: "Lab" },
+          l: "en",
+        }),
+      }),
+    };
+
+    expect(readBakedInitialPageProps(documentRef)).toEqual({
+      initialSettings: { theme: "dark", title: "Lab" },
+      locale: "en",
     });
   });
 });
