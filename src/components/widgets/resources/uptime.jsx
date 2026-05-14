@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FaRegClock } from "react-icons/fa";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Error from "../widget/error";
 import Resource from "../widget/resource";
@@ -8,7 +8,7 @@ import Resource from "../widget/resource";
 export default function Uptime({ refresh = 1500 }) {
   const { t } = useTranslation();
 
-  const { data, error } = useSWR(`/api/widgets/resources?type=uptime`, {
+  const { data, error } = useApiQuery(`/api/widgets/resources?type=uptime`, {
     refreshInterval: refresh,
   });
 

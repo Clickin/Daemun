@@ -3,13 +3,13 @@
 import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR, Resource, Error } = vi.hoisted(() => ({
-  useSWR: vi.fn(),
+const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
+  useApiQueryMock: vi.fn(),
   Resource: vi.fn(() => <div data-testid="resource" />),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
-vi.mock("swr", () => ({ default: useSWR }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 vi.mock("../widget/resource", () => ({ default: Resource }));
 vi.mock("../widget/error", () => ({ default: Error }));
 
@@ -21,7 +21,7 @@ describe("components/widgets/resources/uptime", () => {
   });
 
   it("renders a placeholder while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     render(<Uptime />);
     expect(Resource).toHaveBeenCalled();
@@ -33,7 +33,7 @@ describe("components/widgets/resources/uptime", () => {
     try {
       vi.setSystemTime(new Date("2020-01-01T00:00:30.000Z"));
 
-      useSWR.mockReturnValue({ data: { uptime: 1234 }, error: undefined });
+      useApiQueryMock.mockReturnValue({ data: { uptime: 1234 }, error: undefined });
       render(<Uptime />);
 
       const props = Resource.mock.calls[0][0];
@@ -44,8 +44,8 @@ describe("components/widgets/resources/uptime", () => {
     }
   });
 
-  it("renders Error when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders Error when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     render(<Uptime />);
 

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Container from "../widget/container";
 import Error from "../widget/error";
@@ -25,7 +25,7 @@ export default function Widget({ options }) {
     },
   };
 
-  const { data, error } = useSWR(`/api/widgets/kubernetes?${new URLSearchParams({ lang: i18n.language }).toString()}`, {
+  const { data, error } = useApiQuery(`/api/widgets/kubernetes?${new URLSearchParams({ lang: i18n.language }).toString()}`, {
     refreshInterval: 1500,
   });
 

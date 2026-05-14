@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
 
-vi.mock("swr", () => ({
-  default: useSWR,
+vi.mock("utils/query/api-query", () => ({
+  useApiQuery: useApiQueryMock,
 }));
 
 import useWidgetAPI from "./use-widget-api";
@@ -14,12 +14,12 @@ describe("utils/proxy/use-widget-api", () => {
   });
 
   it("formats the proxy url and passes refreshInterval when provided in options", () => {
-    useSWR.mockReturnValue({ data: { ok: true }, error: undefined, mutate: "m" });
+    useApiQueryMock.mockReturnValue({ data: { ok: true }, error: undefined, mutate: "m" });
 
     const widget = { service_group: "g", service_name: "s", index: 0 };
     const result = useWidgetAPI(widget, "status", { refreshInterval: 123, foo: "bar" });
 
-    expect(useSWR).toHaveBeenCalledWith(
+    expect(useApiQueryMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/services/proxy?"),
       expect.objectContaining({ refreshInterval: 123 }),
     );
@@ -30,7 +30,7 @@ describe("utils/proxy/use-widget-api", () => {
 
   it("returns data.error as the top-level error", () => {
     const dataError = { message: "nope" };
-    useSWR.mockReturnValue({ data: { error: dataError }, error: undefined, mutate: vi.fn() });
+    useApiQueryMock.mockReturnValue({ data: { error: dataError }, error: undefined, mutate: vi.fn() });
 
     const widget = { service_group: "g", service_name: "s", index: 0 };
     const result = useWidgetAPI(widget, "status", {});
@@ -39,11 +39,11 @@ describe("utils/proxy/use-widget-api", () => {
   });
 
   it("disables the request when endpoint is an empty string", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined, mutate: vi.fn() });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined, mutate: vi.fn() });
 
     const widget = { service_group: "g", service_name: "s", index: 0 };
     useWidgetAPI(widget, "");
 
-    expect(useSWR).toHaveBeenCalledWith(null, {});
+    expect(useApiQueryMock).toHaveBeenCalledWith(null, {});
   });
 });

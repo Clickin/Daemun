@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FiSearch } from "react-icons/fi";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 import { SettingsContext } from "utils/contexts/settings";
 
 import ResolvedIcon from "./resolvedicon";
@@ -28,7 +28,7 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
   const [url, setUrl] = useState(null);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
 
-  const { data: widgets } = useSWR("/api/widgets");
+  const { data: widgets } = useApiQuery("/api/widgets");
   const searchWidget = Object.values(widgets).find((w) => w.type === "search");
 
   let searchProvider;

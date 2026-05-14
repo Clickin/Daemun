@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 import Component from "./component";
 
@@ -16,15 +16,15 @@ describe("widgets/kubernetes/component", () => {
   });
 
   it("renders placeholders while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     const { container } = renderWithProviders(
       <Component service={{ widget: { type: "kubernetes", namespace: "ns", app: "app" } }} />,
       { settings: { hideErrors: false } },
     );
 
-    expect(useSWR.mock.calls[0][0]).toContain("/api/kubernetes/status/ns/app?");
-    expect(useSWR.mock.calls[1][0]).toContain("/api/kubernetes/stats/ns/app?");
+    expect(useApiQueryMock.mock.calls[0][0]).toContain("/api/kubernetes/status/ns/app?");
+    expect(useApiQueryMock.mock.calls[1][0]).toContain("/api/kubernetes/stats/ns/app?");
 
     expect(container.querySelectorAll(".service-block")).toHaveLength(2);
     expect(screen.getByText("docker.cpu")).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe("widgets/kubernetes/component", () => {
   });
 
   it("renders offline status when status endpoint reports non-running state", () => {
-    useSWR.mockImplementation((key) => {
+    useApiQueryMock.mockImplementation((key) => {
       if (String(key).includes("/status/")) return { data: { status: "stopped" }, error: undefined };
       if (String(key).includes("/stats/")) return { data: { stats: { cpu: 0.1, mem: 10 } }, error: undefined };
       return { data: undefined, error: undefined };
@@ -47,7 +47,7 @@ describe("widgets/kubernetes/component", () => {
   });
 
   it("renders cpu percent when cpuLimit is present, otherwise raw cpu number", () => {
-    useSWR.mockImplementation((key) => {
+    useApiQueryMock.mockImplementation((key) => {
       if (String(key).includes("/status/")) return { data: { status: "running" }, error: undefined };
       if (String(key).includes("/stats/"))
         return {

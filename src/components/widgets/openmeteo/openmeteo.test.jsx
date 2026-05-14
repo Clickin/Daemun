@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 vi.mock("react-icons/md", () => ({
   MdLocationDisabled: (props) => <svg data-testid="location-disabled" {...props} />,
@@ -25,7 +25,7 @@ describe("components/widgets/openmeteo", () => {
   });
 
   it("renders an error state when the widget api returns an error", async () => {
-    useSWR.mockReturnValue({ data: { error: "nope" }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { error: "nope" }, error: undefined });
 
     renderWithProviders(<OpenMeteo options={{ latitude: 1, longitude: 2 }} />, { settings: { target: "_self" } });
 
@@ -46,7 +46,7 @@ describe("components/widgets/openmeteo", () => {
       geolocation: { getCurrentPosition },
     });
 
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<OpenMeteo options={{}} />, { settings: { target: "_self" } });
 
@@ -65,7 +65,7 @@ describe("components/widgets/openmeteo", () => {
       geolocation: { getCurrentPosition },
     });
 
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<OpenMeteo options={{}} />, { settings: { target: "_self" } });
 
@@ -85,7 +85,7 @@ describe("components/widgets/openmeteo", () => {
       geolocation: { getCurrentPosition },
     });
 
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<OpenMeteo options={{}} />, { settings: { target: "_self" } });
 
@@ -96,7 +96,7 @@ describe("components/widgets/openmeteo", () => {
   });
 
   it("renders temperature and condition when coordinates are provided", async () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         current_weather: { temperature: 22.2, weathercode: 0, time: "2020-01-01T12:00" },
         daily: { sunrise: ["2020-01-01T06:00"], sunset: ["2020-01-01T18:00"] },
@@ -115,7 +115,7 @@ describe("components/widgets/openmeteo", () => {
   });
 
   it("uses night conditions and fahrenheit units when configured", async () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         current_weather: { temperature: 72, weathercode: 1, time: "2020-01-01T23:00" },
         daily: { sunrise: ["2020-01-01T06:00"], sunset: ["2020-01-01T18:00"] },

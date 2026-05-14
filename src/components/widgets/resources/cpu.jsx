@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FiCpu } from "react-icons/fi";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Error from "../widget/error";
 import Resource from "../widget/resource";
@@ -8,7 +8,7 @@ import Resource from "../widget/resource";
 export default function Cpu({ expanded, refresh = 1500 }) {
   const { t } = useTranslation();
 
-  const { data, error } = useSWR(`/api/widgets/resources?type=cpu`, {
+  const { data, error } = useApiQuery(`/api/widgets/resources?type=cpu`, {
     refreshInterval: refresh,
   });
 

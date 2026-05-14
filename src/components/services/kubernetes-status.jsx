@@ -1,9 +1,9 @@
 import { t } from "i18next";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 export default function KubernetesStatus({ service, style }) {
   const podSelectorString = service.podSelector !== undefined ? `podSelector=${service.podSelector}` : "";
-  const { data, error } = useSWR(`/api/kubernetes/status/${service.namespace}/${service.app}?${podSelectorString}`);
+  const { data, error } = useApiQuery(`/api/kubernetes/status/${service.namespace}/${service.app}?${podSelectorString}`);
 
   let statusLabel = t("docker.unknown");
   let statusTitle = "";

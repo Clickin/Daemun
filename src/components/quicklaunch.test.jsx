@@ -6,19 +6,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { state, useSWR, getStoredProvider } = vi.hoisted(() => ({
+const { state, useApiQueryMock, getStoredProvider } = vi.hoisted(() => ({
   state: {
     widgets: {},
   },
-  useSWR: vi.fn((key) => {
+  useApiQueryMock: vi.fn((key) => {
     if (key === "/api/widgets") return { data: state.widgets, error: undefined };
     return { data: undefined, error: undefined };
   }),
   getStoredProvider: vi.fn(() => null),
 }));
 
-vi.mock("swr", () => ({
-  default: useSWR,
+vi.mock("utils/query/api-query", () => ({
+  useApiQuery: useApiQueryMock,
 }));
 
 vi.mock("./resolvedicon", () => ({

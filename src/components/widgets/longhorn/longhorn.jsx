@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Container from "../widget/container";
 import Error from "../widget/error";
@@ -8,7 +8,7 @@ import Node from "./node";
 
 export default function Longhorn({ options }) {
   const { expanded, total, labels, include, nodes } = options;
-  const { data, error } = useSWR(`/api/widgets/longhorn`, {
+  const { data, error } = useApiQuery(`/api/widgets/longhorn`, {
     refreshInterval: 1500,
   });
 

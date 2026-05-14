@@ -5,9 +5,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
 
-vi.mock("swr", () => ({ default: useSWR }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 vi.mock("./node", () => ({
   default: ({ data }) => <div data-testid="longhorn-node" data-id={data.node.id} />,
@@ -20,8 +20,8 @@ describe("components/widgets/longhorn", () => {
     vi.clearAllMocks();
   });
 
-  it("renders an error state when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders an error state when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     renderWithProviders(<Longhorn options={{ nodes: true, total: true }} />, { settings: { target: "_self" } });
 
@@ -29,7 +29,7 @@ describe("components/widgets/longhorn", () => {
   });
 
   it("renders an empty container while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     const { container } = renderWithProviders(<Longhorn options={{ nodes: true, total: true }} />, {
       settings: { target: "_self" },
@@ -40,7 +40,7 @@ describe("components/widgets/longhorn", () => {
   });
 
   it("filters nodes based on options (total/include)", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         nodes: [{ id: "total" }, { id: "node1" }, { id: "node2" }],
       },
@@ -57,7 +57,7 @@ describe("components/widgets/longhorn", () => {
   });
 
   it("omits non-total nodes when options.nodes is false", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         nodes: [{ id: "total" }, { id: "node1" }],
       },

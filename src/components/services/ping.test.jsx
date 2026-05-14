@@ -3,10 +3,10 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
 
-vi.mock("swr", () => ({
-  default: useSWR,
+vi.mock("utils/query/api-query", () => ({
+  useApiQuery: useApiQueryMock,
 }));
 
 import Ping from "./ping";
@@ -17,7 +17,7 @@ describe("components/services/ping", () => {
   });
 
   it("renders a loading state when data is not available yet", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     render(<Ping groupName="g" serviceName="s" />);
 
@@ -28,8 +28,8 @@ describe("components/services/ping", () => {
     );
   });
 
-  it("renders an error label when SWR returns error", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("boom") });
+  it("renders an error label when query returns error", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("boom") });
 
     render(<Ping groupName="g" serviceName="s" />);
 
@@ -37,7 +37,7 @@ describe("components/services/ping", () => {
   });
 
   it("renders down when the host is not alive", () => {
-    useSWR.mockReturnValue({ data: { alive: false, time: 0 }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { alive: false, time: 0 }, error: undefined });
 
     render(<Ping groupName="g" serviceName="s" />);
 
@@ -45,11 +45,11 @@ describe("components/services/ping", () => {
   });
 
   it("renders the ping time when the host is alive", () => {
-    useSWR.mockReturnValue({ data: { alive: true, time: 123 }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { alive: true, time: 123 }, error: undefined });
 
     render(<Ping groupName="g" serviceName="s" />);
 
-    expect(useSWR).toHaveBeenCalledWith("/api/ping?groupName=g&serviceName=s", { refreshInterval: 30000 });
+    expect(useApiQueryMock).toHaveBeenCalledWith("/api/ping?groupName=g&serviceName=s", { refreshInterval: 30000 });
     expect(screen.getByText("123")).toBeInTheDocument();
     expect(screen.getByText("123").closest(".ping-status")).toHaveAttribute(
       "title",
@@ -58,7 +58,7 @@ describe("components/services/ping", () => {
   });
 
   it("renders an up label for basic style", () => {
-    useSWR.mockReturnValue({ data: { alive: true, time: 1 }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { alive: true, time: 1 }, error: undefined });
 
     render(<Ping groupName="g" serviceName="s" style="basic" />);
 
@@ -66,7 +66,7 @@ describe("components/services/ping", () => {
   });
 
   it("renders a dot when style is dot", () => {
-    useSWR.mockReturnValue({ data: { alive: true, time: 5 }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { alive: true, time: 5 }, error: undefined });
 
     const { container } = render(<Ping groupName="g" serviceName="s" style="dot" />);
 

@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "test-utils/render-with-providers";
 import { expectBlockValue } from "test-utils/widget-assertions";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 import Component from "./component";
 
@@ -17,7 +17,7 @@ describe("widgets/proxmoxvm/component", () => {
   });
 
   it("renders placeholders while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     const { container } = renderWithProviders(
       <Component service={{ widget: { type: "proxmoxvm", node: "n1", vmid: "100" } }} />,
@@ -30,7 +30,7 @@ describe("widgets/proxmoxvm/component", () => {
   });
 
   it("renders cpu percent and mem bytes when loaded", () => {
-    useSWR.mockReturnValue({ data: { cpu: 0.5, mem: 1024 }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { cpu: 0.5, mem: 1024 }, error: undefined });
 
     const { container } = renderWithProviders(
       <Component service={{ widget: { type: "proxmoxvm", node: "n1", vmid: "100" } }} />,

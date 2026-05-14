@@ -8,7 +8,7 @@ import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
 
-const { state, i18n, loadLanguage, useSWR, useWindowFocus } = vi.hoisted(() => {
+const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoisted(() => {
   const state = {
     throwIn: null,
     validateData: [],
@@ -25,7 +25,7 @@ const { state, i18n, loadLanguage, useSWR, useWindowFocus } = vi.hoisted(() => {
   const i18n = { language: "en", changeLanguage: vi.fn() };
   const loadLanguage = vi.fn(async (language) => language);
 
-  const useSWR = vi.fn((key) => {
+  const useApiQueryMock = vi.fn((key) => {
     if (key === "/api/validate") return { data: state.validateData };
     if (key === "/api/hash") return { data: state.hashData, mutate: state.mutateHash };
     if (key === "/api/services") return { data: state.servicesData };
@@ -40,7 +40,7 @@ const { state, i18n, loadLanguage, useSWR, useWindowFocus } = vi.hoisted(() => {
     state,
     i18n,
     loadLanguage,
-    useSWR,
+    useApiQueryMock,
     useWindowFocus,
   };
 });
@@ -56,9 +56,8 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("swr", () => ({
-  default: useSWR,
-  SWRConfig: ({ children }) => children,
+vi.mock("utils/query/api-query", () => ({
+  useApiQuery: useApiQueryMock,
 }));
 
 vi.mock("utils/hooks/window-focus", () => ({
@@ -194,7 +193,7 @@ describe("pages/index Wrapper", () => {
   });
 });
 
-describe("pages/index Index routing + SWR branches", () => {
+describe("pages/index Index routing + query branches", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     state.hashData = null;

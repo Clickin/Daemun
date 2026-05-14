@@ -5,10 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
 
-vi.mock("swr", () => ({
-  default: useSWR,
+vi.mock("utils/query/api-query", () => ({
+  useApiQuery: useApiQueryMock,
 }));
 
 import Component from "./component";
@@ -19,7 +19,7 @@ describe("widgets/docker/component", () => {
   });
 
   it("renders offline status when container is not running", () => {
-    useSWR
+    useApiQueryMock
       .mockReturnValueOnce({ data: { status: "exited" }, error: undefined }) // status
       .mockReturnValueOnce({ data: undefined, error: undefined }); // stats
 
@@ -32,7 +32,7 @@ describe("widgets/docker/component", () => {
   });
 
   it("renders cpu/mem/rx/tx values when stats are available", () => {
-    useSWR
+    useApiQueryMock
       .mockReturnValueOnce({ data: { status: "running" }, error: undefined }) // status
       .mockReturnValueOnce({
         data: {

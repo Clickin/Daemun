@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { FaMemory, FaRegClock, FaThermometerHalf } from "react-icons/fa";
 import { FiCpu, FiHardDrive } from "react-icons/fi";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 import { SettingsContext } from "utils/contexts/settings";
 
 import Error from "../widget/error";
@@ -26,7 +26,7 @@ export default function Widget({ options }) {
   const { settings } = useContext(SettingsContext);
   const diskUnits = options.diskUnits === "bbytes" ? "common.bbytes" : "common.bytes";
 
-  const { data, error } = useSWR(
+  const { data, error } = useApiQuery(
     `/api/widgets/glances?${new URLSearchParams({ lang: i18n.language, ...options }).toString()}`,
     {
       refreshInterval: 1500,

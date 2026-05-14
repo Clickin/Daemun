@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaChartLine } from "react-icons/fa6";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Container from "../widget/container";
 import Error from "../widget/error";
@@ -16,7 +16,7 @@ export default function Widget({ options }) {
 
   const { color } = options;
 
-  const { data, error } = useSWR(
+  const { data, error } = useApiQuery(
     `/api/widgets/stocks?${new URLSearchParams({ lang: i18n.language, ...options }).toString()}`,
   );
 

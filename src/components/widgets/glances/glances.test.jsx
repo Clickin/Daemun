@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 import Glances from "./glances";
 
@@ -15,8 +15,8 @@ describe("components/widgets/glances", () => {
     vi.clearAllMocks();
   });
 
-  it("renders an error state when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders an error state when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     renderWithProviders(<Glances options={{ cpu: true, mem: true }} />, { settings: { target: "_self" } });
 
@@ -24,7 +24,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("renders placeholder resources while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<Glances options={{ cpu: true, mem: true, cputemp: true, disk: "/", uptime: true }} />, {
       settings: { target: "_self" },
@@ -35,7 +35,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("renders placeholder disk resources when loading and disk is an array", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<Glances options={{ disk: ["/", "/data"] }} />, { settings: { target: "_self" } });
 
@@ -43,7 +43,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("renders cpu percent and memory available when data is present", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         cpu: { total: 12.34 },
         load: { min15: 5 },
@@ -75,7 +75,7 @@ describe("components/widgets/glances", () => {
       warning: 90,
     };
 
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         cpu: { total: 1 },
         load: { min15: 1 },
@@ -94,7 +94,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("renders temperature in fahrenheit for matching cpu sensors and marks the widget expanded", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         cpu: { total: 1 },
         load: { min15: 1 },
@@ -121,7 +121,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("renders temperature for custom cpu sensor labels", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         cpu: { total: 1 },
         load: { min15: 1 },
@@ -141,7 +141,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("renders disk resources for an array of mount points and filters missing mounts", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         cpu: { total: 1 },
         load: { min15: 1 },
@@ -165,7 +165,7 @@ describe("components/widgets/glances", () => {
   });
 
   it("formats uptime into translated day/hour labels", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         cpu: { total: 1 },
         load: { min15: 1 },

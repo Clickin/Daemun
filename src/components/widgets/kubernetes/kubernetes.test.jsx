@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 vi.mock("./node", () => ({
   default: ({ type }) => <div data-testid="kube-node" data-type={type} />,
@@ -19,8 +19,8 @@ describe("components/widgets/kubernetes", () => {
     vi.clearAllMocks();
   });
 
-  it("renders an error state when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders an error state when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     renderWithProviders(<Kubernetes options={{ cluster: { show: true }, nodes: { show: true } }} />, {
       settings: { target: "_self" },
@@ -30,7 +30,7 @@ describe("components/widgets/kubernetes", () => {
   });
 
   it("renders placeholder nodes while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<Kubernetes options={{ cluster: { show: true }, nodes: { show: true } }} />, {
       settings: { target: "_self" },
@@ -40,7 +40,7 @@ describe("components/widgets/kubernetes", () => {
   });
 
   it("renders a node per returned entry when data is available", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: { cluster: {}, nodes: [{ name: "n1" }, { name: "n2" }] },
       error: undefined,
     });

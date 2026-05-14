@@ -1,14 +1,14 @@
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 export default function ProxmoxVM({ service }) {
   const { t } = useTranslation();
 
   const { widget } = service;
 
-  const { data, error } = useSWR(`/api/proxmox/stats/${widget.node}/${widget.vmid}?type=${widget.type || "qemu"}`);
+  const { data, error } = useApiQuery(`/api/proxmox/stats/${widget.node}/${widget.vmid}?type=${widget.type || "qemu"}`);
 
   if (error) {
     return <Container service={service} error={error} />;

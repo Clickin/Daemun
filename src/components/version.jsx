@@ -2,7 +2,7 @@ import { compareVersions, validate } from "compare-versions";
 import cache from "memory-cache";
 import { useTranslation } from "react-i18next";
 import { MdNewReleases } from "react-icons/md";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 const LATEST_RELEASE_CACHE_KEY = "latestRelease";
 
@@ -25,7 +25,7 @@ export default function Version({ disableUpdateCheck = false }) {
 
   let latestRelease = cache.get(LATEST_RELEASE_CACHE_KEY);
 
-  const { data: releaseData } = useSWR(latestRelease || disableUpdateCheck ? null : "/api/releases");
+  const { data: releaseData } = useApiQuery(latestRelease || disableUpdateCheck ? null : "/api/releases");
 
   if (releaseData) {
     latestRelease = releaseData?.[0];

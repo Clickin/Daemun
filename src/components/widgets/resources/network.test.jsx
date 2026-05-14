@@ -3,13 +3,13 @@
 import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR, Resource, Error } = vi.hoisted(() => ({
-  useSWR: vi.fn(),
+const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
+  useApiQueryMock: vi.fn(),
   Resource: vi.fn(() => <div data-testid="resource" />),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
-vi.mock("swr", () => ({ default: useSWR }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 vi.mock("../widget/resource", () => ({ default: Resource }));
 vi.mock("../widget/error", () => ({ default: Error }));
 
@@ -21,15 +21,15 @@ describe("components/widgets/resources/network", () => {
   });
 
   it("normalizes options.network=true to default interfaceName in the request", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     render(<Network options={{ network: true }} />);
 
-    expect(useSWR).toHaveBeenCalledWith(expect.stringContaining("interfaceName=default"), expect.any(Object));
+    expect(useApiQueryMock).toHaveBeenCalledWith(expect.stringContaining("interfaceName=default"), expect.any(Object));
   });
 
   it("renders rates and usage percentage when data is present", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         network: { rx_sec: 3, tx_sec: 1, rx_bytes: 30, tx_bytes: 10 },
       },
@@ -47,8 +47,8 @@ describe("components/widgets/resources/network", () => {
     expect(props.wide).toBe(true);
   });
 
-  it("renders Error when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders Error when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     render(<Network options={{ network: "en0" }} />);
 

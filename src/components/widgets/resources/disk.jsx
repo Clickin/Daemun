@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FiHardDrive } from "react-icons/fi";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Error from "../widget/error";
 import Resource from "../widget/resource";
@@ -9,7 +9,7 @@ export default function Disk({ options, expanded, diskUnits, refresh = 1500 }) {
   const { t } = useTranslation();
   const diskUnitsName = diskUnits === "bbytes" ? "common.bbytes" : "common.bytes";
 
-  const { data, error } = useSWR(`/api/widgets/resources?type=disk&target=${options.disk}`, {
+  const { data, error } = useApiQuery(`/api/widgets/resources?type=disk&target=${options.disk}`, {
     refreshInterval: refresh,
   });
 

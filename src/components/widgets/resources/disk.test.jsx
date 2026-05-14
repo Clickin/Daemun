@@ -3,13 +3,13 @@
 import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR, Resource, Error } = vi.hoisted(() => ({
-  useSWR: vi.fn(),
+const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
+  useApiQueryMock: vi.fn(),
   Resource: vi.fn(() => <div data-testid="resource" />),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
-vi.mock("swr", () => ({ default: useSWR }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 vi.mock("../widget/resource", () => ({ default: Resource }));
 vi.mock("../widget/error", () => ({ default: Error }));
 
@@ -21,7 +21,7 @@ describe("components/widgets/resources/disk", () => {
   });
 
   it("renders a placeholder Resource while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     render(<Disk options={{ disk: "/" }} expanded />);
 
@@ -30,7 +30,7 @@ describe("components/widgets/resources/disk", () => {
   });
 
   it("computes percent used from size/available and renders bytes", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: { drive: { size: 100, available: 40 } },
       error: undefined,
     });
@@ -43,8 +43,8 @@ describe("components/widgets/resources/disk", () => {
     expect(props.percentage).toBe(60);
   });
 
-  it("renders Error when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders Error when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     render(<Disk options={{ disk: "/" }} expanded />);
 

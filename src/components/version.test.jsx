@@ -3,7 +3,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { cache, cv, useSWR } = vi.hoisted(() => ({
+const { cache, cv, useApiQueryMock } = vi.hoisted(() => ({
   cache: {
     get: vi.fn(),
     put: vi.fn(),
@@ -12,7 +12,7 @@ const { cache, cv, useSWR } = vi.hoisted(() => ({
     validate: vi.fn(),
     compareVersions: vi.fn(),
   },
-  useSWR: vi.fn(),
+  useApiQueryMock: vi.fn(),
 }));
 
 vi.mock("memory-cache", () => ({
@@ -24,8 +24,8 @@ vi.mock("compare-versions", () => ({
   compareVersions: cv.compareVersions,
 }));
 
-vi.mock("swr", () => ({
-  default: useSWR,
+vi.mock("utils/query/api-query", () => ({
+  useApiQuery: useApiQueryMock,
 }));
 
 import Version from "./version";
@@ -41,7 +41,7 @@ describe("components/version", () => {
   it("renders non-link version text for dev/main/nightly", () => {
     cv.validate.mockReturnValue(false);
     cache.get.mockReturnValue(null);
-    useSWR.mockReturnValue({ data: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined });
 
     render(<Version />);
 
@@ -53,7 +53,7 @@ describe("components/version", () => {
     process.env.VITE_VERSION = "1.2.3";
     cv.validate.mockReturnValue(true);
     cache.get.mockReturnValue(null);
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: [{ tag_name: "1.2.4", html_url: "http://example.com/release" }],
     });
     cv.compareVersions.mockReturnValue(1);
@@ -73,7 +73,7 @@ describe("components/version", () => {
 
       cv.validate.mockReturnValue(false);
       cache.get.mockReturnValue(null);
-      useSWR.mockReturnValue({ data: undefined });
+      useApiQueryMock.mockReturnValue({ data: undefined });
 
       render(<Version />);
 

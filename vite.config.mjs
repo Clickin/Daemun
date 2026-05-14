@@ -51,11 +51,7 @@ function clientManualChunks(id) {
       return "vendor-i18n";
     }
 
-    if (
-      normalizedId.includes("/swr/") ||
-      normalizedId.includes("/stable-hash/") ||
-      normalizedId.includes("/use-sync-external-store/")
-    ) {
+    if (normalizedId.includes("/@tanstack/") || normalizedId.includes("/hono/") || normalizedId.includes("/zod/")) {
       return "vendor-data";
     }
 

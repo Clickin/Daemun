@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 export default function Status({ service, style }) {
   const { t } = useTranslation();
 
-  const { data, error } = useSWR(`/api/docker/status/${service.container}/${service.server || ""}`);
+  const { data, error } = useApiQuery(`/api/docker/status/${service.container}/${service.server || ""}`);
 
   let statusLabel = t("docker.unknown");
   let backgroundClass = "px-1.5 py-0.5 bg-theme-500/10 dark:bg-theme-900/50";

@@ -11,7 +11,6 @@ import Widget from "components/widgets/widget";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BiError } from "react-icons/bi";
-import useSWR, { SWRConfig } from "swr";
 import { ColorContext } from "utils/contexts/color";
 import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
@@ -20,6 +19,7 @@ import dynamic from "utils/dynamic";
 import useWindowFocus from "utils/hooks/window-focus";
 import { loadLanguage } from "utils/i18n";
 import { normalizeLanguage } from "utils/i18n/language";
+import { useApiQuery } from "utils/query/api-query";
 
 const ThemeToggle = dynamic(() => import("components/toggles/theme"), {
   ssr: false,
@@ -38,9 +38,11 @@ const rightAlignedWidgets = ["weatherapi", "openweathermap", "weather", "openmet
 function Index({ initialSettings, fallback }) {
   const windowFocused = useWindowFocus();
   const [stale, setStale] = useState(false);
-  const { data: errorsData } = useSWR("/api/validate");
+  const { data: errorsData } = useApiQuery("/api/validate");
   const { error: validateError } = errorsData || {};
-  const { data: hashData, mutate: mutateHash } = useSWR("/api/hash");
+  const { data: hashData, mutate: mutateHash } = useApiQuery("/api/hash", {
+    initialData: fallback?.["/api/hash"],
+  });
 
   useEffect(() => {
     if (windowFocused) {
@@ -122,11 +124,9 @@ function Index({ initialSettings, fallback }) {
   }
 
   return (
-    <SWRConfig value={{ fallback, fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()) }}>
-      <ErrorBoundary>
-        <Home initialSettings={initialSettings} />
-      </ErrorBoundary>
-    </SWRConfig>
+    <ErrorBoundary>
+      <Home fallback={fallback} initialSettings={initialSettings} />
+    </ErrorBoundary>
   );
 }
 
@@ -150,7 +150,7 @@ function getAllServices(services) {
   return [...services.map(getServices).flat()];
 }
 
-function Home({ initialSettings }) {
+function Home({ fallback, initialSettings }) {
   const { i18n } = useTranslation();
   const { theme, setTheme } = useContext(ThemeContext);
   const { color, setColor } = useContext(ColorContext);
@@ -161,9 +161,18 @@ function Home({ initialSettings }) {
     setSettings(initialSettings);
   }, [initialSettings, setSettings]);
 
-  const { data: services } = useSWR("/api/services");
-  const { data: bookmarks } = useSWR("/api/bookmarks");
-  const { data: widgets } = useSWR("/api/widgets");
+  const { data: services = [] } = useApiQuery("/api/services", {
+    immutable: true,
+    initialData: fallback?.["/api/services"] ?? [],
+  });
+  const { data: bookmarks = [] } = useApiQuery("/api/bookmarks", {
+    immutable: true,
+    initialData: fallback?.["/api/bookmarks"] ?? [],
+  });
+  const { data: widgets = [] } = useApiQuery("/api/widgets", {
+    immutable: true,
+    initialData: fallback?.["/api/widgets"] ?? [],
+  });
 
   const servicesAndBookmarks = [...bookmarks.map((bg) => bg.bookmarks).flat(), ...getAllServices(services)].filter(
     (i) => i?.href,

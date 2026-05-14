@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 import Stocks from "./stocks";
 
@@ -16,7 +16,7 @@ describe("components/widgets/stocks", () => {
   });
 
   it("renders an error widget when the api call fails", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     renderWithProviders(<Stocks options={{}} />, { settings: { target: "_self" } });
 
@@ -24,7 +24,7 @@ describe("components/widgets/stocks", () => {
   });
 
   it("renders a loading state while waiting for data", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<Stocks options={{}} />, { settings: { target: "_self" } });
 
@@ -32,7 +32,7 @@ describe("components/widgets/stocks", () => {
   });
 
   it("toggles between price and percent change on click", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         stocks: [
           { ticker: "NASDAQ:AAPL", currentPrice: 123.45, percentChange: 1.23 },
@@ -53,7 +53,7 @@ describe("components/widgets/stocks", () => {
   });
 
   it("shows api_error for null prices and uses colored classes when enabled", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         stocks: [{ ticker: "NASDAQ:AAPL", currentPrice: null, percentChange: -1 }],
       },

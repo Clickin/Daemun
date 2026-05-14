@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdLocationDisabled, MdLocationSearching } from "react-icons/md";
 import { WiCloudDown } from "react-icons/wi";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import mapIcon from "../../../utils/weather/condition-map";
 import Container from "../widget/container";
@@ -15,7 +15,7 @@ import WidgetIcon from "../widget/widget_icon";
 function Widget({ options }) {
   const { t, i18n } = useTranslation();
 
-  const { data, error } = useSWR(
+  const { data, error } = useApiQuery(
     `/api/widgets/weather?${new URLSearchParams({ lang: i18n.language, ...options }).toString()}`,
   );
 

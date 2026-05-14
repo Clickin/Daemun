@@ -3,13 +3,13 @@
 import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR, Resource, Error } = vi.hoisted(() => ({
-  useSWR: vi.fn(),
+const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
+  useApiQueryMock: vi.fn(),
   Resource: vi.fn(() => <div data-testid="resource" />),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
-vi.mock("swr", () => ({ default: useSWR }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 vi.mock("../widget/resource", () => ({ default: Resource }));
 vi.mock("../widget/error", () => ({ default: Error }));
 
@@ -21,7 +21,7 @@ describe("components/widgets/resources/cputemp", () => {
   });
 
   it("renders placeholder when temperature data is missing", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
     render(<CpuTemp expanded units="metric" />);
 
     const props = Resource.mock.calls[0][0];
@@ -29,7 +29,7 @@ describe("components/widgets/resources/cputemp", () => {
   });
 
   it("averages core temps, converts to fahrenheit and computes percentage", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: { cputemp: { main: 10, cores: [10, 10], max: 20 } },
       error: undefined,
     });
@@ -43,8 +43,8 @@ describe("components/widgets/resources/cputemp", () => {
     expect(props.percentage).toBe(74);
   });
 
-  it("renders Error when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders Error when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     render(<CpuTemp expanded units="metric" />);
 

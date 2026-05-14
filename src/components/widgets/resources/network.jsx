@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FaNetworkWired } from "react-icons/fa";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 import Error from "../widget/error";
 import Resource from "../widget/resource";
@@ -10,7 +10,7 @@ export default function Network({ options, refresh = 1500 }) {
   // oxlint-disable-next-line no-param-reassign
   if (options.network === true) options.network = "default";
 
-  const { data, error } = useSWR(`/api/widgets/resources?type=network&interfaceName=${options.network}`, {
+  const { data, error } = useApiQuery(`/api/widgets/resources?type=network&interfaceName=${options.network}`, {
     refreshInterval: refresh,
   });
 

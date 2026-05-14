@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 export default function ProxmoxStatus({ service, style }) {
   const { t } = useTranslation();
@@ -7,7 +7,7 @@ export default function ProxmoxStatus({ service, style }) {
   const vmType = service.proxmoxType || "qemu";
   const apiUrl = `/api/proxmox/stats/${service.proxmoxNode}/${service.proxmoxVMID}?type=${vmType}`;
 
-  const { data, error } = useSWR(apiUrl);
+  const { data, error } = useApiQuery(apiUrl);
 
   let statusLabel = t("docker.unknown");
   let backgroundClass = "px-1.5 py-0.5 bg-theme-500/10 dark:bg-theme-900/50";

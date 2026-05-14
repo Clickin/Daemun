@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useSWR } = vi.hoisted(() => ({ useSWR: vi.fn() }));
-vi.mock("swr", () => ({ default: useSWR }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 vi.mock("react-icons/md", () => ({
   MdLocationDisabled: (props) => <svg data-testid="location-disabled" {...props} />,
@@ -24,12 +24,12 @@ describe("components/widgets/weather", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders an error state when SWR errors or the API payload indicates an error", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders an error state when query errors or the API payload indicates an error", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
     renderWithProviders(<WeatherApi options={{ latitude: 1, longitude: 2 }} />, { settings: { target: "_self" } });
     expect(screen.getByText("widget.api_error")).toBeInTheDocument();
 
-    useSWR.mockReturnValue({ data: { error: "nope" }, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: { error: "nope" }, error: undefined });
     renderWithProviders(<WeatherApi options={{ latitude: 1, longitude: 2 }} />, { settings: { target: "_self" } });
     expect(screen.getAllByText("widget.api_error").length).toBeGreaterThan(0);
   });
@@ -49,7 +49,7 @@ describe("components/widgets/weather", () => {
       geolocation: { getCurrentPosition },
     });
 
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<WeatherApi options={{}} />, { settings: { target: "_self" } });
 
@@ -66,7 +66,7 @@ describe("components/widgets/weather", () => {
       geolocation: { getCurrentPosition },
     });
 
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<WeatherApi options={{}} />, { settings: { target: "_self" } });
 
@@ -85,7 +85,7 @@ describe("components/widgets/weather", () => {
       geolocation: { getCurrentPosition },
     });
 
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     renderWithProviders(<WeatherApi options={{}} />, { settings: { target: "_self" } });
 
@@ -98,7 +98,7 @@ describe("components/widgets/weather", () => {
   });
 
   it("renders temperature and condition when coordinates are provided", async () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         current: {
           temp_c: 21.5,
@@ -122,7 +122,7 @@ describe("components/widgets/weather", () => {
   });
 
   it("uses fahrenheit and night conditions when configured", async () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: {
         current: {
           temp_c: 21.5,

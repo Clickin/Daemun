@@ -3,13 +3,13 @@
 import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useSWR, Resource, Error } = vi.hoisted(() => ({
-  useSWR: vi.fn(),
+const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
+  useApiQueryMock: vi.fn(),
   Resource: vi.fn(() => <div data-testid="resource" />),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
-vi.mock("swr", () => ({ default: useSWR }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 vi.mock("../widget/resource", () => ({ default: Resource }));
 vi.mock("../widget/error", () => ({ default: Error }));
 
@@ -21,7 +21,7 @@ describe("components/widgets/resources/cpu", () => {
   });
 
   it("renders a placeholder Resource while loading", () => {
-    useSWR.mockReturnValue({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
 
     render(<Cpu expanded refresh={1000} />);
 
@@ -32,7 +32,7 @@ describe("components/widgets/resources/cpu", () => {
   });
 
   it("renders usage/load values when data is present", () => {
-    useSWR.mockReturnValue({
+    useApiQueryMock.mockReturnValue({
       data: { cpu: { usage: 12.3, load: 1.23 } },
       error: undefined,
     });
@@ -45,8 +45,8 @@ describe("components/widgets/resources/cpu", () => {
     expect(props.percentage).toBe(12.3);
   });
 
-  it("renders Error when SWR errors", () => {
-    useSWR.mockReturnValue({ data: undefined, error: new Error("nope") });
+  it("renders Error when query errors", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
 
     render(<Cpu expanded />);
 

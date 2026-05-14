@@ -1,18 +1,18 @@
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
+import { useApiQuery } from "utils/query/api-query";
 
 export default function Component({ service }) {
   const { t } = useTranslation();
 
   const { widget } = service;
   const podSelectorString = widget.podSelector !== undefined ? `podSelector=${widget.podSelector}` : "";
-  const { data: statusData, error: statusError } = useSWR(
+  const { data: statusData, error: statusError } = useApiQuery(
     `/api/kubernetes/status/${widget.namespace}/${widget.app}?${podSelectorString}`,
   );
 
-  const { data: statsData, error: statsError } = useSWR(
+  const { data: statsData, error: statsError } = useApiQuery(
     `/api/kubernetes/stats/${widget.namespace}/${widget.app}?${podSelectorString}`,
   );
 
