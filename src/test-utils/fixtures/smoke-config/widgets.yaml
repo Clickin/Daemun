@@ -1,0 +1,8 @@
+---
+- resources:
+    cpu: true
+    memory: true
+    refresh: 1000
+- search:
+    provider: duckduckgo
+    target: _self

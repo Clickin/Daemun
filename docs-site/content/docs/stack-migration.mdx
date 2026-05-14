@@ -1,0 +1,46 @@
+---
+title: Stack Migration
+description: Runtime and documentation migration notes for the Daemun fork.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Daemun keeps the application behavior while removing framework and project
+identity that belonged to the upstream Next.js runtime.
+
+<Aside type="tip" title="Documentation direction">
+  The historical MkDocs content is now copied into the Astro Starlight content
+  collection. Pages that need richer UI use MDX and Starlight components, while
+  mostly-static reference pages stay as Markdown for easier migration.
+</Aside>
+
+## Current Baseline
+
+- App runtime: Hono on Node 26 with Vite-built React/Inertia assets.
+- Package manager: pnpm.
+- Docs package: `@daemun/docs` in the pnpm workspace.
+- Docs runtime: Astro Starlight, built with the same JavaScript toolchain as the
+  application.
+- Docs search: Pagefind through Starlight's static search provider.
+- Docs Vite version: `docs-site` pins Vite 7 for Astro 6 compatibility while the
+  application can continue using Vite 8.
+- Configuration and service discovery: inherited YAML, Docker labels, and
+  Kubernetes annotations remain compatible.
+
+## Naming Direction
+
+- Package name: `daemun`.
+- Repository: `https://github.com/Clickin/Daemun`.
+- Container image target: `ghcr.io/clickin/daemun`.
+- User-facing copy should use Daemun unless it is documenting compatibility
+  labels, environment variables, or upstream historical behavior.
+
+## Verification Gates
+
+```bash
+pnpm run lint
+pnpm test
+pnpm build
+pnpm docs:build
+act pull_request -W .github/workflows/docs-publish.yml -j build --container-architecture linux/amd64
+```

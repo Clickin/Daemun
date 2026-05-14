@@ -56,4 +56,20 @@ describe("components/toggles/color", () => {
     fireEvent.click(blue);
     expect(setColor).toHaveBeenCalledWith("blue");
   });
+
+  it("renders palette swatches with each swatch's own theme variables", () => {
+    render(
+      <ColorContext.Provider value={{ color: "slate", setColor: vi.fn() }}>
+        <ColorToggle />
+      </ColorContext.Provider>,
+    );
+
+    const emerald = screen.getByTitle("emerald");
+    const rose = screen.getByTitle("rose");
+
+    expect(emerald).toHaveClass("theme-emerald");
+    expect(rose).toHaveClass("theme-rose");
+    expect(emerald).toHaveStyle({ backgroundColor: "rgb(var(--color-400))" });
+    expect(rose).toHaveStyle({ backgroundColor: "rgb(var(--color-400))" });
+  });
 });

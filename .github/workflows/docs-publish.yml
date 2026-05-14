@@ -2,7 +2,6 @@ name: Docs
 
 on:
   push:
-    tags: ["v*.*.*"]
     branches: ["main"]
   pull_request:
   merge_group:
@@ -13,57 +12,54 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  test:
-    name: Test Build Docs
-    if: github.repository == 'Clickin/Daemun' && github.event_name == 'pull_request'
+  build:
+    name: Build Astro Starlight docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.0.4
         with:
-          version: 10
           run_install: false
 
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
           node-version: 26
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Test Docs Build
+      - name: Build docs
         run: pnpm docs:build
 
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request' && github.event_name != 'merge_group' && github.ref == 'refs/heads/main' && env.ACT != 'true'
+        uses: actions/configure-pages@v6
+
+      - name: Upload GitHub Pages artifact
+        if: github.event_name != 'pull_request' && github.event_name != 'merge_group' && github.ref == 'refs/heads/main' && env.ACT != 'true'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist-docs
+
   deploy:
-    name: Build & Deploy Docs
-    if: github.repository == 'Clickin/Daemun' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    name: Deploy Astro Starlight docs
+    needs: build
+    if: github.repository == 'Clickin/Daemun' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-
-      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
-        with:
-          version: 10
-          run_install: false
-
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: 26
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      - name: Build Docs
-        run: pnpm docs:build
-
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
-        with:
-          path: dist-docs
-      - uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+      - name: Deploy to GitHub Pages
         id: deployment
+        uses: actions/deploy-pages@v5

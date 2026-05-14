@@ -1,0 +1,41 @@
+---
+title: Installation
+description: Install and run Daemun.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Daemun can run from a container, from Kubernetes, from UNRAID, or directly from
+source. Docker is the common deployment path for homelab installs.
+
+<Aside type="caution" title="Expose it carefully">
+  Daemun can proxy data from private services. It does not include its own
+  authentication layer. Public or shared deployments should sit behind a reverse
+  proxy or VPN that enforces authentication, TLS, and strict host validation.
+</Aside>
+
+<CardGrid>
+  <LinkCard title="Docker" description="Run the published Daemun image with Docker or Compose." href="/Daemun/installation/docker/" />
+  <LinkCard title="Kubernetes" description="Deploy with Kubernetes manifests and annotations." href="/Daemun/installation/k8s/" />
+  <LinkCard title="UNRAID" description="Notes for UNRAID installs." href="/Daemun/installation/unraid/" />
+  <LinkCard title="From source" description="Build the Hono/Vite runtime locally." href="/Daemun/installation/source/" />
+</CardGrid>
+
+## `HOMEPAGE_ALLOWED_HOSTS`
+
+Daemun keeps the inherited `HOMEPAGE_ALLOWED_HOSTS` environment variable for
+deployment compatibility.
+
+The value is a comma-separated list of allowed hosts, sometimes including the
+port, that may host your Daemun install. `localhost:3000` and
+`127.0.0.1:3000` are always included. For example:
+
+```bash
+HOMEPAGE_ALLOWED_HOSTS=daemun.example.com,192.168.1.2:3000
+```
+
+If host validation fails, check the Daemun logs and ensure the host shown there
+is exactly present in `HOMEPAGE_ALLOWED_HOSTS`.
+
+Setting `HOMEPAGE_ALLOWED_HOSTS=*` disables the check, but this is not
+recommended outside tightly controlled local testing.

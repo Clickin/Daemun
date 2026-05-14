@@ -1,17 +1,13 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="images/banner_light@2x.png">
-    <img src="images/banner_dark@2x.png" width="65%">
-  </picture>
-</p>
+# Daemun
 
-<p align="center">
-  Daemun is a lightweight Hono/Vite application dashboard with proxied service integrations, YAML configuration, Docker label discovery, and translations into multiple languages.
-</p>
+Daemun is a lightweight application dashboard for self-hosted services. It is a
+fork of the upstream Homepage project, rebuilt around a compact Hono runtime
+instead of the original Next.js server.
 
-<p align="center">
-  <img src="images/1.png?v=2" />
-</p>
+The fork keeps the practical parts that make the dashboard useful: YAML
+configuration, service and bookmark groups, Docker label discovery, Kubernetes
+annotations, proxied widgets, translations, and custom CSS/JavaScript. The
+runtime and project identity now belong to Daemun.
 
 <p align="center">
   <a href="https://github.com/Clickin/Daemun/actions/workflows/docker-publish.yml"><img alt="Docker workflow status" src="https://img.shields.io/github/actions/workflow/status/Clickin/Daemun/docker-publish.yml"></a>
@@ -21,47 +17,42 @@
   <a href="https://github.com/Clickin/Daemun/actions/workflows/docs-publish.yml"><img alt="Docs workflow status" src="https://img.shields.io/github/actions/workflow/status/Clickin/Daemun/docs-publish.yml?label=docs"></a>
 </p>
 
-# Features
+## Runtime Direction
 
-With features like quick search, bookmarks, weather support, a wide range of integrations and widgets, and a focus on a compact runtime, Daemun is your home entry point for self-hosted services.
+- Hono serves the production HTTP runtime and the existing `/api/**` contracts.
+- Vite builds the React/Inertia browser bundle and the Node server bundle.
+- `pnpm` owns the app, docs, test, and build workflows.
+- Astro Starlight replaces the old Python documentation stack.
+- Starlight search uses Pagefind.
+- Docker images are built around the generated `dist` output plus only the
+  native runtime dependencies that cannot be bundled.
 
-- **Fast** - The app runs on a compact Hono server with Vite-built client assets.
-- **Secure** - All API requests to backend services are proxied, keeping your API keys hidden. Constantly reviewed for security by the community.
-- **For Everyone** - Images built for AMD64, ARM64.
-- **Full i18n** - Support for over 40 languages.
-- **Service & Web Bookmarks** - Add custom links to the dashboard.
-- **Docker Integration** - Container status and stats. Automatic service discovery via labels.
-- **Service Integration** - Over 100 service integrations, including popular starr and self-hosted apps.
-- **Information & Utility Widgets** - Weather, time, date, search, and more.
-- **And much more...**
+## Compatibility
 
-## Docker Integration
+Daemun intentionally preserves compatibility with inherited deployments where it
+is useful:
 
-Daemun has built-in support for Docker, and can automatically discover and add services based on labels.
+- Existing YAML files under `/app/config`.
+- `HOMEPAGE_ALLOWED_HOSTS` and related deployment environment variables.
+- Docker discovery labels using the `homepage.*` prefix.
+- Kubernetes discovery annotations using the `gethomepage.dev/*` prefix.
+- Existing widget and proxy configuration shapes.
 
-## Service Widgets
+Those names are compatibility contracts, not the fork identity.
 
-Daemun keeps the inherited service widget catalog, including popular \*arr apps and self-hosted apps such as Plex, Jellyfin, Emby, Transmission, qBittorrent, Deluge, Jackett, NZBGet, and SABnzbd.
+## Features
 
-## Information Widgets
+- Service groups and web bookmarks.
+- Docker container status, stats, and label-based discovery.
+- Kubernetes service discovery through annotations.
+- More than 100 inherited service integrations.
+- Information widgets for resources, weather, time, date, search, and more.
+- Hidden server-side proxying for service API keys.
+- Custom themes, custom CSS, custom JavaScript, layouts, and localization.
 
-Daemun has built-in support for information providers including weather, time, date, search, Glances, and more.
+## Install With Docker
 
-## Customization
-
-Daemun remains highly customizable, with support for custom themes, custom CSS and JavaScript, layouts, formatting, and localization.
-
-# Getting Started
-
-This fork is Daemun. Some inherited documentation still uses the upstream project name while the docs content is migrated.
-
-## Security Notice 🔒
-
-Please note that when using features such as widgets, Daemun can access personal information (for example from your home automation system) and Daemun currently does not include an authentication layer itself. If Daemun is reachable from any untrusted network, it **must** sit behind a reverse proxy (and/or VPN) that enforces authentication, TLS, and strictly validates Host headers. The built-in host check is a best-effort guard and should not be treated as security when exposed publicly.
-
-## With Docker
-
-Using docker compose:
+Using Docker Compose:
 
 ```yaml
 services:
@@ -69,18 +60,18 @@ services:
     image: ghcr.io/clickin/daemun:latest
     container_name: daemun
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: daemun.example.com # required, may need port
-      PUID: 1000 # optional, your user id
-      PGID: 1000 # optional, your group id
+      HOMEPAGE_ALLOWED_HOSTS: daemun.example.com
+      PUID: 1000
+      PGID: 1000
     ports:
       - 3000:3000
     volumes:
-      - /path/to/config:/app/config # Make sure your local config directory exists
-      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+      - /path/to/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 ```
 
-or docker run:
+Or with `docker run`:
 
 ```bash
 docker run --name daemun \
@@ -94,74 +85,101 @@ docker run --name daemun \
   ghcr.io/clickin/daemun:latest
 ```
 
-## From Source
-
-First, clone the repository:
+## Build From Source
 
 ```bash
 git clone https://github.com/Clickin/Daemun.git
-```
-
-Then install dependencies and build the production bundle:
-
-```bash
+cd Daemun
 pnpm install
 pnpm build
-```
-
-If this is your first time starting, copy the `src/skeleton` directory to `config/` to populate initial example config files.
-
-Finally, run the server in production mode:
-
-```bash
 pnpm start
 ```
 
-# Configuration
+If you are starting from an empty config directory, copy the files from
+`src/skeleton/` into your config path first.
 
-Inherited configuration guides remain under `docs/` while they are migrated into the Astro Starlight documentation site.
-
-# Development
-
-Install NPM packages, this project uses [pnpm](https://pnpm.io/) (and so should you!):
+## Development
 
 ```bash
 pnpm install
-```
-
-Start the development server:
-
-```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to start.
+Open `http://localhost:3000`.
 
-This is a Hono application with Vite-built React/Inertia client assets.
+Useful verification commands:
 
-# Documentation
+```bash
+pnpm run lint
+pnpm test
+pnpm build
+pnpm gate:widgets
+pnpm gate:upstream-contracts
+pnpm gate:real-world:quick
+pnpm gate:release
+```
 
-Astro Starlight is the documentation runtime:
+`pnpm gate:upstream-contracts` checks the recorded upstream Homepage baseline
+against `tools/release-gate/upstream-contract-map.json`. The map keeps each
+upstream page test path next to the Daemun contract files that replace it, so a
+future upstream baseline update fails until new tests are mapped deliberately.
+`pnpm gate:widgets` blocks only on the supported widget baseline recorded by the
+current upstream commit. New widgets added to upstream after that baseline are
+tracked as parity backlog, not automatic release blockers. To inspect that
+non-blocking drift, run:
+
+```bash
+node tools/release-gate/verify-widget-registry.mjs --report-upstream-drift
+```
+
+Real-world gates are split by cost. `pnpm gate:release` builds the production
+bundle first, then `pnpm gate:real-world:quick` runs a short mock-backed loop
+for YAML bootstrap, Glances host metrics, and resource API calls without binding
+the Daemun app to a port. `pnpm gate:real-world:soak` uses the same production
+bundle and scenarios as a longer manual/nightly leak check. Its default duration
+is 10 minutes and can be tuned:
+
+```bash
+DAEMUN_REAL_WORLD_SOAK_SECONDS=1800 pnpm gate:real-world:soak
+```
+
+Container resource and stress comparison against upstream Homepage is documented
+in [BENCHMARK.md](BENCHMARK.md).
+
+## Documentation
+
+The published documentation is the Astro Starlight site in `docs-site/`.
+Search is powered by Pagefind through Starlight’s built-in search provider.
 
 ```bash
 pnpm docs:dev
 pnpm docs:build
 ```
 
-The legacy Markdown source is still under `docs/` during the content migration. The Starlight entrypoint is under `docs-site/`.
+GitHub Pages deployment is handled by `.github/workflows/docs-publish.yml` and
+publishes the built Starlight site to:
 
-# Support & Suggestions
+```text
+https://clickin.github.io/Daemun/
+```
 
-If you have any questions, suggestions, or general issues, please start a discussion in the fork repository.
+The old `docs/` directory is retained as migration source material only. It is
+not the Daemun documentation surface.
 
-## Troubleshooting
+## Security Notice
 
-In addition to the docs, the inherited troubleshooting content under `docs/troubleshooting/` can help reveal many basic config or network issues while the Starlight migration continues.
+Daemun can proxy requests to services that expose personal or operational data.
+It does not provide an authentication layer. If Daemun is reachable from an
+untrusted network, run it behind a reverse proxy or VPN that enforces
+authentication, TLS, and strict host validation.
 
-## Contributing & Contributors
+## Upstream
 
-Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+Daemun is a fork of `gethomepage/homepage`. The upstream project and community
+created the original dashboard, widget catalog, translations, and configuration
+contracts that this fork continues to support while changing the runtime stack
+and long-term project direction.
 
-Thanks to the over 200 contributors who have helped make this project what it is today!
+## License
 
-Especially huge thanks to [@shamoon](https://github.com/shamoon), who has been the backbone of this community from the very start.
+Daemun inherits the repository license. See [LICENSE](LICENSE).

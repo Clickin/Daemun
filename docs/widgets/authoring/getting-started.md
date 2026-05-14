@@ -57,7 +57,7 @@ pnpm test:coverage
   - request construction (URL, query params, headers/auth)
   - response mapping (what the widget consumes)
   - error pathways (upstream error, unexpected payloads)
-- Avoid placing test files under `src/pages/**` to keep route handlers and page tests clearly separated. Page tests should live under `src/__tests__/pages/**`.
+- Avoid placing test files under `src/pages/**` to keep route handlers and page tests clearly separated. Page tests should live under `test/pages/**`.
 
 ## Code Formatting
 

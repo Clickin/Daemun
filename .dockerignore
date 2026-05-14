@@ -16,10 +16,16 @@
 **/compose*
 **/Dockerfile*
 **/node_modules
+**/.pnpm-store
 **/npm-debug.log
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+.astro/
+benchmarks/results/
+coverage/
+dist/
+dist-docs/
 README.md
 config/
 k3d/

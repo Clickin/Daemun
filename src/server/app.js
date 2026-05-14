@@ -63,7 +63,7 @@ function apiHostValidation() {
 
 const catchAllService = (c) => ({ service: splitCatchAll(c.req.param("*")) });
 
-export function createApp() {
+export function createApp({ staticHome } = {}) {
   const app = new Hono();
   const publicRoot = path.resolve(process.cwd(), "public");
   const clientRoot = path.resolve(process.cwd(), "dist/client");
@@ -114,6 +114,10 @@ export function createApp() {
   );
   app.get("/robots.txt", (c) => c.body(robotsTxt(), 200, { "content-type": "text/plain" }));
   app.get("/site.webmanifest", (c) => c.json(siteWebmanifest(), 200, { "content-type": "application/manifest+json" }));
+
+  if (staticHome) {
+    app.use("*", staticHome.middleware());
+  }
 
   app.get("/", async (c) => c.render("Home", await loadHomePageProps()));
 

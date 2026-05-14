@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/gethomepage/homepage",
+  "branch": "main",
+  "commit": "233721cc905be3a1eeb995963de14cd8d2a0d614",
+  "capturedAt": "2026-05-14",
+  "capturedBy": "git ls-remote https://github.com/gethomepage/homepage.git refs/heads/main"
+}

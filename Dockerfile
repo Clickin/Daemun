@@ -4,7 +4,7 @@
 FROM node:26-alpine AS builder
 WORKDIR /app
 
-RUN npm install -g pnpm@10.32.1
+RUN npm install -g pnpm@11.1.1
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY docs-site/package.json ./docs-site/package.json
@@ -34,7 +34,7 @@ RUN if [ "$CI" != "true" ]; then \
 FROM node:26-alpine AS runtime-deps
 WORKDIR /app
 
-RUN npm install -g pnpm@10.32.1
+RUN npm install -g pnpm@11.1.1
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY runtime-deps/package.json ./runtime-deps/package.json
@@ -67,12 +67,10 @@ RUN apk add --no-cache su-exec iputils-ping shadow
 USER root
 
 ENV NODE_ENV=production
-ENV HOSTNAME=::
-ENV PORT=3000
-EXPOSE $PORT
+EXPOSE 3000
 
 HEALTHCHECK --interval=10s --timeout=3s --start-period=20s \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:$PORT/api/healthcheck || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/healthcheck || exit 1
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["node", "dist/server/index.mjs"]
+CMD ["node", "dist/server/index.mjs", "--host", "0.0.0.0", "--port", "3000"]

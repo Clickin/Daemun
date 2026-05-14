@@ -50,4 +50,21 @@ describe("utils/contexts/color", () => {
     expect(screen.getByTestId("value")).toHaveTextContent("slate");
     await waitFor(() => expect(document.documentElement.classList.contains("theme-slate")).toBe(true));
   });
+
+  it("lets configured initial color replace stale root theme classes", async () => {
+    localStorage.setItem("theme-color", "blue");
+    document.documentElement.className = "theme-blue theme-slate";
+
+    render(
+      <ColorProvider initialColor="emerald">
+        <Reader />
+      </ColorProvider>,
+    );
+
+    expect(screen.getByTestId("value")).toHaveTextContent("emerald");
+    await waitFor(() => expect(document.documentElement.classList.contains("theme-emerald")).toBe(true));
+    expect(document.documentElement.classList.contains("theme-blue")).toBe(false);
+    expect(document.documentElement.classList.contains("theme-slate")).toBe(false);
+    expect(localStorage.getItem("theme-color")).toBe("emerald");
+  });
 });

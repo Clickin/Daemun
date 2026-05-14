@@ -4,15 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "node src/server/dev.js",
-    "build": "vite build && vite build --ssr src/server/index.js",
+    "bench:containers": "node tools/bench/compare-containers.mjs",
+    "build": "vite build && vite build --ssr",
     "docs:build": "pnpm --filter @daemun/docs build",
     "docs:dev": "pnpm --filter @daemun/docs dev",
     "docs:preview": "pnpm --filter @daemun/docs preview",
     "start": "node dist/server/index.mjs",
     "format": "oxfmt",
-    "lint": "oxlint --quiet --react-plugin --jsx-a11y-plugin --vitest-plugin src vite.config.mjs vitest.config.mjs vitest.setup.js docs-site/astro.config.mjs",
+    "gate:real-world:quick": "node tools/release-gate/run-real-world-gate.mjs --mode=quick",
+    "gate:real-world:soak": "node tools/release-gate/run-real-world-gate.mjs --mode=soak",
+    "gate:release": "pnpm build && pnpm gate:upstream-contracts && pnpm gate:widgets && pnpm gate:real-world:quick",
+    "gate:upstream-contracts": "node tools/release-gate/verify-upstream-contracts.mjs",
+    "gate:widgets": "node tools/release-gate/verify-widget-registry.mjs",
+    "lint": "oxlint --quiet --react-plugin --jsx-a11y-plugin --vitest-plugin src test tools vite.config.mjs vitest.config.mjs vitest.setup.js docs-site/astro.config.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:smoke": "vitest run --config vitest.smoke.config.mjs",
     "test:watch": "vitest"
   },
   "devDependencies": {
@@ -64,5 +71,5 @@
   "optionalDependencies": {
     "osx-temperature-sensor": "^1.0.8"
   },
-  "packageManager": "pnpm@10.32.1"
+  "packageManager": "pnpm@11.1.1"
 }

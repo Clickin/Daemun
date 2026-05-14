@@ -61,16 +61,16 @@ not export it into the browser bundle.
   "2xl:h-0 2xl:h-1 2xl:h-2 2xl:h-3 2xl:h-4 2xl:h-5 2xl:h-6 2xl:h-7 2xl:h-8 2xl:h-9 2xl:h-10 2xl:h-11 2xl:h-12 2xl:h-13 2xl:h-14 2xl:h-15 2xl:h-16 2xl:h-17 2xl:h-18 2xl:h-19 2xl:h-20 2xl:h-21 2xl:h-22 2xl:h-23 2xl:h-24 2xl:h-25 2xl:h-26 2xl:h-27 2xl:h-28 2xl:h-29 2xl:h-30 2xl:h-31 2xl:h-32 2xl:h-33 2xl:h-34 2xl:h-35 2xl:h-36 2xl:h-37 2xl:h-38 2xl:h-39 2xl:h-40 2xl:h-41 2xl:h-42 2xl:h-43 2xl:h-44 2xl:h-45 2xl:h-46 2xl:h-47 2xl:h-48 2xl:h-49 2xl:h-50 2xl:h-51 2xl:h-52 2xl:h-53 2xl:h-54 2xl:h-55 2xl:h-56 2xl:h-57 2xl:h-58 2xl:h-59 2xl:h-60 2xl:h-61 2xl:h-62 2xl:h-63 2xl:h-64 2xl:h-65 2xl:h-66 2xl:h-67 2xl:h-68 2xl:h-69 2xl:h-70 2xl:h-71 2xl:h-72 2xl:h-73 2xl:h-74 2xl:h-75 2xl:h-76 2xl:h-77 2xl:h-78 2xl:h-79 2xl:h-80 2xl:h-81 2xl:h-82 2xl:h-83 2xl:h-84 2xl:h-85 2xl:h-86 2xl:h-87 2xl:h-88 2xl:h-89 2xl:h-90 2xl:h-91 2xl:h-92 2xl:h-93 2xl:h-94 2xl:h-95 2xl:h-96",
 */
 
-export function AppProviders({ children }) {
+export function AppProviders({ children, initialSettings }) {
   return (
     <SWRConfig
       value={{
         fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
       }}
     >
-      <ColorProvider>
-        <ThemeProvider>
-          <SettingsProvider>
+      <ColorProvider initialColor={initialSettings?.color}>
+        <ThemeProvider initialTheme={initialSettings?.theme}>
+          <SettingsProvider initialSettings={initialSettings}>
             <TabProvider>{children}</TabProvider>
           </SettingsProvider>
         </ThemeProvider>

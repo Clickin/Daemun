@@ -1,0 +1,57 @@
+---
+title: Daemun
+description: Daemun documentation entrypoint.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Daemun is a lightweight application dashboard for self-hosted services. It is a
+fork of the upstream Homepage project, rebuilt around Hono, Vite, React, and
+Inertia instead of the original Next.js server runtime.
+
+<Aside type="note" title="Fork compatibility">
+  The detailed guides below were migrated from the inherited documentation.
+  Compatibility names such as `HOMEPAGE_ALLOWED_HOSTS`, `homepage.*` Docker
+  labels, and `gethomepage.dev/*` Kubernetes annotations are still documented
+  because Daemun keeps those deployment contracts.
+</Aside>
+
+<CardGrid>
+  <LinkCard
+    title="Installation"
+    description="Run Daemun with Docker, Kubernetes, UNRAID, or from source."
+    href="/Daemun/installation/"
+  />
+  <LinkCard
+    title="Configuration"
+    description="YAML files for services, bookmarks, widgets, Docker, Kubernetes, and settings."
+    href="/Daemun/configs/"
+  />
+  <LinkCard
+    title="Widgets"
+    description="Service widgets, information widgets, proxy behavior, and widget authoring."
+    href="/Daemun/widgets/"
+  />
+  <LinkCard
+    title="Stack Migration"
+    description="Runtime, docs, packaging, and naming direction for the Daemun fork."
+    href="/Daemun/stack-migration/"
+  />
+</CardGrid>
+
+## Current Runtime
+
+- Hono serves the app and the existing `/api/**` route contracts.
+- Vite builds the browser bundle and the server bundle.
+- React and Inertia render the dashboard.
+- Astro Starlight publishes this documentation as static HTML.
+- Starlight search is explicitly backed by Pagefind.
+
+## Local Commands
+
+```bash
+pnpm dev
+pnpm build
+pnpm docs:dev
+pnpm docs:build
+```

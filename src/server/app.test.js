@@ -78,4 +78,27 @@ describe("Hono app", () => {
     expect(response.headers.get("content-type")).toBe("image/x-icon");
     expect((await response.arrayBuffer()).byteLength).toBeGreaterThan(0);
   });
+
+  it("serves static compatibility payloads without Next pages", async () => {
+    const { createApp } = await import("./app");
+    const app = createApp();
+
+    const robots = await app.request("/robots.txt");
+    expect(robots.status).toBe(200);
+    expect(robots.headers.get("content-type")).toContain("text/plain");
+    expect(await robots.text()).toContain("User-agent: *");
+
+    const browserConfig = await app.request("/browserconfig.xml");
+    expect(browserConfig.status).toBe(200);
+    expect(browserConfig.headers.get("content-type")).toContain("text/xml");
+    expect(await browserConfig.text()).toContain("<browserconfig>");
+
+    const manifest = await app.request("/site.webmanifest");
+    expect(manifest.status).toBe(200);
+    expect(manifest.headers.get("content-type")).toContain("application/manifest+json");
+    expect(await manifest.json()).toMatchObject({
+      display: "standalone",
+      start_url: "/",
+    });
+  });
 });

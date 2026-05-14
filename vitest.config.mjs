@@ -3,7 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  // Next.js handles JSX via SWC; Vitest uses Vite/esbuild, so enable the modern JSX runtime
+  // Vitest uses Vite/esbuild, so enable the modern JSX runtime
   // to avoid requiring `import React from "react"` in every JSX file.
   esbuild: {
     jsx: "automatic",
@@ -23,7 +23,8 @@ export default defineConfig({
     // Use worker threads instead of forked processes to reduce overhead and avoid noisy per-process Node warnings.
     pool: "threads",
     setupFiles: ["./vitest.setup.js"],
-    include: ["src/**/*.test.{js,jsx}", "src/**/*.spec.{js,jsx}"],
+    include: ["src/**/*.test.{js,jsx,ts,tsx}", "src/**/*.spec.{js,jsx,ts,tsx}", "test/**/*.test.{js,jsx,ts,tsx}"],
+    exclude: ["src/server/browserless-smoke.test.jsx"],
     coverage: {
       provider: "v8",
       all: true,
@@ -36,7 +37,7 @@ export default defineConfig({
         // Exclude tests and test harness code from coverage totals.
         "src/**/*.test.{js,jsx,ts,tsx}",
         "src/**/*.spec.{js,jsx,ts,tsx}",
-        "src/**/__tests__/**",
+        "test/**",
         "src/test-utils/**",
         "src/widgets/widgets.js",
         "src/widgets/components.js",

@@ -25,8 +25,8 @@ export function ThemeProvider({ initialTheme, children }) {
     const root = window.document.documentElement;
     const isDark = rawTheme === "dark";
 
-    root.classList.remove(isDark ? "light" : "dark");
-    root.classList.add(rawTheme);
+    root.classList.remove("dark", "light", "scheme-dark", "scheme-light");
+    root.classList.add(rawTheme, isDark ? "scheme-dark" : "scheme-light");
 
     localStorage.setItem("theme-mode", rawTheme);
   };

@@ -15,8 +15,10 @@ const pages = {
 createInertiaApp({
   resolve: (name) => pages[name],
   setup({ el, App, props }) {
+    const initialSettings = props.initialPage?.props?.initialSettings;
+
     createRoot(el).render(
-      <AppProviders>
+      <AppProviders initialSettings={initialSettings}>
         <App {...props} />
       </AppProviders>,
     );

@@ -1,0 +1,15 @@
+---
+- E2E Services:
+    - Widget Probe:
+        href: https://clickin.github.io/Daemun/
+        description: Custom API proxy smoke fixture
+        widget:
+          type: customapi
+          url: http://fixture.local/theme
+          mappings:
+            - field: color
+              label: Palette
+              format: text
+            - field: theme
+              label: Mode
+              format: text

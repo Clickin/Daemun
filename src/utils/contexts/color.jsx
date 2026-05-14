@@ -16,14 +16,20 @@ const getInitialColor = () => {
 
 export const ColorContext = createContext();
 
-export function ColorProvider({ initialTheme, children }) {
-  const [color, setColor] = useState(() => initialTheme ?? getInitialColor());
+export function ColorProvider({ initialColor, children }) {
+  const [color, setColor] = useState(() => initialColor ?? getInitialColor());
 
   const rawSetColor = (rawColor) => {
     const root = window.document.documentElement;
+    const desiredClass = `theme-${rawColor}`;
+    const staleThemeClasses = Array.from(root.classList).filter(
+      (className) => className.startsWith("theme-") && className !== desiredClass,
+    );
 
-    root.classList.remove(`theme-${lastColor}`);
-    root.classList.add(`theme-${rawColor}`);
+    if (staleThemeClasses.length) {
+      root.classList.remove(...staleThemeClasses);
+    }
+    root.classList.add(desiredClass);
 
     localStorage.setItem("theme-color", rawColor);
 
@@ -31,9 +37,9 @@ export function ColorProvider({ initialTheme, children }) {
   };
 
   useEffect(() => {
-    if (initialTheme !== undefined) setColor(initialTheme ?? getInitialColor());
+    if (initialColor !== undefined) setColor(initialColor ?? getInitialColor());
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialTheme]);
+  }, [initialColor]);
 
   useEffect(() => {
     rawSetColor(color);

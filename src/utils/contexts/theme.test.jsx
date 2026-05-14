@@ -61,4 +61,21 @@ describe("utils/contexts/theme", () => {
     expect(screen.getByTestId("value")).toHaveTextContent("dark");
     await waitFor(() => expect(localStorage.getItem("theme-mode")).toBe("dark"));
   });
+
+  it("lets configured initial theme replace stale root scheme classes", async () => {
+    document.documentElement.className = "dark scheme-dark";
+    localStorage.setItem("theme-mode", "dark");
+
+    render(
+      <ThemeProvider initialTheme="light">
+        <Reader />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByTestId("value")).toHaveTextContent("light");
+    await waitFor(() => expect(document.documentElement.classList.contains("light")).toBe(true));
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(document.documentElement.classList.contains("scheme-dark")).toBe(false);
+    expect(document.documentElement.classList.contains("scheme-light")).toBe(true);
+  });
 });

@@ -1,0 +1,27 @@
+{
+  "description": "Mock-backed real-world Homepage usage scenarios tracked for Daemun release gates. Quick scenarios are release-blocking; soak scenarios are manual/nightly leak checks.",
+  "scenarios": [
+    {
+      "id": "glances-resource-metrics",
+      "sourceDiscussionUrls": [
+        "https://github.com/gethomepage/homepage/discussions/2446",
+        "https://github.com/gethomepage/homepage/discussions/3368",
+        "https://github.com/gethomepage/homepage/discussions/3795"
+      ],
+      "modes": ["quick", "soak"],
+      "description": "Covers Glances-backed host metrics with optional uptime, CPU temperature, and disk payloads."
+    },
+    {
+      "id": "host-resource-usage",
+      "sourceDiscussionUrls": ["https://gethomepage.dev/widgets/info/resources/"],
+      "modes": ["quick", "soak"],
+      "description": "Covers local resource widget API calls that users commonly pin next to service widgets."
+    },
+    {
+      "id": "yaml-dashboard-bootstrap",
+      "sourceDiscussionUrls": ["https://gethomepage.dev/configs/"],
+      "modes": ["quick", "soak"],
+      "description": "Covers YAML settings/services/bookmarks/widgets bootstrapping through Hono without binding the app to a port."
+    }
+  ]
+}

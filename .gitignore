@@ -49,5 +49,8 @@ dist-docs/
 .astro/
 .cache/
 
+# benchmark output
+/benchmarks/results/
+
 # OMX runtime state
 /.omx/
