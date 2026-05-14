@@ -27,7 +27,7 @@ RUN if [ "$CI" != "true" ]; then \
       echo "Using prebuilt app from CI context"; \
     fi
 
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 
 # =========================
 # Runtime Stage
