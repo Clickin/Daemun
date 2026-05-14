@@ -9,19 +9,37 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const { loadHomePageProps } = vi.hoisted(() => ({
   loadHomePageProps: vi.fn(async () => ({
     fallback: {
-      "/api/bookmarks": [],
+      "/api/bookmarks": [
+        {
+          bookmarks: [{ description: "Static bookmark description", href: "https://example.com", name: "Static Link" }],
+          name: "Static Bookmarks",
+        },
+      ],
       "/api/hash": false,
-      "/api/services": [],
+      "/api/services": [
+        {
+          groups: [],
+          name: "Static Services",
+          services: [
+            { description: "Static service description", href: "https://example.com", name: "Static App", widgets: [] },
+          ],
+        },
+      ],
       "/api/validate": [],
       "/api/widgets": [],
     },
-    initialSettings: { color: "emerald", theme: "light", title: "Static Lab" },
+    initialSettings: { color: "emerald", hideVersion: true, layout: {}, theme: "light", title: "Static Lab" },
     locale: "en",
   })),
 }));
 
 vi.mock("./home-props", () => ({
   loadHomePageProps,
+}));
+
+vi.mock("utils/i18n", () => ({
+  default: { changeLanguage: vi.fn(), language: "en" },
+  loadLanguage: vi.fn(async (language) => language),
 }));
 
 describe("static home SSG cache", () => {
@@ -47,6 +65,10 @@ describe("static home SSG cache", () => {
     );
     expect(result.html).toBe(html);
     expect(html).toContain("<title>Static Lab</title>");
+    expect(html).toContain("Static Services");
+    expect(html).toContain("Static App");
+    expect(html).toContain("Static Bookmarks");
+    expect(html).toContain("Static Link");
     expect(html).toContain('data-page="app"');
     expect(html).toContain('"version":"test-version"');
     expect(loadHomePageProps).toHaveBeenCalledTimes(1);
@@ -87,8 +109,8 @@ describe("static home SSG cache", () => {
     const { isStaticHomeConfigFile } = await import("./static-home");
 
     expect(isStaticHomeConfigFile("services.yaml")).toBe(true);
-    expect(isStaticHomeConfigFile("custom.css")).toBe(true);
-    expect(isStaticHomeConfigFile("custom.js")).toBe(true);
+    expect(isStaticHomeConfigFile("custom.css")).toBe(false);
+    expect(isStaticHomeConfigFile("custom.js")).toBe(false);
     expect(isStaticHomeConfigFile("readme.txt")).toBe(false);
     expect(isStaticHomeConfigFile("")).toBe(true);
   });

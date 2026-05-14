@@ -87,14 +87,22 @@ function createApiResponse() {
   return res;
 }
 
-function toResponse(res) {
-  const init = {
-    headers: res.headers,
-    status: res.statusCode || 200,
-  };
+function toHeaderRecord(headers) {
+  const record = {};
+
+  headers.forEach((value, key) => {
+    record[key] = value;
+  });
+
+  return record;
+}
+
+function toResponse(c, res) {
+  const status = res.statusCode || 200;
+  const headers = toHeaderRecord(res.headers);
 
   if (res.body === undefined) {
-    return new Response(null, init);
+    return c.body(null, status, headers);
   }
 
   if (
@@ -103,14 +111,15 @@ function toResponse(res) {
     ArrayBuffer.isView(res.body) ||
     res.body instanceof Blob
   ) {
-    return new Response(res.body, init);
+    return c.body(res.body, status, headers);
   }
 
   if (!res.headers.has("content-type")) {
     res.headers.set("content-type", "application/json; charset=utf-8");
+    headers["content-type"] = "application/json; charset=utf-8";
   }
 
-  return new Response(JSON.stringify(res.body), init);
+  return c.json(res.body, status, headers);
 }
 
 export function splitCatchAll(value) {
@@ -137,7 +146,7 @@ export function honoApiHandler(handler, getRouteQuery = () => ({})) {
 
     await handler(req, res);
 
-    return toResponse(res);
+    return toResponse(c, res);
   };
 }
 

@@ -2,6 +2,14 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { rootView } from "./root-view";
 
+function readScriptJson(html, selector) {
+  const scriptPattern = new RegExp(`<script ${selector}[^>]*>(.*?)<\\/script>`, "s");
+  const match = html.match(scriptPattern);
+
+  expect(match).not.toBeNull();
+  return JSON.parse(match[1]);
+}
+
 describe("rootView", () => {
   const originalViteOrigin = process.env.VITE_DEV_SERVER_ORIGIN;
 
@@ -38,6 +46,41 @@ describe("rootView", () => {
     expect(html).toContain('link rel="preload" href="/api/config/custom.css" as="style"');
     expect(html).toContain('link rel="stylesheet" href="/api/config/custom.css"');
     expect(html).toContain('<div id="app"></div>');
+    expect(html).toContain('<script src="/api/config/custom.js"></script>');
+  });
+
+  it("bakes static query data outside the Inertia page payload", () => {
+    const html = rootView({
+      component: "Home",
+      props: {
+        initialSettings: { title: "Lab" },
+        fallback: {
+          "/api/services": [{ name: "Service One" }],
+          "/api/bookmarks": [{ name: "Bookmark One" }],
+          "/api/widgets": [{ type: "search" }],
+          "/api/validate": [],
+          "/api/hash": "abc123",
+          "/api/future": { keep: true },
+        },
+      },
+      url: "/",
+      version: "test",
+    });
+
+    const bakedQueryData = readScriptJson(html, 'id="daemun-query-data"');
+    const inertiaPage = readScriptJson(html, 'data-page="app"');
+
+    expect(bakedQueryData).toEqual({
+      s: [{ name: "Service One" }],
+      b: [{ name: "Bookmark One" }],
+      w: [{ type: "search" }],
+      v: [],
+      h: "abc123",
+    });
+    expect(inertiaPage.props.fallback).toEqual({ "/api/future": { keep: true } });
+    expect(JSON.stringify(inertiaPage)).not.toContain("Service One");
+    expect(JSON.stringify(inertiaPage)).not.toContain("Bookmark One");
+    expect(html).toContain('link rel="stylesheet" href="/api/config/custom.css"');
     expect(html).toContain('<script src="/api/config/custom.js"></script>');
   });
 });

@@ -10,6 +10,7 @@ afterEach(() => {
 
 // implement a couple of common formatters mocked in react-i18next
 vi.mock("react-i18next", () => ({
+  initReactI18next: { init: vi.fn(), type: "3rdParty" },
   useTranslation: () => ({
     i18n: { changeLanguage: vi.fn(), language: "en" },
     t: (key, opts) => {

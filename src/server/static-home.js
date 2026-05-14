@@ -10,11 +10,12 @@ import { CONF_DIR } from "utils/config/config";
 
 import { getAssetVersion } from "./build-info.js";
 import { loadHomePageProps } from "./home-props.js";
+import { renderHomeHtml } from "./render-home.jsx";
 import { rootView } from "./root-view.js";
 
 const bakedHomeHeader = "X-Daemun-Static-Home";
 const defaultBakeDir = path.resolve(process.cwd(), "dist/server/ssg");
-const watchedConfigPattern = /\.(ya?ml|css|js)$/i;
+const watchedConfigPattern = /\.ya?ml$/i;
 
 let activeStaticHomeCache = null;
 
@@ -22,16 +23,21 @@ function createStaticHomeApp(version = getAssetVersion()) {
   const app = new Hono();
   let propsPromise = null;
 
-  app.get("/", async (c) =>
-    c.html(
-      rootView({
-        component: "Home",
-        props: await (propsPromise ??= loadHomePageProps()),
-        url: "/",
-        version,
-      }),
-    ),
-  );
+  app.get("/", async (c) => {
+    const props = await (propsPromise ??= loadHomePageProps());
+
+    return c.html(
+      rootView(
+        {
+          component: "Home",
+          props,
+          url: "/",
+          version,
+        },
+        { appHtml: renderHomeHtml(props) },
+      ),
+    );
+  });
 
   return app;
 }
