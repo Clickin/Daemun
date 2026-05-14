@@ -38,7 +38,10 @@ const rightAlignedWidgets = ["weatherapi", "openweathermap", "weather", "openmet
 function Index({ initialSettings, fallback }) {
   const windowFocused = useWindowFocus();
   const [stale, setStale] = useState(false);
-  const { data: errorsData } = useApiQuery("/api/validate");
+  const { data: errorsData } = useApiQuery("/api/validate", {
+    immutable: true,
+    initialData: fallback?.["/api/validate"] ?? [],
+  });
   const { error: validateError } = errorsData || {};
   const { data: hashData, mutate: mutateHash } = useApiQuery("/api/hash", {
     initialData: fallback?.["/api/hash"],

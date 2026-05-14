@@ -3,6 +3,13 @@ import { hc } from "hono/client";
 
 import { schemaForApiPath } from "./schemas";
 
+const staticInitialApiPaths = new Set(["/api/bookmarks", "/api/services", "/api/validate", "/api/widgets"]);
+
+function isStaticInitialApiPath(url) {
+  if (!url) return false;
+  return staticInitialApiPaths.has(resolveUrl(url).pathname);
+}
+
 function collectQuery(searchParams) {
   const query = {};
 
@@ -100,6 +107,7 @@ export function apiQueryOptions(
   } = {},
 ) {
   const isEnabled = Boolean(url) && enabled !== false;
+  const shouldUseImmutable = immutable || isStaticInitialApiPath(url);
 
   return {
     queryKey: queryKey ?? ["api", url ?? "disabled"],
@@ -107,10 +115,10 @@ export function apiQueryOptions(
     enabled: isEnabled,
     initialData: initialData ?? fallbackData,
     refetchInterval: queryOptions.refetchInterval ?? refreshInterval,
-    refetchOnMount: immutable ? false : queryOptions.refetchOnMount,
-    refetchOnReconnect: immutable ? false : queryOptions.refetchOnReconnect,
-    refetchOnWindowFocus: immutable ? false : queryOptions.refetchOnWindowFocus,
-    staleTime: immutable ? Infinity : queryOptions.staleTime,
+    refetchOnMount: shouldUseImmutable ? false : queryOptions.refetchOnMount,
+    refetchOnReconnect: shouldUseImmutable ? false : queryOptions.refetchOnReconnect,
+    refetchOnWindowFocus: shouldUseImmutable ? false : queryOptions.refetchOnWindowFocus,
+    staleTime: shouldUseImmutable ? Infinity : queryOptions.staleTime,
     ...queryOptions,
   };
 }

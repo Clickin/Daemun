@@ -12,6 +12,7 @@ const { loadHomePageProps } = vi.hoisted(() => ({
       "/api/bookmarks": [],
       "/api/hash": false,
       "/api/services": [],
+      "/api/validate": [],
       "/api/widgets": [],
     },
     initialSettings: { color: "emerald", theme: "light", title: "Static Lab" },

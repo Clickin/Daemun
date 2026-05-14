@@ -28,8 +28,8 @@ export default function QuickLaunch({ servicesAndBookmarks, searchString, setSea
   const [url, setUrl] = useState(null);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
 
-  const { data: widgets } = useApiQuery("/api/widgets");
-  const searchWidget = Object.values(widgets).find((w) => w.type === "search");
+  const { data: widgets } = useApiQuery("/api/widgets", { immutable: true });
+  const searchWidget = Object.values(widgets ?? []).find((w) => w.type === "search");
 
   let searchProvider;
 

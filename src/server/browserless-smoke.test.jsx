@@ -98,7 +98,7 @@ describe("browserless YAML/Hono/JSX smoke", () => {
     ]);
 
     render(
-      <AppProviders initialSettings={pageProps.initialSettings}>
+      <AppProviders initialQueryData={pageProps.fallback} initialSettings={pageProps.initialSettings}>
         <Wrapper {...pageProps} />
       </AppProviders>,
     );

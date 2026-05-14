@@ -70,4 +70,13 @@ describe("api-query", () => {
     expect(options.queryKey).toEqual(["api", "/api/hash"]);
     expect(options.refetchInterval).toBe(1234);
   });
+
+  it("treats baked config endpoints as immutable initial data", () => {
+    const options = apiQueryOptions("/api/widgets");
+
+    expect(options.staleTime).toBe(Infinity);
+    expect(options.refetchOnMount).toBe(false);
+    expect(options.refetchOnReconnect).toBe(false);
+    expect(options.refetchOnWindowFocus).toBe(false);
+  });
 });

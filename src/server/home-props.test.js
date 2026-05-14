@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { state, getSettings, servicesResponse, bookmarksResponse, widgetsResponse, logger } = vi.hoisted(() => {
+const { state, getSettings, servicesResponse, bookmarksResponse, widgetsResponse, checkAndCopyConfig, logger } =
+  vi.hoisted(() => {
   const state = { throwIn: null };
   const logger = { error: vi.fn() };
 
@@ -9,6 +10,7 @@ const { state, getSettings, servicesResponse, bookmarksResponse, widgetsResponse
       if (state.throwIn === "bookmarks") throw new Error("bookmarks failed");
       return [{ name: "bm" }];
     }),
+    checkAndCopyConfig: vi.fn(() => true),
     getSettings: vi.fn(() => ({ language: "en", providers: {}, title: "Daemun" })),
     logger,
     servicesResponse: vi.fn(async () => {
@@ -28,6 +30,7 @@ vi.mock("utils/logger", () => ({
 }));
 
 vi.mock("utils/config/config", () => ({
+  default: checkAndCopyConfig,
   getSettings,
 }));
 
@@ -53,6 +56,7 @@ describe("loadHomePageProps", () => {
     expect(result.fallback["/api/services"]).toEqual([{ name: "svc" }]);
     expect(result.fallback["/api/bookmarks"]).toEqual([{ name: "bm" }]);
     expect(result.fallback["/api/widgets"]).toEqual([{ type: "search" }]);
+    expect(result.fallback["/api/validate"]).toEqual([]);
     expect(result.fallback["/api/hash"]).toBe(false);
     expect(result.locale).toBe("en");
   });
@@ -77,6 +81,7 @@ describe("loadHomePageProps", () => {
     expect(result.fallback["/api/services"]).toEqual([]);
     expect(result.fallback["/api/bookmarks"]).toEqual([]);
     expect(result.fallback["/api/widgets"]).toEqual([]);
+    expect(result.fallback["/api/validate"]).toEqual([]);
     expect(result.locale).toBe("en");
     expect(logger.error).toHaveBeenCalled();
   });

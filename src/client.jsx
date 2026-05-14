@@ -16,9 +16,10 @@ createInertiaApp({
   resolve: (name) => pages[name],
   setup({ el, App, props }) {
     const initialSettings = props.initialPage?.props?.initialSettings;
+    const initialQueryData = props.initialPage?.props?.fallback;
 
     createRoot(el).render(
-      <AppProviders initialSettings={initialSettings}>
+      <AppProviders initialQueryData={initialQueryData} initialSettings={initialSettings}>
         <App {...props} />
       </AppProviders>,
     );

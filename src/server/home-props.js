@@ -1,5 +1,6 @@
 import { bookmarksResponse, servicesResponse, widgetsResponse } from "utils/config/api-response";
 import { getSettings } from "utils/config/config";
+import { validateConfigResponse } from "utils/config/validate";
 import { normalizeLanguage } from "utils/i18n/language";
 import createLogger from "utils/logger";
 
@@ -13,6 +14,7 @@ export async function loadHomePageProps() {
     const services = await servicesResponse();
     const bookmarks = await bookmarksResponse();
     const widgets = await widgetsResponse();
+    const validation = validateConfigResponse();
     const language = normalizeLanguage(settings.language);
 
     return {
@@ -24,6 +26,7 @@ export async function loadHomePageProps() {
         "/api/bookmarks": bookmarks,
         "/api/hash": false,
         "/api/services": services,
+        "/api/validate": validation,
         "/api/widgets": widgets,
       },
       locale: language,
@@ -39,6 +42,7 @@ export async function loadHomePageProps() {
         "/api/bookmarks": [],
         "/api/hash": false,
         "/api/services": [],
+        "/api/validate": [],
         "/api/widgets": [],
       },
       locale: "en",
