@@ -1,9 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { serializePage } from "@hono/inertia";
-
 import themes from "utils/styles/themes";
+
+import { serializePage } from "./inertia.js";
 
 function escapeText(value) {
   return String(value ?? "")

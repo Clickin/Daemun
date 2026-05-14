@@ -1,9 +1,9 @@
-import { fritzboxDefaultFields } from "./component";
-
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 import { httpProxy } from "utils/proxy/http";
 import { parseSoapBody } from "utils/xml";
+
+import { fritzboxDefaultFields } from "./fields";
 
 const logger = createLogger("fritzboxProxyHandler");
 

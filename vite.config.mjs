@@ -16,6 +16,8 @@ const aliases = {
 const resolvedAliases = Object.fromEntries(
   Object.entries(aliases).map(([key, value]) => [key, fileURLToPath(new URL(value, import.meta.url))]),
 );
+resolvedAliases["cpu-features"] = fileURLToPath(new URL("./src/server/shims/cpu-features.cjs", import.meta.url));
+resolvedAliases["fast-xml-parser"] = fileURLToPath(new URL("./src/server/shims/fast-xml-parser.js", import.meta.url));
 
 const buildTime = process.env.VITE_BUILDTIME || process.env.BUILDTIME || "";
 const revision = process.env.VITE_REVISION || process.env.REVISION || "";
@@ -95,6 +97,7 @@ export default defineConfig((configEnv) => {
           rollupOptions: {
             input: "src/server/index.js",
             output: {
+              banner: "const __filename = import.meta.filename; const __dirname = import.meta.dirname;",
               chunkFileNames: "chunks/[name]-[hash].mjs",
               entryFileNames: "[name].mjs",
             },
@@ -121,5 +124,10 @@ export default defineConfig((configEnv) => {
     resolve: {
       alias: resolvedAliases,
     },
+    ssr: isSsrBuild
+      ? {
+          noExternal: true,
+        }
+      : undefined,
   };
 });

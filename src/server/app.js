@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { inertia } from "@hono/inertia";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 
@@ -36,6 +35,7 @@ import widgetsWeather from "../pages/api/widgets/weather.js";
 import { getAssetVersion } from "./build-info.js";
 import { loadHomePageProps } from "./home-props.js";
 import { honoApiHandler, splitCatchAll } from "./api-handler-adapter.js";
+import { inertia } from "./inertia.js";
 import { rootView } from "./root-view.js";
 import { browserConfigXml, robotsTxt, siteWebmanifest } from "./static-pages.js";
 

@@ -1,17 +1,18 @@
-import { searchProviders } from "components/widgets/search/providers";
-
 import { getSettings } from "utils/config/config";
 import { widgetsFromConfig } from "utils/config/widget-helpers";
 import { cachedRequest } from "utils/proxy/http";
+import { searchProviderData } from "utils/search/providers";
 
 export default async function handler(req, res) {
   const { query, providerName } = req.query;
 
-  const provider = Object.values(searchProviders).find(({ name }) => name === providerName);
+  const matchedProvider = Object.values(searchProviderData).find(({ name }) => name === providerName);
 
-  if (!provider) {
+  if (!matchedProvider) {
     return res.json([query, []]);
   }
+
+  const provider = { ...matchedProvider };
 
   if (provider.name === "Custom") {
     const widgets = await widgetsFromConfig();

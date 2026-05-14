@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
-export const fritzboxDefaultFields = ["connectionStatus", "uptime", "maxDown", "maxUp"];
+import { fritzboxDefaultFields } from "./fields";
 
 export default function Component({ service }) {
   const { t } = useTranslation();

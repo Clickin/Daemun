@@ -8,6 +8,7 @@ RUN npm install -g pnpm@10.32.1
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY docs-site/package.json ./docs-site/package.json
+COPY runtime-deps/package.json ./runtime-deps/package.json
 RUN pnpm install --frozen-lockfile
 
 COPY . .
@@ -27,7 +28,19 @@ RUN if [ "$CI" != "true" ]; then \
       echo "Using prebuilt app from CI context"; \
     fi
 
-RUN CI=true pnpm prune --prod
+# =========================
+# Native Runtime Dependencies Stage
+# =========================
+FROM node:26-alpine AS runtime-deps
+WORKDIR /app
+
+RUN npm install -g pnpm@10.32.1
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY runtime-deps/package.json ./runtime-deps/package.json
+RUN node -e "const p = require('./runtime-deps/package.json'); const deps = { ...(p.dependencies || {}), ...(p.optionalDependencies || {}) }; process.exit(Object.keys(deps).length === 0 ? 0 : 1)" \
+      && mkdir -p /runtime-deps/node_modules \
+      || pnpm --filter @daemun/runtime-native-deps deploy --prod --legacy /runtime-deps
 
 # =========================
 # Runtime Stage
@@ -43,7 +56,7 @@ LABEL org.opencontainers.image.licenses='GPL-3.0-only'
 WORKDIR /app
 
 COPY --link --from=builder --chown=1000:1000 /app/dist ./dist
-COPY --link --from=builder --chown=1000:1000 /app/node_modules ./node_modules
+COPY --link --from=runtime-deps --chown=1000:1000 /runtime-deps/node_modules ./node_modules
 COPY --link --from=builder --chown=1000:1000 /app/package.json ./package.json
 COPY --link --from=builder --chown=1000:1000 /app/public ./public
 COPY --link --from=builder --chown=1000:1000 /app/src/skeleton ./src/skeleton

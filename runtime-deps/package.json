@@ -1,0 +1,6 @@
+{
+  "name": "@daemun/runtime-native-deps",
+  "private": true,
+  "description": "Native runtime dependencies that cannot be bundled into dist/server.",
+  "dependencies": {}
+}
