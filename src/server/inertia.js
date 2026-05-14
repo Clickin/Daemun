@@ -40,11 +40,11 @@ export function inertia(options = {}) {
       c.header("Vary", "Accept, X-Inertia");
       if (c.req.header("X-Inertia")) {
         c.header("X-Inertia", "true");
-        return c.json(page);
+        return c.json(page, 200);
       }
 
       if (c.req.header("Accept")?.includes("application/json")) {
-        return c.json(props);
+        return c.json(props, 200);
       }
 
       const rendered = rootView(page, c);
