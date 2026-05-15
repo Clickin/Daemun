@@ -16,7 +16,7 @@ import { renderHomeHtml } from "./render-home.tsx";
 import { rootView } from "./root-view.ts";
 
 const bakedHomeHeader = "X-Daemun-Static-Home";
-const defaultBakeDir = path.resolve(process.cwd(), "dist/server/ssg");
+const defaultBakeDir = path.resolve(process.env.DAEMUN_STATIC_HOME_DIR ?? path.join(process.cwd(), "dist/server/ssg"));
 const watchedConfigPattern = /\.ya?ml$/i;
 
 interface StaticHomeLogger {

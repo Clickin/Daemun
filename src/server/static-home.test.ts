@@ -90,6 +90,56 @@ describe("static home SSG cache", () => {
     expect(loadHomePageProps).toHaveBeenCalledTimes(1);
   });
 
+  it("uses DAEMUN_STATIC_HOME_DIR as the default bake directory", async () => {
+    const originalStaticHomeDir = process.env.DAEMUN_STATIC_HOME_DIR;
+    const runtimeDir = path.join(tempDir, "runtime-ssg");
+    process.env.DAEMUN_STATIC_HOME_DIR = runtimeDir;
+    vi.resetModules();
+
+    try {
+      const { bakeStaticHome } = await import("./static-home");
+
+      const result = await bakeStaticHome({ version: "runtime-dir-version" });
+
+      expect(result.filePath).toBe(path.join(runtimeDir, "index.html"));
+      await expect(readFile(path.join(runtimeDir, "index.html"), "utf8")).resolves.toBe(result.html);
+    } finally {
+      if (originalStaticHomeDir === undefined) {
+        delete process.env.DAEMUN_STATIC_HOME_DIR;
+      } else {
+        process.env.DAEMUN_STATIC_HOME_DIR = originalStaticHomeDir;
+      }
+      vi.resetModules();
+    }
+  });
+
+  it("keeps the nginx static root aligned with the runtime bake directory", async () => {
+    const entrypoint = await readFile(path.resolve(process.cwd(), "nginx-docker/entrypoint.sh"), "utf8");
+    const nginxConfig = await readFile(path.resolve(process.cwd(), "nginx-docker/nginx.conf"), "utf8");
+
+    expect(entrypoint).toContain("STATIC_HOME_DIR=/tmp/daemun/ssg");
+    expect(entrypoint).toContain('export DAEMUN_STATIC_HOME_DIR="$STATIC_HOME_DIR"');
+    expect(entrypoint).toContain('STATIC_INDEX="$STATIC_HOME_DIR/index.html"');
+    expect(nginxConfig).toContain("root /tmp/daemun/ssg;");
+    expect(nginxConfig).toContain("location /api/");
+    expect(nginxConfig).toContain("root /app/public;");
+    expect(nginxConfig).toContain("location /assets/");
+    expect(nginxConfig).toContain("alias /app/dist/client/assets/;");
+  });
+
+  it("keeps runtime config and static directories writable after dropping privileges", async () => {
+    const dockerEntrypoint = await readFile(path.resolve(process.cwd(), "docker-entrypoint.sh"), "utf8");
+    const nginxEntrypoint = await readFile(path.resolve(process.cwd(), "nginx-docker/entrypoint.sh"), "utf8");
+
+    for (const entrypoint of [dockerEntrypoint, nginxEntrypoint]) {
+      expect(entrypoint).toContain("CONFIG_DIR=$(readlink -f /app/config");
+      expect(entrypoint).toContain('chown -R "$PUID:$PGID" "$CONFIG_DIR"');
+      expect(entrypoint).toContain('chown "$PUID:$PGID" "$STATIC_HOME_DIR"');
+    }
+
+    expect(nginxEntrypoint).toContain('chown "$PUID:$PGID" /run/daemun');
+  });
+
   it("keeps the existing index.html when a bake fails", async () => {
     const { bakeStaticHome } = await import("./static-home");
     const existingHtml = "<!doctype html><title>existing snapshot</title>";
