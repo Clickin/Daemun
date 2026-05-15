@@ -20,7 +20,7 @@ export default function Component({ service }) {
   const apiVersion = parseVersionForUrl(version, 3);
   const [, gpuName] = widget.metric.split(":");
 
-  const [dataPoints, setDataPoints] = useState(new Array(pointsLimit).fill({ a: 0, b: 0 }, 0, pointsLimit));
+  const [dataPoints, setDataPoints] = useState(Array.from({ length: pointsLimit }, () => ({ a: 0, b: 0 })));
 
   const { data, error } = useWidgetAPI(widget, `${apiVersion}/gpu`, {
     refreshInterval: Math.max(defaultInterval, refreshInterval),

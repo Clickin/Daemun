@@ -72,5 +72,7 @@ describe("components/widgets/widget/container", () => {
       </Container>,
       { settings: { target: "_self" } },
     );
+
+    expect(screen.getByRole("link")).toHaveAttribute("href", "http://example");
   });
 });

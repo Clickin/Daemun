@@ -151,7 +151,7 @@ function getAllServices(services: ServiceGroupRecord[]) {
     return nestedServices;
   }
 
-  return [...services.map(getServices).flat()];
+  return services.map(getServices).flat();
 }
 
 function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "initialSettings">) {

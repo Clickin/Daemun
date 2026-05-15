@@ -19,7 +19,7 @@ export default function Component({ service }) {
   const { chart, refreshInterval = defaultInterval, pointsLimit = defaultPointsLimit, version = 3 } = widget;
   const apiVersion = parseVersionForUrl(version, 3);
 
-  const [dataPoints, setDataPoints] = useState(new Array(pointsLimit).fill({ value: 0 }, 0, pointsLimit));
+  const [dataPoints, setDataPoints] = useState(Array.from({ length: pointsLimit }, () => ({ value: 0 })));
 
   const { data, error } = useWidgetAPI(service.widget, `${apiVersion}/cpu`, {
     refreshInterval: Math.max(defaultInterval, refreshInterval),
@@ -70,7 +70,7 @@ export default function Component({ service }) {
 
       {!chart && quicklookData && !quicklookError && (
         <Block position="top-3 right-3">
-          <div className="text-[0.6rem] opacity-50">{quicklookData.cpu_name && quicklookData.cpu_name}</div>
+          <div className="text-[0.6rem] opacity-50">{quicklookData.cpu_name}</div>
         </Block>
       )}
 

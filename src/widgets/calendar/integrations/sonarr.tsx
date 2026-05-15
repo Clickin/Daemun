@@ -10,7 +10,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
     includeSeries: "true",
     includeEpisodeFile: "false",
     includeEpisodeImages: "false",
-    ...(config?.params ?? {}),
+    ...config?.params,
   });
 
   useEffect(() => {

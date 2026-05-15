@@ -4,7 +4,7 @@ import createLogger from "utils/logger";
 
 const logger = createLogger("resources");
 
-function isMissingNetworkStat(networkData, interfaceName) {
+function isMissingNetworkStat(networkData) {
   return (
     networkData.operstate === "unknown" &&
     networkData.rx_bytes === 0 &&
@@ -88,7 +88,7 @@ export default async function handler(req, res) {
         networkData = Array.isArray(directNetworkData) ? directNetworkData.at(0) : null;
 
         // si returns unknown + zeroes when interface truly does not exist
-        if (!networkData || isMissingNetworkStat(networkData, interfaceName)) {
+        if (!networkData || isMissingNetworkStat(networkData)) {
           networkData = null;
         }
       }

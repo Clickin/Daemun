@@ -58,7 +58,7 @@ export async function sendJsonRpcRequest(
       body,
     };
 
-    const [status, contentType, data] = await httpProxy(url, httpRequestParams);
+    const [status, , data] = await httpProxy(url, httpRequestParams);
     if (status === 200) {
       const json = JSON.parse(data.toString());
 

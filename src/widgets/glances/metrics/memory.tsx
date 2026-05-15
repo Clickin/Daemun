@@ -20,7 +20,7 @@ export default function Component({ service }) {
   const { refreshInterval = defaultInterval(chart), pointsLimit = defaultPointsLimit, version = 3 } = widget;
   const apiVersion = parseVersionForUrl(version, 3);
 
-  const [dataPoints, setDataPoints] = useState(new Array(pointsLimit).fill({ value: 0 }, 0, pointsLimit));
+  const [dataPoints, setDataPoints] = useState(Array.from({ length: pointsLimit }, () => ({ a: 0, b: 0 })));
 
   const { data, error } = useWidgetAPI(service.widget, `${apiVersion}/mem`, {
     refreshInterval: Math.max(defaultInterval(chart), refreshInterval),

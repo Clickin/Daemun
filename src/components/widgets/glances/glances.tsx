@@ -75,7 +75,7 @@ export default function Widget({ options }) {
         mainTemp = convertToFahrenheit(mainTemp);
         maxTemp = convertToFahrenheit(maxTemp);
       }
-    } catch (e) {
+    } catch {
       // cpu sensor retrieval failed
     }
   }

@@ -34,7 +34,7 @@ export default function Component({ service }) {
     );
   }
 
-  const datastoreIndex = !!widget.datastore
+  const datastoreIndex = widget.datastore
     ? datastoreData.data.findIndex(function (ds) {
         return ds.store == widget.datastore;
       })

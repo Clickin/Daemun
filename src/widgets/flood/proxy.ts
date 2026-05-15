@@ -22,7 +22,7 @@ async function login(widget) {
     });
   }
 
-  const [status, contentType, data] = await httpProxy(loginUrl, loginParams);
+  const [status, , data] = await httpProxy(loginUrl, loginParams);
   return [status, data];
 }
 

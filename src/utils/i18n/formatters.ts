@@ -132,7 +132,7 @@ export function addDaemunFormatters(i18next) {
   i18next.services.formatter.add("relativeDate", (value, lng, options) =>
     relativeDate(new Date(value), new Intl.RelativeTimeFormat(lng, { ...options })),
   );
-  i18next.services.formatter.add("duration", (value, lng) => duration(value, i18next));
+  i18next.services.formatter.add("duration", (value) => duration(value, i18next));
 }
 
 export const daemunFormatterPlugin = {

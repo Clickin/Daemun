@@ -8,7 +8,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
   const { data: readarrData, error: readarrError } = useWidgetAPI(config, "calendar", {
     ...params,
     includeAuthor: "true",
-    ...(config?.params ?? {}),
+    ...config?.params,
   });
 
   useEffect(() => {

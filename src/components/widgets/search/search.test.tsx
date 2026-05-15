@@ -50,7 +50,7 @@ vi.mock("@headlessui/react", async () => {
       value,
       children,
       ...props
-    }: HTMLAttributes<HTMLDivElement> & {
+    }: HTMLAttributes<HTMLButtonElement> & {
       as?: ElementType;
       children?: ReactNode | ((state: { active: boolean }) => ReactNode);
       value?: { name?: string };
@@ -58,15 +58,9 @@ vi.mock("@headlessui/react", async () => {
       const ctx = useContext(ListboxContext);
       const content = typeof children === "function" ? children({ active: false }) : children;
       return (
-        <div
-          role="option"
-          data-provider={value?.name}
-          aria-selected={ctx?.value === value}
-          onClick={() => ctx?.onChange?.(value)}
-          {...props}
-        >
+        <button type="button" data-provider={value?.name} onClick={() => ctx?.onChange?.(value)} {...props}>
           {content}
-        </div>
+        </button>
       );
     },
     ListboxOptions: passthrough,

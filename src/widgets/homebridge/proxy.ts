@@ -17,7 +17,7 @@ async function login(widget, service) {
   const loginBody = { username: widget.username.toString(), password: widget.password.toString() };
   const headers = { "Content-Type": "application/json" };
 
-  const [status, contentType, data, responseHeaders] = await httpProxy(loginUrl, {
+  const [, , data] = await httpProxy(loginUrl, {
     method: "POST",
     body: JSON.stringify(loginBody),
     headers,

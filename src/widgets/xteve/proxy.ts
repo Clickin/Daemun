@@ -24,7 +24,7 @@ export default async function xteveProxyHandler(req, res) {
   const payload: { cmd: string; token?: string } = { cmd: "status" };
 
   if (widget.username && widget.password) {
-    const [status, contentType, data] = await httpProxy(url, {
+    const [status, , data] = await httpProxy(url, {
       method,
       body: JSON.stringify({
         cmd: "login",

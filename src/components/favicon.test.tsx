@@ -70,7 +70,7 @@ describe("components/favicon", () => {
 
     expect(document.head.querySelector('link[rel="shortcut icon"]')).toBeNull();
 
-    vi.unmock("react");
+    vi.doUnmock("react");
     vi.resetModules();
   });
 });

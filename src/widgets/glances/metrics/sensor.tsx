@@ -20,7 +20,7 @@ export default function Component({ service }) {
   const apiVersion = parseVersionForUrl(version, 3);
   const [, sensorName] = widget.metric.split(":");
 
-  const [dataPoints, setDataPoints] = useState(new Array(pointsLimit).fill({ value: 0 }, 0, pointsLimit));
+  const [dataPoints, setDataPoints] = useState(Array.from({ length: pointsLimit }, () => ({ value: 0 })));
 
   const { data, error } = useWidgetAPI(service.widget, `${apiVersion}/sensors`, {
     refreshInterval: Math.max(defaultInterval, refreshInterval),

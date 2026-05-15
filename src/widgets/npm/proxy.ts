@@ -29,7 +29,7 @@ async function login(loginUrl, username, password, service) {
       const expiration = new Date(data.expires).getTime() - Date.now();
       cache.put(`${tokenCacheKey}.${service}`, data.token, expiration - 5 * 60 * 1000); // expiration -5 minutes
     }
-  } catch (e) {
+  } catch {
     logger.error(`Error ${status} logging into npm`, JSON.stringify(authResponse[2]));
   }
   return [status, data.token ?? data];

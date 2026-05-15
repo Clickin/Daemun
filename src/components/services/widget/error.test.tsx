@@ -38,7 +38,7 @@ describe("components/services/widget/error", () => {
 
     expect(screen.getByText(/inner/)).toBeInTheDocument();
     expect(screen.getByText("https://example.com")).toBeInTheDocument();
-    expect(screen.getByText(/\"code\": 1/)).toBeInTheDocument();
+    expect(screen.getByText(/"code": 1/)).toBeInTheDocument();
     // Buffer.from({type:"Buffer",data:[97,98]}).toString() === "ab"
     expect(screen.getByText(/ab/)).toBeInTheDocument();
   });

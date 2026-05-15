@@ -15,7 +15,7 @@ async function login(widget) {
     body: loginBody,
   };
 
-  const [status, contentType, data] = await httpProxy(loginUrl, loginParams);
+  const [status, , data] = await httpProxy(loginUrl, loginParams);
   return [status, data];
 }
 

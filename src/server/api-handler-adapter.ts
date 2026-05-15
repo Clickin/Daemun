@@ -1,7 +1,7 @@
 import type { Context, Handler } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
 
-import type { QueryRecord, QueryValue, UnknownRecord } from "../types";
+import type { QueryRecord } from "../types";
 
 export interface NextApiRequestCompat {
   body: unknown;

@@ -407,7 +407,7 @@ describe("utils/proxy/http httpProxy", () => {
 
     expect(logger.error).toHaveBeenCalled();
 
-    vi.unmock("node:zlib");
+    vi.doUnmock("node:zlib");
   });
 
   it("applies strict IPv4 agent options when HOMEPAGE_PROXY_DISABLE_IPV6 is true", async () => {

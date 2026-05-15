@@ -50,7 +50,7 @@ async function login(loginUrl, username, password, controllerVersionMajor, sessi
     };
   }
 
-  const [status, contentType, data, responseHeaders] = await httpProxy(loginUrl, {
+  const [status, , data, responseHeaders] = await httpProxy(loginUrl, {
     method: "POST",
     body: JSON.stringify(params),
     headers: {
@@ -85,7 +85,7 @@ export default async function omadaProxyHandler(req, res) {
 
       const controllerInfoURL = `${url}/api/info`;
 
-      let [status, contentType, data] = await httpProxy(controllerInfoURL, {
+      let [status, , data] = await httpProxy(controllerInfoURL, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -102,7 +102,7 @@ export default async function omadaProxyHandler(req, res) {
       try {
         cId = JSON.parse(data).result.omadacId;
         controllerVersion = JSON.parse(data).result.controllerVer;
-      } catch (e) {
+      } catch {
         controllerVersion = "3.2.x";
       }
 
@@ -191,7 +191,7 @@ export default async function omadaProxyHandler(req, res) {
               break;
           }
 
-          [status, contentType, data] = await httpProxy(sitesUrl, {
+          [status, , data] = await httpProxy(sitesUrl, {
             method,
             params,
             body: JSON.stringify(body),
@@ -248,7 +248,7 @@ export default async function omadaProxyHandler(req, res) {
             }
             params = { token };
 
-            [status, contentType, data] = await httpProxy(switchUrl, {
+            [status, , data] = await httpProxy(switchUrl, {
               method,
               params,
               body: JSON.stringify(body),
@@ -267,7 +267,7 @@ export default async function omadaProxyHandler(req, res) {
             }
 
             const statsUrl = `${url}/web/v1/controller?getGlobalStat=&token=${token}`;
-            [status, contentType, data] = await httpProxy(statsUrl, {
+            [status, , data] = await httpProxy(statsUrl, {
               method,
               params,
               body: JSON.stringify({
@@ -297,7 +297,7 @@ export default async function omadaProxyHandler(req, res) {
                 ? `${url}/api/v2/sites/${siteName}/dashboard/overviewDiagram?token=${token}&currentPage=1&currentPageSize=1000`
                 : `${url}/${cId}/api/v2/sites/${siteName}/dashboard/overviewDiagram?token=${token}&currentPage=1&currentPageSize=1000`;
 
-            [status, contentType, data] = await httpProxy(siteStatsUrl, {
+            [status, , data] = await httpProxy(siteStatsUrl, {
               headers: { ...headers },
             });
 
@@ -324,7 +324,7 @@ export default async function omadaProxyHandler(req, res) {
                 ? `${url}/api/v2/sites/${siteName}/alerts/num?token=${token}&currentPage=1&currentPageSize=1000`
                 : `${url}/${cId}/api/v2/sites/${siteName}/alerts/num?token=${token}&currentPage=1&currentPageSize=1000`;
 
-            [status, contentType, data] = await httpProxy(alertUrl, {
+            [status, , data] = await httpProxy(alertUrl, {
               headers: { ...headers },
             });
             const alertResponseData = JSON.parse(data);

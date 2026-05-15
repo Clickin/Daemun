@@ -162,7 +162,7 @@ export async function servicesFromDocker() {
         serverGroup = mappedServiceGroups[mappedServiceGroups.length - 1];
       }
 
-      const { name: serviceName, group: serverServiceGroup, ...pushedService } = serverService;
+      const { name: serviceName, group: _, ...pushedService } = serverService;
       const result = {
         name: serviceName,
         ...pushedService,
@@ -448,7 +448,7 @@ export function cleanServiceGroups(groups) {
         if (typeof fields === "string") {
           try {
             fieldsList = JSON.parse(fields);
-          } catch (e) {
+          } catch {
             logger.error("Invalid fields list detected in config for service '%s'", service.name);
             fieldsList = null;
           }
@@ -468,7 +468,7 @@ export function cleanServiceGroups(groups) {
           if (typeof highlight === "string") {
             try {
               parsedHighlight = JSON.parse(highlight);
-            } catch (e) {
+            } catch {
               logger.error("Invalid highlight configuration detected in config for service '%s'", service.name);
               parsedHighlight = null;
             }
@@ -632,7 +632,7 @@ export function cleanServiceGroups(groups) {
                 if (!integration || typeof integration !== "object") {
                   return integration;
                 }
-                const { url, ...integrationWithoutUrl } = integration;
+                const { url: _, ...integrationWithoutUrl } = integration;
                 return integrationWithoutUrl;
               });
             } else {

@@ -14,7 +14,7 @@ export default function Component({ service }) {
     if (data && data[0] && data[0].error) {
       try {
         finalError = JSON.parse(data[0].error);
-      } catch (e) {
+      } catch {
         finalError = data[0].error;
       }
     }

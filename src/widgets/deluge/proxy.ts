@@ -58,14 +58,14 @@ export default async function delugeProxyHandler(req, res) {
   const api = widgets?.[widget.type]?.api;
   const url = new URL(formatApiCall(api, { ...widget }));
 
-  let [status, contentType, data] = await sendRpc(url, dataMethod, dataParams);
+  let [status, , data] = await sendRpc(url, dataMethod, dataParams);
   if (status === 403) {
-    [status, contentType, data] = await login(url, widget.password);
+    [status, , data] = await login(url, widget.password);
     if (status !== 200) {
       return res.status(status).end(data);
     }
 
-    [status, contentType, data] = await sendRpc(url, dataMethod, dataParams);
+    [status, , data] = await sendRpc(url, dataMethod, dataParams);
   }
 
   return res.status(status).end(data);

@@ -8,7 +8,7 @@ let winstonLogger;
 
 function combineMessageAndSplat() {
   return {
-    transform: (info, opts) => {
+    transform: (info) => {
       // combine message and args if any
 
       info.message = utilFormat(info.message, ...(info[Symbol.for("splat")] || []));

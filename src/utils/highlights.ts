@@ -217,7 +217,7 @@ const evaluateStringRule = (value, rule) => {
       const regex = new RegExp(rule.value, flags);
       const passes = regex.test(value);
       return rule.negate ? !passes : passes;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

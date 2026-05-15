@@ -9,7 +9,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
   const { t } = useTranslation();
   const { data: radarrData, error: radarrError } = useWidgetAPI(config, "calendar", {
     ...params,
-    ...(config?.params ?? {}),
+    ...config?.params,
   });
   useEffect(() => {
     if (!radarrData || radarrError) {

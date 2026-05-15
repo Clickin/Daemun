@@ -16,7 +16,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const dockerArgs = containerServer ? getDockerArguments(containerServer) : { conn: getDockerArguments(), swarm: false };
+    const dockerArgs = containerServer
+      ? getDockerArguments(containerServer)
+      : { conn: getDockerArguments(), swarm: false };
     if (!dockerArgs) {
       return res.status(404).send({
         status: "not found",
@@ -98,7 +100,7 @@ export default async function handler(req, res) {
               status: info.State.Status,
               health: info.State.Health?.Status,
             });
-          } catch (e) {
+          } catch {
             if (task) {
               return res.status(200).json({
                 status: task.Status.State,

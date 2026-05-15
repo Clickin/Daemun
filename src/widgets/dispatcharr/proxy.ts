@@ -29,7 +29,7 @@ async function login(loginUrl, username, password, service) {
     } else {
       throw new Error(`HTTP ${status} logging into dispatcharr`);
     }
-  } catch (e) {
+  } catch {
     logger.error(`Error ${status} logging into dispatcharr`, JSON.stringify(data));
     return [status, null];
   }

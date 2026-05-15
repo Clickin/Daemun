@@ -88,7 +88,7 @@ describe("browserless YAML/Hono/JSX smoke", () => {
       const url = new URL(rawUrl, "http://localhost:3000");
       return app.request(url.pathname + url.search, {
         ...init,
-        headers: { host: "localhost:3000", ...(init?.headers ?? {}) },
+        headers: { host: "localhost:3000", ...init?.headers },
       });
     });
 

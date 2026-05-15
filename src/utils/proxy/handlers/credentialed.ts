@@ -32,9 +32,9 @@ export default async function credentialedProxyHandler(req, res, map = undefined
 
       const headers = {
         "Content-Type": "application/json",
-        ...(widgets[widget.type].headers ?? {}),
-        ...(widget.headers ?? {}),
-        ...(req.extraHeaders ?? {}),
+        ...widgets[widget.type].headers,
+        ...widget.headers,
+        ...req.extraHeaders,
       };
 
       if (widget.type === "stocks") {

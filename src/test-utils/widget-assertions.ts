@@ -7,6 +7,6 @@ export function findServiceBlockByLabel(container: ParentNode, label: string) {
 
 export function expectBlockValue(container: ParentNode, label: string, value: unknown) {
   const block = findServiceBlockByLabel(container, label);
-  expect(block, `missing block for ${label}`).toBeTruthy();
+  expect(block).toBeTruthy();
   expect(block.textContent).toContain(String(value));
 }

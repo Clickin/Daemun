@@ -26,9 +26,9 @@ export default async function genericProxyHandler(req, res, map = undefined) {
       const url = new URL(urlString);
 
       const headers: Record<string, string> = {
-        ...(widgets[widget.type].headers ?? {}),
-        ...(widget.headers ?? {}),
-        ...(req.extraHeaders ?? {}),
+        ...widgets[widget.type].headers,
+        ...widget.headers,
+        ...req.extraHeaders,
       };
 
       if (widget.username && widget.password) {

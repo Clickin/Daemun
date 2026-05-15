@@ -10,7 +10,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import ContainerForm from "../widget/container_form";
@@ -30,7 +30,7 @@ function getAvailableProviderIds(options) {
 export default function Search({ options }) {
   const { t } = useTranslation();
 
-  const availableProviderIds = getAvailableProviderIds(options) ?? [];
+  const availableProviderIds = useMemo(() => getAvailableProviderIds(options) ?? [], [options]);
 
   const [query, setQuery] = useState("");
   const [selectedProvider, setSelectedProvider] = useState(searchProviders[availableProviderIds[0] ?? "google"]);

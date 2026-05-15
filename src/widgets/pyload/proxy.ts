@@ -14,7 +14,7 @@ const isNgCacheKey = `${proxyName}__isNg`;
 function parsePyloadResponse(url, data) {
   try {
     return JSON.parse(Buffer.from(data).toString());
-  } catch (e) {
+  } catch {
     logger.error(`Error communicating with pyload API at ${url}, returned: ${JSON.stringify(data)}`);
     return data;
   }
@@ -44,7 +44,7 @@ async function fetchFromPyloadAPI(url, sessionId, params, service) {
     options.headers.Cookie = cache.get(`${sessionCacheKey}.${service}`);
   }
 
-  const [status, contentType, data, responseHeaders] = await httpProxy(url, options);
+  const [status, , data, responseHeaders] = await httpProxy(url, options);
   const returnData = parsePyloadResponse(url, data);
   return [status, returnData, responseHeaders];
 }
@@ -76,7 +76,7 @@ async function fetchFromPyloadAPIWithCredentials(url, params, username, password
     options.body = JSON.stringify(params);
   }
 
-  const [status, contentType, data, responseHeaders] = await httpProxy(parsedUrl, options);
+  const [status, , data, responseHeaders] = await httpProxy(parsedUrl, options);
   const returnData = parsePyloadResponse(parsedUrl, data);
   return [status, returnData, responseHeaders];
 }
@@ -155,7 +155,7 @@ export default async function pyloadProxyHandler(req, res, map: { ngEndpoint?: s
             return res.status(status).send({
               error: { message: "HTTP error communicating with Pyload API", data: Buffer.from(data).toString() },
             });
-          } catch (e) {
+          } catch {
             return res.status(status).send({ error: { message: "HTTP error communicating with Pyload API", data } });
           }
         }

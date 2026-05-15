@@ -11,7 +11,7 @@ export async function loadHomePageProps(): Promise<HomePageProps> {
 
   try {
     logger = createLogger("index");
-    const { providers, ...settings } = getSettings();
+    const { providers: _, ...settings } = getSettings();
 
     const services = await servicesResponse();
     const bookmarks = await bookmarksResponse();

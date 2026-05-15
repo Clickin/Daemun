@@ -25,7 +25,7 @@ export default function Component({ service }) {
 
   const [, interfaceName] = metric.split(":");
 
-  const [dataPoints, setDataPoints] = useState(new Array(pointsLimit).fill({ value: 0 }, 0, pointsLimit));
+  const [dataPoints, setDataPoints] = useState(Array.from({ length: pointsLimit }, () => ({ a: 0, b: 0 })));
 
   const { data, error } = useWidgetAPI(widget, `${apiVersion}/network`, {
     refreshInterval: Math.max(defaultInterval(chart), refreshInterval),

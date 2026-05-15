@@ -24,7 +24,7 @@ export default async function urbackupProxyHandler(req, res) {
         diskUsage,
         maxDays: serviceWidget.maxDays,
       });
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: "Error communicating with UrBackup server" });
     }
   })();

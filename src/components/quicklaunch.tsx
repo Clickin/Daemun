@@ -94,7 +94,8 @@ export default function QuickLaunch({
     if (Array.isArray(searchWidget.options?.provider)) {
       // If search provider is a list, try to retrieve from localstorage, fall back to the first
       const providerName = searchWidget.options.provider[0];
-      searchProvider = (getStoredProvider() as SearchProvider | null) ?? (providerName ? providerMap[providerName] : undefined);
+      searchProvider =
+        (getStoredProvider() as SearchProvider | null) ?? (providerName ? providerMap[providerName] : undefined);
     } else if (searchWidget.options?.provider === "custom") {
       searchProvider = searchWidget.options;
     } else if (typeof searchWidget.options?.provider === "string") {
@@ -143,7 +144,7 @@ export default function QuickLaunch({
       setUrl(new URL(urlString)); // basic validation
       setSearchString(rawSearchString);
       return;
-    } catch (e) {
+    } catch {
       setUrl(null);
     }
     setSearchString(rawSearchString.toLowerCase());
@@ -321,13 +322,15 @@ export default function QuickLaunch({
           !hidden && isOpen && "opacity-100",
           !isOpen && "opacity-0",
         )}
-        role="dialog"
-        aria-modal="true"
       >
         <div className="fixed inset-0 bg-gray-500 opacity-50" />
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full min-w-full items-start justify-center text-center">
-            <dialog className="mt-[10%] mx-auto min-w-[90%] max-w-[90%] md:min-w-[40%] md:max-w-[40%] rounded-md p-0 block font-medium text-theme-700 dark:text-theme-200 dark:hover:text-theme-300 shadow-md shadow-theme-900/10 dark:shadow-theme-900/20 bg-theme-50 dark:bg-theme-800">
+            <dialog
+              open
+              aria-modal="true"
+              className="mt-[10%] mx-auto min-w-[90%] max-w-[90%] md:min-w-[40%] md:max-w-[40%] rounded-md p-0 block font-medium text-theme-700 dark:text-theme-200 dark:hover:text-theme-300 shadow-md shadow-theme-900/10 dark:shadow-theme-900/20 bg-theme-50 dark:bg-theme-800"
+            >
               <input
                 name="daemun-quicklaunch"
                 placeholder="Search"
@@ -362,7 +365,7 @@ export default function QuickLaunch({
                           {(r.icon || r.abbr) && (
                             <div className="w-5 text-xs mr-4">
                               {r.icon && <ResolvedIcon icon={r.icon} />}
-                              {r.abbr && r.abbr}
+                              {r.abbr}
                             </div>
                           )}
                           <div className="flex flex-col md:flex-row text-left items-baseline mr-4 pointer-events-none">
@@ -385,7 +388,7 @@ export default function QuickLaunch({
                           </div>
                         </div>
                         <div className="text-xs text-theme-600 font-bold pointer-events-none">
-                          {t(`quicklaunch.${r.type ? r.type.toLowerCase() : "bookmark"}`)}
+                          {t(`quicklaunch.${r.type?.toLowerCase() ?? "bookmark"}`)}
                         </div>
                       </button>
                     </li>

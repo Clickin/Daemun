@@ -21,9 +21,9 @@ export default function Component({ service }) {
   const [, diskName] = widget.metric.split(":");
 
   const [dataPoints, setDataPoints] = useState(
-    new Array(pointsLimit).fill({ read_bytes: 0, write_bytes: 0, time_since_update: 0 }, 0, pointsLimit),
+    Array.from({ length: pointsLimit }, () => ({ read_bytes: 0, write_bytes: 0, time_since_update: 0 })),
   );
-  const [ratePoints, setRatePoints] = useState(new Array(pointsLimit).fill({ a: 0, b: 0 }, 0, pointsLimit));
+  const [ratePoints, setRatePoints] = useState(Array.from({ length: pointsLimit }, () => ({ a: 0, b: 0 })));
 
   const { data, error } = useWidgetAPI(service.widget, `${apiVersion}/diskio`, {
     refreshInterval: Math.max(defaultInterval, refreshInterval),

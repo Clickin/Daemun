@@ -142,7 +142,7 @@ function getColor(mapping, customData) {
       try {
         const number = parseFloat(value);
         return number > 0 ? "text-emerald-300" : "text-rose-300";
-      } catch (e) {
+      } catch {
         return "";
       }
     case "black":

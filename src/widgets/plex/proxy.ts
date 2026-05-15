@@ -54,7 +54,7 @@ async function fetchFromPlexAPI(endpoint, widget) {
 
   try {
     return [status, parseXml(data), contentType];
-  } catch (e) {
+  } catch {
     logger.error("Error decoding Plex API data. Data: %s", data.toString());
     return [status, null];
   }

@@ -33,7 +33,7 @@ export default function Component({ service }) {
           src={widget?.src}
           key={`${widget?.name}-${refreshTimer}`}
           name={widget?.name}
-          title={widget?.name}
+          title={String(widget?.name ?? "Daemun embedded widget")}
           allow={widget?.allowPolicy}
           allowFullScreen={widget?.allowfullscreen}
           referrerPolicy={widget?.referrerPolicy}

@@ -27,7 +27,7 @@ async function login(loginUrl, username, password, service) {
     if (status === 200) {
       cache.put(`${tokenCacheKey}.${service}`, data.token);
     }
-  } catch (e) {
+  } catch {
     logger.error(`Error ${status} logging into beszel`, JSON.stringify(authResponse[2]));
   }
   return [status, data.token ?? data];

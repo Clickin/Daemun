@@ -51,7 +51,7 @@ async function login(loginSecret, deviceSecret, params) {
     const serverEncryptionToken = createEncryptionToken(loginSecret, sessionToken);
     const deviceEncryptionToken = createEncryptionToken(deviceSecret, sessionToken);
     return [status, decryptedData, contentType, serverEncryptionToken, deviceEncryptionToken, sessionToken];
-  } catch (e) {
+  } catch {
     logger.error("Error decoding jdownloader API data. Data: %s", data.toString());
     return [status, null];
   }
@@ -79,7 +79,7 @@ async function getDevice(serverEncryptionToken, deviceName, params) {
     const decryptedData = JSON.parse(decrypt(data.toString(), serverEncryptionToken));
     const filteredDevice = decryptedData.list.filter((device) => device.name === deviceName);
     return [status, filteredDevice[0].id];
-  } catch (e) {
+  } catch {
     logger.error("Error decoding jdownloader API data. Data: %s", data.toString());
     return [status, null];
   }
@@ -113,7 +113,7 @@ async function queryPackages(deviceEncryptionToken, deviceId, sessionToken, para
   try {
     const decryptedData = JSON.parse(decrypt(data.toString(), deviceEncryptionToken));
     return decryptedData.data;
-  } catch (e) {
+  } catch {
     logger.error("Error decoding JDRss jdownloader data. Data: %s", data.toString());
     return [status, null];
   }

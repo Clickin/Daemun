@@ -12,13 +12,10 @@ interface ColorProviderProps {
   initialColor?: ColorValue;
 }
 
-let lastColor: ColorValue | false = false;
-
 const getInitialColor = () => {
   if (typeof window !== "undefined" && window.localStorage) {
     const storedPrefs = window.localStorage.getItem("theme-color");
     if (typeof storedPrefs === "string") {
-      lastColor = storedPrefs;
       return storedPrefs;
     }
   }
@@ -47,8 +44,6 @@ export function ColorProvider({ initialColor, children }: ColorProviderProps) {
     root.classList.add(desiredClass);
 
     localStorage.setItem("theme-color", rawColor);
-
-    lastColor = rawColor;
   };
 
   useEffect(() => {

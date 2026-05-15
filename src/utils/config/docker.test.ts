@@ -45,13 +45,11 @@ describe("utils/config/docker", () => {
     const args = getDockerArguments();
 
     expect(checkAndCopyConfig).toHaveBeenCalledWith("docker.yaml");
-    // if running on linux, should return socketPath
-    if (process.platform !== "win32" && process.platform !== "darwin") {
-      expect(args).toEqual({ socketPath: "/var/run/docker.sock" });
-    } else {
-      // otherwise, should return host
-      expect(args).toEqual(expect.objectContaining({ host: expect.any(String) }));
-    }
+    const defaultSocketArgs = { socketPath: "/var/run/docker.sock" };
+    const defaultHostArgs = expect.objectContaining({ host: expect.any(String) });
+    const expectedArgs =
+      process.platform !== "win32" && process.platform !== "darwin" ? defaultSocketArgs : defaultHostArgs;
+    expect(args).toEqual(expectedArgs);
   });
 
   it("returns socket config when server has a socket", () => {

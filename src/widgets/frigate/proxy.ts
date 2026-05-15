@@ -8,7 +8,7 @@ import widgets from "widgets/widgets";
 const proxyName = "frigateProxyHandler";
 const logger = createLogger(proxyName);
 
-export default async function frigateProxyHandler(req, res, map = undefined) {
+export default async function frigateProxyHandler(req, res) {
   const { group, service, endpoint, index } = req.query;
 
   if (group && service) {

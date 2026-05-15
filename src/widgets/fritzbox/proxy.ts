@@ -32,7 +32,7 @@ async function requestEndpoint(apiBaseUrl, service, action) {
   const response: Record<string, string> = {};
   try {
     Object.assign(response, parseSoapBody(data));
-  } catch (e) {
+  } catch {
     logger.debug(`Failed parsing ${service}->${action} response:`, data);
     throw new Error(`Failed parsing '${action}' response`);
   }

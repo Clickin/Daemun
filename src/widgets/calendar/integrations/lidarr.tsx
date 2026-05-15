@@ -8,7 +8,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
   const { data: lidarrData, error: lidarrError } = useWidgetAPI(config, "calendar", {
     ...params,
     includeArtist: "false",
-    ...(config?.params ?? {}),
+    ...config?.params,
   });
 
   useEffect(() => {

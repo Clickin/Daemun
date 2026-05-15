@@ -49,7 +49,7 @@ async function getApiInfo(serviceWidget, apiName, serviceName) {
 
   const infoUrl = formatApiCall(INFO_ENDPOINT, serviceWidget);
 
-  const [status, contentType, data] = await httpProxy(infoUrl);
+  const [status, , data] = await httpProxy(infoUrl);
 
   if (status === 200) {
     try {

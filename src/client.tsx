@@ -23,7 +23,7 @@ function mergeBakedInitialPageProps(props) {
       ...props.initialPage,
       props: {
         ...bakedPageProps,
-        ...(props.initialPage.props ?? {}),
+        ...props.initialPage.props,
       },
     },
   };
