@@ -1,13 +1,13 @@
 import { mkdtempSync, rmSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
 import { Hono } from "hono";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { loadHomePageProps } = vi.hoisted(() => ({
-  loadHomePageProps: vi.fn<VitestMockProcedure>(async () => ({
+const { loadHomePageProps, staticHomeProps } = vi.hoisted(() => {
+  const staticHomeProps = {
     fallback: {
       "/api/bookmarks": [
         {
@@ -30,8 +30,13 @@ const { loadHomePageProps } = vi.hoisted(() => ({
     },
     initialSettings: { color: "emerald", hideVersion: true, layout: {}, theme: "light", title: "Static Lab" },
     locale: "en",
-  })),
-}));
+  };
+
+  return {
+    loadHomePageProps: vi.fn<VitestMockProcedure>(async () => staticHomeProps),
+    staticHomeProps,
+  };
+});
 
 vi.mock("./home-props", () => ({
   loadHomePageProps,
@@ -41,6 +46,17 @@ vi.mock("utils/i18n", () => ({
   default: { changeLanguage: vi.fn<VitestMockProcedure>(), language: "en" },
   loadLanguage: vi.fn<VitestMockProcedure>(async (language) => language),
 }));
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((promiseResolve, promiseReject) => {
+    resolve = promiseResolve;
+    reject = promiseReject;
+  });
+
+  return { promise, reject, resolve };
+}
 
 describe("static home SSG cache", () => {
   let tempDir;
@@ -74,6 +90,53 @@ describe("static home SSG cache", () => {
     expect(loadHomePageProps).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps the existing index.html when a bake fails", async () => {
+    const { bakeStaticHome } = await import("./static-home");
+    const existingHtml = "<!doctype html><title>existing snapshot</title>";
+    await writeFile(path.join(tempDir, "index.html"), existingHtml);
+    loadHomePageProps.mockRejectedValueOnce(new Error("bake boom"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      await expect(bakeStaticHome({ dir: tempDir, version: "failed-version" })).rejects.toThrow();
+    } finally {
+      consoleError.mockRestore();
+    }
+
+    await expect(readFile(path.join(tempDir, "index.html"), "utf8")).resolves.toBe(existingHtml);
+    const entries = await readdir(tempDir);
+    expect(entries.filter((entry) => entry.startsWith(".bake-"))).toEqual([]);
+  });
+
+  it("replaces only index.html after a successful bake", async () => {
+    const { bakeStaticHome } = await import("./static-home");
+    const sentinelPath = path.join(tempDir, "sentinel.txt");
+    await writeFile(path.join(tempDir, "index.html"), "<!doctype html><title>old snapshot</title>");
+    await writeFile(sentinelPath, "keep me");
+
+    const result = await bakeStaticHome({ dir: tempDir, version: "replacement-version" });
+
+    await expect(readFile(sentinelPath, "utf8")).resolves.toBe("keep me");
+    expect(result.html).toContain("<title>Static Lab</title>");
+    expect(result.html).toContain('"version":"replacement-version"');
+    await expect(readFile(path.join(tempDir, "index.html"), "utf8")).resolves.toBe(result.html);
+    const entries = await readdir(tempDir);
+    expect(entries.filter((entry) => entry.startsWith(".bake-"))).toEqual([]);
+  });
+
+  it("removes stale bake staging directories before writing a fresh snapshot", async () => {
+    const { bakeStaticHome } = await import("./static-home");
+    const staleDir = path.join(tempDir, ".bake-123-stale");
+    await writeFile(path.join(tempDir, "index.html"), "<!doctype html><title>existing snapshot</title>");
+    await mkdir(staleDir);
+    await writeFile(path.join(staleDir, "index.html"), "<!doctype html><title>stale staging</title>");
+
+    await bakeStaticHome({ dir: tempDir, version: "cleanup-version" });
+
+    const entries = await readdir(tempDir);
+    expect(entries.filter((entry) => entry.startsWith(".bake-"))).toEqual([]);
+  });
+
   it("serves baked HTML only for browser home requests", async () => {
     const { StaticHomeCache } = await import("./static-home");
     const cache = new StaticHomeCache({
@@ -103,6 +166,58 @@ describe("static home SSG cache", () => {
       headers: { accept: "text/html" },
     });
     expect(await queryResponse.text()).toBe("dynamic");
+  });
+
+  it("runs one follow-up bake after a refresh is queued during an active bake", async () => {
+    const { StaticHomeCache } = await import("./static-home");
+    const firstProps = deferred<Awaited<ReturnType<typeof loadHomePageProps>>>();
+    const secondProps = deferred<Awaited<ReturnType<typeof loadHomePageProps>>>();
+    let activeLoads = 0;
+    let maxActiveLoads = 0;
+    loadHomePageProps
+      .mockImplementationOnce(async () => {
+        activeLoads += 1;
+        maxActiveLoads = Math.max(maxActiveLoads, activeLoads);
+        try {
+          return await firstProps.promise;
+        } finally {
+          activeLoads -= 1;
+        }
+      })
+      .mockImplementationOnce(async () => {
+        activeLoads += 1;
+        maxActiveLoads = Math.max(maxActiveLoads, activeLoads);
+        try {
+          return await secondProps.promise;
+        } finally {
+          activeLoads -= 1;
+        }
+      });
+    const cache = new StaticHomeCache({
+      dir: tempDir,
+      enabled: true,
+      logger: { info: vi.fn<VitestMockProcedure>(), warn: vi.fn<VitestMockProcedure>() },
+      watch: false,
+    });
+
+    const firstRefresh = cache.refresh("first");
+    await vi.waitFor(() => expect(loadHomePageProps).toHaveBeenCalledTimes(1));
+    const queuedRefresh = cache.refresh("second");
+    let queuedRefreshSettled = false;
+    void queuedRefresh.then(() => {
+      queuedRefreshSettled = true;
+    });
+    firstProps.resolve(staticHomeProps);
+    await vi.waitFor(() => expect(loadHomePageProps).toHaveBeenCalledTimes(2));
+    await Promise.resolve();
+    expect(queuedRefreshSettled).toBe(false);
+    secondProps.resolve(staticHomeProps);
+
+    await expect(firstRefresh).resolves.toBe(true);
+    await expect(queuedRefresh).resolves.toBe(true);
+    expect(queuedRefreshSettled).toBe(true);
+    expect(loadHomePageProps).toHaveBeenCalledTimes(2);
+    expect(maxActiveLoads).toBe(1);
   });
 
   it("detects config file names that should refresh the baked page", async () => {

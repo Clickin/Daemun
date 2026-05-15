@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { existsSync, type FSWatcher } from "node:fs";
 import { mkdir, watch as watchConfigDir } from "node:fs";
 import fs from "node:fs/promises";
@@ -37,6 +38,41 @@ interface StaticHomeBakeOptions {
 
 function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error);
+}
+
+function isFsError(error: unknown, code: string) {
+  return error instanceof Error && "code" in error && error.code === code;
+}
+
+async function createBakeStagingDir(dir: string) {
+  await fs.mkdir(dir, { recursive: true });
+  await cleanupStaleBakeStagingDirs(dir);
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const stagingDir = path.join(dir, `.bake-${process.pid}-${randomUUID()}`);
+    try {
+      await fs.mkdir(stagingDir, { recursive: false });
+      return stagingDir;
+    } catch (error) {
+      if (isFsError(error, "EEXIST")) continue;
+      throw error;
+    }
+  }
+
+  throw new Error("Could not create a unique static home staging directory");
+}
+
+async function cleanupStaleBakeStagingDirs(dir: string) {
+  const entries = await fs.readdir(dir).catch((error) => {
+    if (isFsError(error, "ENOENT")) return [];
+    throw error;
+  });
+
+  await Promise.all(
+    entries
+      .filter((entry) => entry.startsWith(".bake-"))
+      .map((entry) => fs.rm(path.join(dir, entry), { force: true, recursive: true }).catch(() => undefined)),
+  );
 }
 
 type ActiveStaticHomeCache = Pick<StaticHomeCache, "refresh">;
@@ -85,23 +121,42 @@ export async function bakeStaticHome({
   dir = defaultBakeDir,
   version = getAssetVersion(),
 }: StaticHomeBakeOptions = {}) {
-  await fs.rm(dir, { force: true, recursive: true });
+  let stagingDir: string | null = null;
 
-  const result = await toSSG(createStaticHomeApp(version), fs, {
-    concurrency: 1,
-    dir,
-  });
+  try {
+    stagingDir = await createBakeStagingDir(dir);
 
-  if (!result.success) {
-    throw result.error ?? new Error("Static home generation failed");
+    const result = await toSSG(createStaticHomeApp(version), fs, {
+      concurrency: 1,
+      dir: stagingDir,
+    });
+
+    if (!result.success) {
+      throw result.error ?? new Error("Static home generation failed");
+    }
+
+    const stagingIndex = path.join(stagingDir, "index.html");
+    const html = await fs.readFile(stagingIndex, "utf8");
+    if (html.length === 0) {
+      throw new Error("Static home generation produced an empty index.html");
+    }
+
+    const filePath = path.join(dir, "index.html");
+    await fs.rename(stagingIndex, filePath);
+
+    return {
+      filePath,
+      files: result.files.map((file) => {
+        const relativePath = path.relative(stagingDir, file);
+        return relativePath.startsWith("..") || path.isAbsolute(relativePath) ? file : path.join(dir, relativePath);
+      }),
+      html,
+    };
+  } finally {
+    if (stagingDir) {
+      await fs.rm(stagingDir, { force: true, recursive: true }).catch(() => undefined);
+    }
   }
-
-  const filePath = path.join(dir, "index.html");
-  return {
-    filePath,
-    files: result.files,
-    html: await fs.readFile(filePath, "utf8"),
-  };
 }
 
 export class StaticHomeCache {
@@ -146,31 +201,40 @@ export class StaticHomeCache {
 
   async refresh(reason = "manual") {
     if (!this.enabled) return false;
+    this.queuedRefreshReason = reason;
     if (this.refreshPromise) {
-      this.queuedRefreshReason = reason;
       return this.refreshPromise;
     }
 
-    this.refreshPromise = bakeStaticHome({ dir: this.dir, version: this.version })
-      .then(({ html }) => {
-        this.html = html;
-        this.logger.info?.(`Static home baked (${reason})`);
-        return true;
-      })
-      .catch((error) => {
-        this.logger.warn?.(`Static home bake failed (${reason}): ${errorMessage(error)}`);
-        return false;
-      })
-      .finally(() => {
-        this.refreshPromise = null;
-        const queuedReason = this.queuedRefreshReason;
-        this.queuedRefreshReason = null;
-        if (queuedReason) {
-          this.scheduleRefresh(queuedReason);
-        }
-      });
+    this.refreshPromise = this.drainRefreshQueue();
 
     return this.refreshPromise;
+  }
+
+  private async drainRefreshQueue() {
+    let lastResult = false;
+
+    try {
+      while (this.queuedRefreshReason) {
+        const reason = this.queuedRefreshReason;
+        this.queuedRefreshReason = null;
+
+        lastResult = await bakeStaticHome({ dir: this.dir, version: this.version })
+          .then(({ html }) => {
+            this.html = html;
+            this.logger.info?.(`Static home baked (${reason})`);
+            return true;
+          })
+          .catch((error) => {
+            this.logger.warn?.(`Static home bake failed (${reason}): ${errorMessage(error)}`);
+            return false;
+          });
+      }
+
+      return lastResult;
+    } finally {
+      this.refreshPromise = null;
+    }
   }
 
   scheduleRefresh(reason: string) {
