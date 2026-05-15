@@ -47,7 +47,7 @@ RUN node -e "const p = require('./runtime-deps/package.json'); const deps = { ..
 # =========================
 FROM node:26-alpine AS runner
 LABEL org.opencontainers.image.title="Daemun"
-LABEL org.opencontainers.image.description="A self-hosted services landing page, with docker and service integrations."
+LABEL org.opencontainers.image.description="A Hono-powered self-hosted dashboard for homelab services, widgets, and YAML-compatible Homepage configurations."
 LABEL org.opencontainers.image.url="https://github.com/Clickin/Daemun"
 LABEL org.opencontainers.image.documentation='https://github.com/Clickin/Daemun'
 LABEL org.opencontainers.image.source='https://github.com/Clickin/Daemun'

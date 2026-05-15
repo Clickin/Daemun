@@ -92,6 +92,9 @@ The default image serves `/`, static assets, and API requests from the direct
 Node/Hono runtime. Use `ghcr.io/clickin/daemun:latest-nginx` if you specifically
 want nginx in front of Daemun on port `80`.
 
+Before the first tagged release, branch images are available as
+`ghcr.io/clickin/daemun:main` and `ghcr.io/clickin/daemun:main-nginx`.
+
 ## Build From Source
 
 ```bash

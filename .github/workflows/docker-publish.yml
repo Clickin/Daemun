@@ -8,10 +8,9 @@ on:
       - main
       - feature/**
       - fix/**
-      - dev
     tags: ["v*.*.*"]
   pull_request:
-    branches: ["dev"]
+    branches: ["main"]
   merge_group:
 
 env:
@@ -41,12 +40,13 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=ref,event=tag
+            type=raw,value=latest,enable={{is_default_branch}}
             # Versioning tags
             type=semver,pattern=v{{version}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{major}}
           flavor: |
-            latest=auto
+            latest=false
 
       - name: Extract nginx Docker metadata
         id: meta-nginx
@@ -55,16 +55,16 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             # Default tags
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=ref,event=tag
+            type=schedule,pattern=nightly-nginx
+            type=ref,event=branch,suffix=-nginx
+            type=ref,event=tag,suffix=-nginx
+            type=raw,value=latest-nginx,enable={{is_default_branch}}
             # Versioning tags
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}.{{minor}}
-            type=semver,pattern=v{{major}}
+            type=semver,pattern=v{{version}},suffix=-nginx
+            type=semver,pattern=v{{major}}.{{minor}},suffix=-nginx
+            type=semver,pattern=v{{major}},suffix=-nginx
           flavor: |
-            latest=auto
-            suffix=-nginx,onlatest=true
+            latest=false
 
       - name: Install pnpm
         uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4

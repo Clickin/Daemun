@@ -25,6 +25,10 @@ The default image runs the direct Node/Hono runtime on port `3000`. If you want
 nginx to serve the baked home page and static assets in front of Daemun, use
 `ghcr.io/clickin/daemun:latest-nginx` and expose `80:80`.
 
+Pre-release branch images are tagged as `main` and `main-nginx`. Release tags
+publish both `latest`/`latest-nginx` and versioned tags such as
+`v1.14.0`/`v1.14.0-nginx`.
+
 ### Static Files
 
 Daemun serves static files from `/app/public` inside the container. Mount only
@@ -53,6 +57,10 @@ background: /images/background.png
 In this example, Daemun serves `/icons/jellyfin.png` from
 `/app/public/icons/jellyfin.png` and `/images/background.png` from
 `/app/public/images/background.png`.
+
+If a running container has `/docker-entrypoint.sh` at the filesystem root and no
+`/app` directory, it is an upstream nginx image, not the Daemun nginx image.
+Check the image field and use a `ghcr.io/clickin/daemun:*` tag.
 
 ### Running as non-root
 

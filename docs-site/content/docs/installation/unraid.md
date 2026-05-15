@@ -3,14 +3,14 @@ title: UNRAID Installation
 description: Install and run Daemun on UNRAID
 ---
 
-Daemun can be run on UNRAID with a custom Docker container template. If you already use an upstream-compatible Homepage template, set the image repository to `ghcr.io/clickin/daemun:latest` and keep your existing `/app/config` mount.
+Daemun can be run on UNRAID with a custom Docker container template. If you already use an upstream-compatible Homepage template, keep your existing `/app/config` mount and pick one of the Daemun images below.
 
 ## Install the Container
 
 - In the UNRAID webGUI, go to the **Apps** tab.
 - Create a new Docker container from the UNRAID webGUI.
-- Set the repository/image to `ghcr.io/clickin/daemun:latest`.
-- Expose port `80` and mount your config directory to `/app/config`.
+- Set the repository/image to `ghcr.io/clickin/daemun:latest` for the direct Node/Hono image, or `ghcr.io/clickin/daemun:latest-nginx` for the nginx-fronted image.
+- Expose container port `3000` for `latest`, or container port `80` for `latest-nginx`, and mount your config directory to `/app/config`.
 - Set `HOMEPAGE_ALLOWED_HOSTS` to the host name and port you use to open Daemun.
 - Change the parameters to your liking.
   - Click on **APPLY**.
