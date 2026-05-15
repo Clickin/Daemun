@@ -175,7 +175,7 @@ Daemun sets few other PWA configurations, that are based on global settings in `
 - `display` - It is always set to "standalone".
 - `start_url` - Equal to the [`startUrl`](#start-url) setting.
 
-More information for wach of the PWA configurations can be found in the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference).
+More information for each of the PWA configurations can be found in the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference).
 
 ## Layout
 
@@ -194,7 +194,7 @@ As an example, this lays the `Media` group out in a row with up to four cards.
 
 ### Icons-Only Layout
 
-You can also specify the an icon-only layout for bookmarks, either like so:
+You can also specify an icon-only layout for bookmarks, either like so:
 
 ```yaml
 layout:
@@ -364,7 +364,7 @@ layout:
     initiallyCollapsed: true
 ```
 
-This can also be set globaly using the `groupsInitiallyCollapsed` option.
+This can also be set globally using the `groupsInitiallyCollapsed` option.
 
 ```yaml
 groupsInitiallyCollapsed: true
