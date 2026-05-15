@@ -34,7 +34,8 @@ const config = {
   concurrency: Number(process.env.BENCH_CONCURRENCY || 32),
   sampleDuringStress: process.env.BENCH_SAMPLE_DURING_STRESS === "1",
   browserTimings: process.env.BENCH_BROWSER_TIMINGS !== "0",
-  browserBin: process.env.BENCH_BROWSER_BIN || process.env.CHROME_PATH || process.env.CHROMIUM_PATH || process.env.MSEDGE_PATH,
+  browserBin:
+    process.env.BENCH_BROWSER_BIN || process.env.CHROME_PATH || process.env.CHROMIUM_PATH || process.env.MSEDGE_PATH,
   browserIterations: Number(process.env.BENCH_BROWSER_ITERATIONS || 7),
   browserWarmupIterations: Number(process.env.BENCH_BROWSER_WARMUP_ITERATIONS || 1),
   endpoints: configuredEndpoints,

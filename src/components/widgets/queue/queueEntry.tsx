@@ -16,7 +16,9 @@ export default function QueueEntry({ title, activity, timeLeft, progress = 0, si
         }}
       />
       <div className="text-xs z-10 self-center ml-2 relative h-4 grow mr-2">
-        <div className="absolute w-full whitespace-nowrap text-ellipsis overflow-hidden text-left">{String(title ?? "")}</div>
+        <div className="absolute w-full whitespace-nowrap text-ellipsis overflow-hidden text-left">
+          {String(title ?? "")}
+        </div>
       </div>
       <div className="self-center text-xs flex justify-end mr-1.5 pl-1 z-10 text-ellipsis overflow-hidden whitespace-nowrap">
         {size ? `${size} - ` : ""}

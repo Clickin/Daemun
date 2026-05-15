@@ -173,7 +173,19 @@ function createIco(pngBuffers) {
 }
 
 function runSharpCli(input, output, width, height = width) {
-  const pnpmArgs = ["dlx", "sharp-cli", "-i", input, "-o", output, "-f", "png", "resize", String(width), String(height)];
+  const pnpmArgs = [
+    "dlx",
+    "sharp-cli",
+    "-i",
+    input,
+    "-o",
+    output,
+    "-f",
+    "png",
+    "resize",
+    String(width),
+    String(height),
+  ];
   const command = process.env.npm_execpath ? process.execPath : process.platform === "win32" ? "pnpm.cmd" : "pnpm";
   const args = process.env.npm_execpath ? [process.env.npm_execpath, ...pnpmArgs] : pnpmArgs;
   const result = spawnSync(command, args, {

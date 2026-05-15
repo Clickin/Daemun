@@ -80,7 +80,9 @@ export function parseSoapBody(xml: Buffer | string): Record<string, string> {
   const envelope = nodes.find((node) =>
     node.children.some((child) => isElementNode(child) && localName(child.tagName) === "Body"),
   );
-  const body = envelope?.children.find((child): child is TNode => isElementNode(child) && localName(child.tagName) === "Body");
+  const body = envelope?.children.find(
+    (child): child is TNode => isElementNode(child) && localName(child.tagName) === "Body",
+  );
   const responseNode = body?.children.find(isElementNode);
 
   if (!responseNode) {
@@ -88,8 +90,6 @@ export function parseSoapBody(xml: Buffer | string): Record<string, string> {
   }
 
   return Object.fromEntries(
-    responseNode.children
-      .filter(isElementNode)
-      .map((child) => [localName(child.tagName), textContent(child)]),
+    responseNode.children.filter(isElementNode).map((child) => [localName(child.tagName), textContent(child)]),
   );
 }

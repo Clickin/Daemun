@@ -30,7 +30,11 @@ describe("utils/proxy/use-widget-api", () => {
 
   it("returns data.error as the top-level error", () => {
     const dataError = { message: "nope" };
-    useApiQueryMock.mockReturnValue({ data: { error: dataError }, error: undefined, mutate: vi.fn<VitestMockProcedure>() });
+    useApiQueryMock.mockReturnValue({
+      data: { error: dataError },
+      error: undefined,
+      mutate: vi.fn<VitestMockProcedure>(),
+    });
 
     const widget = { service_group: "g", service_name: "s", index: 0 };
     const result = useWidgetAPI(widget, "status", {});

@@ -99,7 +99,7 @@ Each service can have multiple widgets attached to it, for example:
 
 :::note
 
-  Multiple widgets per service are not yet supported with Kubernetes ingress annotations.
+Multiple widgets per service are not yet supported with Kubernetes ingress annotations.
 :::
 
 #### Custom HTTP headers
@@ -228,7 +228,7 @@ To use a local icon, first create a Docker mount to `/app/public/icons` and then
 
 :::caution
 
-  Material Design Icons for **brands** were deprecated and may be removed in the future. Using Simple Icons for brand icons will prevent any issues if / when the Material Design Icons are removed.
+Material Design Icons for **brands** were deprecated and may be removed in the future. Using Simple Icons for brand icons will prevent any issues if / when the Material Design Icons are removed.
 :::
 
 ```yaml
@@ -259,7 +259,7 @@ Services may have an optional `ping` property that allows you to monitor the ava
 
 :::note
 
-  Because ping uses the ping command on the underlying host, in some cases you may need to install e.g. the `iputils-ping` package on the host system.
+Because ping uses the ping command on the underlying host, in some cases you may need to install e.g. the `iputils-ping` package on the host system.
 :::
 
 ```yaml
@@ -331,7 +331,7 @@ Services may be connected to a Docker container, either running on the local mac
 
 :::note
 
-  This can also be controlled with `showStats`. See [show docker stats](docker/#show-stats) for more information
+This can also be controlled with `showStats`. See [show docker stats](docker/#show-stats) for more information
 :::
 
 <img width="1038" alt="Docker Stats Expanded" src="https://github.com/gethomepage/homepage/assets/88257202/f95fd595-449e-48ae-af67-fd89618904ec">

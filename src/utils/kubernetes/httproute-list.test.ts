@@ -9,10 +9,14 @@ const { state, getKubernetes, getKubeConfig, logger } = vi.hoisted(() => {
       b: [{ metadata: { name: "r2" } }],
     },
     crd: {
-      listNamespacedCustomObject: vi.fn<VitestMockProcedure>(async ({ namespace }) => ({ items: state.routesByNs[namespace] ?? [] })),
+      listNamespacedCustomObject: vi.fn<VitestMockProcedure>(async ({ namespace }) => ({
+        items: state.routesByNs[namespace] ?? [],
+      })),
     },
     core: {
-      listNamespace: vi.fn<VitestMockProcedure>(async () => ({ items: state.namespaces.map((n) => ({ metadata: { name: n } })) })),
+      listNamespace: vi.fn<VitestMockProcedure>(async () => ({
+        items: state.namespaces.map((n) => ({ metadata: { name: n } })),
+      })),
     },
     kc: {
       makeApiClient: vi.fn<VitestMockProcedure>((Api) => (Api.name === "CoreV1Api" ? state.core : state.crd)),

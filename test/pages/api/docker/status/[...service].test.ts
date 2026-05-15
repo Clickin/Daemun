@@ -74,7 +74,9 @@ describe("pages/api/docker/status/[...service]", () => {
   it("inspects an existing container and returns status + health", async () => {
     state.docker.listContainers.mockResolvedValue([{ Names: ["/myapp"], Id: "cid1" }]);
     state.docker.getContainer.mockReturnValue({
-      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ State: { Status: "running", Health: { Status: "healthy" } } }),
+      inspect: vi
+        .fn<VitestMockProcedure>()
+        .mockResolvedValue({ State: { Status: "running", Health: { Status: "healthy" } } }),
     });
 
     const req = { query: { service: ["myapp", "local"] } };
@@ -144,7 +146,9 @@ describe("pages/api/docker/status/[...service]", () => {
       { Status: { ContainerStatus: { ContainerID: "local1" }, State: "running" } },
     ]);
     state.docker.getContainer.mockReturnValue({
-      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ State: { Status: "running", Health: { Status: "unhealthy" } } }),
+      inspect: vi
+        .fn<VitestMockProcedure>()
+        .mockResolvedValue({ State: { Status: "running", Health: { Status: "unhealthy" } } }),
     });
 
     const req = { query: { service: ["svc", "local"] } };

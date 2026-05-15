@@ -44,12 +44,14 @@ function Widget({ options }) {
     <Container options={options} additionalClassNames="information-widget-openmeteo">
       <PrimaryText>
         {options.label && `${options.label}, `}
-        {String(t("common.number", {
-          value: data.current_weather.temperature,
-          style: "unit",
-          unit,
-          ...options.format,
-        }))}
+        {String(
+          t("common.number", {
+            value: data.current_weather.temperature,
+            style: "unit",
+            unit,
+            ...options.format,
+          }),
+        )}
       </PrimaryText>
       <SecondaryText>{String(t(`wmo.${data.current_weather.weathercode}-${timeOfDay}`))}</SecondaryText>
       <WidgetIcon icon={mapIcon(condition, timeOfDay)} size="xl" />

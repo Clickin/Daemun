@@ -115,7 +115,7 @@ const { data, error } = useWidgetAPI(widget, "info");
 
 You'll see here how part of the API url is built using the `url` and `endpoint` properties from the widget definition.
 
-In this case, we're fetching data from the `info` endpoint.  The `info` endpoint is defined in the `mappings` object.  So the full API endpoint will be `"{url}/v1/info"`.
+In this case, we're fetching data from the `info` endpoint. The `info` endpoint is defined in the `mappings` object. So the full API endpoint will be `"{url}/v1/info"`.
 
 The mapping and endpoint are often the same, but must be defined regardless.
 :::
@@ -152,7 +152,7 @@ This will render the widget with placeholders for the data, i.e., a skeleton vie
 
 :::tip[Translation Tips]
 
-  The `label` prop in the `Block` component corresponds to the translation key we defined earlier in the `common.json` file.  All text and numerical content should be translated.
+The `label` prop in the `Block` component corresponds to the translation key we defined earlier in the `common.json` file. All text and numerical content should be translated.
 :::
 
 ---
@@ -269,7 +269,7 @@ You can now use your custom widget in your Homepage. Open your `services.yaml` f
 
 You'll see here how part of the API url is built using the `url` and `endpoint` properties from the widget definition.
 
-We defined the api endpoint as `"{url}/{endpoint}"`.  This is where the `url` is defined.  So the full API endpoint will be `http://127.0.0.1:1337/{endpoint}`.
+We defined the api endpoint as `"{url}/{endpoint}"`. This is where the `url` is defined. So the full API endpoint will be `http://127.0.0.1:1337/{endpoint}`.
 :::
 
 ---

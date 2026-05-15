@@ -3,8 +3,8 @@
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
-      "VARIANT": "18-bullseye",
-    },
+      "VARIANT": "18-bullseye"
+    }
   },
   "customizations": {
     "vscode": {
@@ -12,15 +12,15 @@
         "dbaeumer.vscode-eslint",
         "mhutchie.git-graph",
         "streetsidesoftware.code-spell-checker",
-        "esbenp.prettier-vscode",
+        "esbenp.prettier-vscode"
       ],
       "settings": {
         "eslint.format.enable": true,
         "eslint.lintTask.enable": true,
-        "eslint.packageManager": "pnpm",
-      },
-    },
+        "eslint.packageManager": "pnpm"
+      }
+    }
   },
   "postCreateCommand": ".devcontainer/setup.sh",
-  "forwardPorts": [3000],
+  "forwardPorts": [3000]
 }

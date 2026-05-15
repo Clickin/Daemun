@@ -5,7 +5,11 @@ import createMockRes from "test-utils/create-mock-res";
 const { getServiceWidget, validateWidgetData, logger } = vi.hoisted(() => ({
   getServiceWidget: vi.fn<VitestMockProcedure>(),
   validateWidgetData: vi.fn<VitestMockProcedure>(() => true),
-  logger: { debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>(), warn: vi.fn<VitestMockProcedure>() },
+  logger: {
+    debug: vi.fn<VitestMockProcedure>(),
+    error: vi.fn<VitestMockProcedure>(),
+    warn: vi.fn<VitestMockProcedure>(),
+  },
 }));
 
 vi.mock("utils/logger", () => ({

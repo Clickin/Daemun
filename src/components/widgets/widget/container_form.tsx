@@ -10,7 +10,12 @@ interface ContainerFormProps {
   options?: WidgetContainerOptions;
 }
 
-export default function ContainerForm({ children = [], options, additionalClassNames = "", callback }: ContainerFormProps) {
+export default function ContainerForm({
+  children = [],
+  options,
+  additionalClassNames = "",
+  callback,
+}: ContainerFormProps) {
   return (
     <form onSubmit={callback} className={`${getAllClasses(options, additionalClassNames)} information-widget-form`}>
       {getInnerBlock(children)}

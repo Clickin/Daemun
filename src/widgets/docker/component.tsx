@@ -14,7 +14,9 @@ export default function Component({ service }) {
     `/api/docker/status/${widget.container}/${widget.server || ""}`,
   );
 
-  const { data: statsData, error: statsError } = useApiQuery(`/api/docker/stats/${widget.container}/${widget.server || ""}`);
+  const { data: statsData, error: statsError } = useApiQuery(
+    `/api/docker/stats/${widget.container}/${widget.server || ""}`,
+  );
 
   if (statsError || statsData?.error || statusError || statusData?.error) {
     const finalError = statsError ?? statsData?.error ?? statusError ?? statusData?.error;

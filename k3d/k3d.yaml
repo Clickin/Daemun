@@ -50,7 +50,7 @@ env:
 registries:
   create:
     name: k3d-registry
-#    host: 0.0.0.0
+    #    host: 0.0.0.0
     hostPort: "55000"
   config: |
     mirrors:

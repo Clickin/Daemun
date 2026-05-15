@@ -33,7 +33,9 @@ describe("components/services/site-monitor", () => {
 
     render(<SiteMonitor groupName="g" serviceName="s" />);
 
-    expect(useApiQueryMock).toHaveBeenCalledWith("/api/siteMonitor?groupName=g&serviceName=s", { refreshInterval: 30000 });
+    expect(useApiQueryMock).toHaveBeenCalledWith("/api/siteMonitor?groupName=g&serviceName=s", {
+      refreshInterval: 30000,
+    });
     expect(screen.getByText("10")).toBeInTheDocument();
   });
 

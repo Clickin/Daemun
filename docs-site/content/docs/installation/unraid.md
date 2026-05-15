@@ -35,7 +35,7 @@ You may need to set the permissions of the folders to be able to edit the files.
 
 :::note
 
-  To view detailed container statistics (CPU, RAM, etc.), or if you use a remote docker socket, `container:` will still need to be set. For example:
+To view detailed container statistics (CPU, RAM, etc.), or if you use a remote docker socket, `container:` will still need to be set. For example:
 :::
 
 ```

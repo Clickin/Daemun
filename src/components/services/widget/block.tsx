@@ -57,7 +57,7 @@ export default function Block({ value, highlightValue, label = "", field }: Bloc
       <div
         className={classNames("font-bold text-xs uppercase", applyToValueOnly && "text-theme-700 dark:text-theme-200")}
       >
-      {typeof label === "string" ? t(label) : label}
+        {typeof label === "string" ? t(label) : label}
       </div>
     </div>
   );

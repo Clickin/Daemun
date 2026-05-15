@@ -81,7 +81,10 @@ export function isStaticHomeConfigFile(filename?: string) {
   return !filename || watchedConfigPattern.test(filename);
 }
 
-export async function bakeStaticHome({ dir = defaultBakeDir, version = getAssetVersion() }: StaticHomeBakeOptions = {}) {
+export async function bakeStaticHome({
+  dir = defaultBakeDir,
+  version = getAssetVersion(),
+}: StaticHomeBakeOptions = {}) {
   await fs.rm(dir, { force: true, recursive: true });
 
   const result = await toSSG(createStaticHomeApp(version), fs, {

@@ -92,10 +92,7 @@ export default function Component({ service }) {
       <Block label="urbackup.errored" value={t("common.number", { value: statusData.errored })} />
       <Block label="urbackup.noRecent" value={t("common.number", { value: statusData.noRecent })} />
       {showDiskUsage && (
-        <Block
-          label="urbackup.totalUsed"
-          value={t("common.bbytes", { value: statusData.totalUsage || 0 })}
-        />
+        <Block label="urbackup.totalUsed" value={t("common.bbytes", { value: statusData.totalUsage || 0 })} />
       )}
     </Container>
   );

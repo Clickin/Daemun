@@ -10,7 +10,12 @@ interface ContainerButtonProps {
   options?: WidgetContainerOptions;
 }
 
-export default function ContainerButton({ children = [], options, additionalClassNames = "", callback }: ContainerButtonProps) {
+export default function ContainerButton({
+  children = [],
+  options,
+  additionalClassNames = "",
+  callback,
+}: ContainerButtonProps) {
   return (
     <button
       type="button"

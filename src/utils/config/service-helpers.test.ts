@@ -41,12 +41,19 @@ const { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi } = vi.hois
   };
 
   const Docker = vi.fn<VitestMockProcedure>((conn) => ({
-    listContainers: vi.fn<VitestMockProcedure>(async () => state.dockerContainersByServer[conn?.serverName] ?? state.dockerContainers),
-    listServices: vi.fn<VitestMockProcedure>(async () => state.dockerServicesByServer[conn?.serverName] ?? state.dockerContainers),
+    listContainers: vi.fn<VitestMockProcedure>(
+      async () => state.dockerContainersByServer[conn?.serverName] ?? state.dockerContainers,
+    ),
+    listServices: vi.fn<VitestMockProcedure>(
+      async () => state.dockerServicesByServer[conn?.serverName] ?? state.dockerContainers,
+    ),
   }));
 
   const dockerCfg = {
-    default: vi.fn<VitestMockProcedure>((serverName) => ({ conn: { serverName }, swarm: Boolean(state.dockerYaml?.[serverName]?.swarm) })),
+    default: vi.fn<VitestMockProcedure>((serverName) => ({
+      conn: { serverName },
+      swarm: Boolean(state.dockerYaml?.[serverName]?.swarm),
+    })),
   };
 
   const kubeCfg = {

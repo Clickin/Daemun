@@ -1,89 +1,89 @@
-name-template: 'v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
-change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
 change-title-escapes: '\\<*_&'
 
 version-resolver:
   major:
     labels:
-      - 'major'
-      - 'breaking-change'
+      - "major"
+      - "breaking-change"
   minor:
     labels:
-      - 'enhancement'
-      - 'feature'
+      - "enhancement"
+      - "feature"
   patch:
     labels:
-      - 'bug'
-      - 'fix'
-      - 'dependencies'
-      - 'translation'
-      - 'documentation'
+      - "bug"
+      - "fix"
+      - "dependencies"
+      - "translation"
+      - "documentation"
   default: patch
 
 categories:
-  - title: '⚠️ Breaking Changes'
+  - title: "⚠️ Breaking Changes"
     labels:
-      - 'major'
-      - 'breaking-change'
-  - title: '🚀 Features'
+      - "major"
+      - "breaking-change"
+  - title: "🚀 Features"
     labels:
-      - 'enhancement'
-      - 'feature'
-  - title: '🐛 Fixes'
+      - "enhancement"
+      - "feature"
+  - title: "🐛 Fixes"
     labels:
-      - 'bug'
-      - 'fix'
-  - title: '🧰 Maintenance'
+      - "bug"
+      - "fix"
+  - title: "🧰 Maintenance"
     labels:
-      - 'dependencies'
-      - 'ci'
-      - 'chore'
-  - title: '🌐 Translations'
+      - "dependencies"
+      - "ci"
+      - "chore"
+  - title: "🌐 Translations"
     labels:
-      - 'translation'
-  - title: '📚 Documentation'
+      - "translation"
+  - title: "📚 Documentation"
     labels:
-      - 'documentation'
+      - "documentation"
 
 autolabeler:
-  - label: 'bug'
+  - label: "bug"
     title:
       - '/^fix(\(.+\))?:/i'
     body:
       - '/- \[[xX]\] Bug fix \(non-breaking change which fixes an issue\)/'
 
-  - label: 'enhancement'
+  - label: "enhancement"
     title:
       - '/^(feature|enhancement)(\(.+\))?:/i'
     body:
       - '/- \[[xX]\] New service widget/'
       - '/- \[[xX]\] New feature or enhancement \(non-breaking change which adds functionality\)/'
 
-  - label: 'documentation'
+  - label: "documentation"
     title:
       - '/^(documentation|docs)(\(.+\))?:/i'
     body:
       - '/- \[[xX]\] Documentation only/'
 
-  - label: 'chore'
+  - label: "chore"
     body:
       - '/- \[[xX]\] Other \(please explain\)/'
 
-  - label: 'ci'
+  - label: "ci"
     branch:
       - '/^(ci|workflow|actions)\//'
     title:
       - '/^(ci|workflow|actions)(\(.+\))?:/i'
 
-  - label: 'dependencies'
+  - label: "dependencies"
     files:
-      - 'package.json'
-      - 'pnpm-lock.yaml'
+      - "package.json"
+      - "pnpm-lock.yaml"
 
-  - label: 'translation'
+  - label: "translation"
     files:
-      - 'public/locales/**'
+      - "public/locales/**"
 
 template: |
   ## What's Changed

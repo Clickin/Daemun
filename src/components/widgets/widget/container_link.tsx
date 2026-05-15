@@ -10,7 +10,12 @@ interface ContainerLinkProps {
   target?: string;
 }
 
-export default function ContainerLink({ children = [], options, additionalClassNames = "", target }: ContainerLinkProps) {
+export default function ContainerLink({
+  children = [],
+  options,
+  additionalClassNames = "",
+  target,
+}: ContainerLinkProps) {
   return (
     <a
       href={options.href || options.url}

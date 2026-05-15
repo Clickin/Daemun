@@ -52,7 +52,9 @@ export function expandInitialQueryData(compactData: unknown): UnknownRecord {
   }, {});
 }
 
-export function readBakedInitialQueryData(documentRef: Document | undefined = globalThis.document): UnknownRecord | undefined {
+export function readBakedInitialQueryData(
+  documentRef: Document | undefined = globalThis.document,
+): UnknownRecord | undefined {
   const element = documentRef?.getElementById?.(BAKED_QUERY_DATA_ELEMENT_ID);
   if (!element?.textContent) return undefined;
 
@@ -80,7 +82,9 @@ export function expandInitialPageProps(compactProps: unknown): UnknownRecord {
   return pageProps;
 }
 
-export function readBakedInitialPageProps(documentRef: Document | undefined = globalThis.document): UnknownRecord | undefined {
+export function readBakedInitialPageProps(
+  documentRef: Document | undefined = globalThis.document,
+): UnknownRecord | undefined {
   const element = documentRef?.getElementById?.(BAKED_PAGE_PROPS_ELEMENT_ID);
   if (!element?.textContent) return undefined;
 

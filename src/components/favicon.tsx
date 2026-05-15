@@ -15,9 +15,7 @@ export function Svg({ svgRef = null }: SvgProps) {
 
   const { iconStart, iconEnd } = themes[color];
 
-  return (
-    <DaemunIcon end={iconEnd} start={iconStart} svgRef={svgRef} title={null} />
-  );
+  return <DaemunIcon end={iconEnd} start={iconStart} svgRef={svgRef} title={null} />;
 }
 
 export default function Favicon() {

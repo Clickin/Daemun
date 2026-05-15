@@ -12,11 +12,11 @@
       },
       "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal",
-      "serverReadyAction":{
+      "serverReadyAction": {
         "pattern": ".*http://localhost:3000.*",
         "action": "startDebugging",
         "name": "Launch Chromium",
-        "killOnServerStop": true,
+        "killOnServerStop": true
       }
     },
     {

@@ -9,9 +9,12 @@ interface SiteMonitorProps {
 
 export default function SiteMonitor({ groupName, serviceName = "", style }: SiteMonitorProps) {
   const { t } = useTranslation();
-  const { data, error } = useApiQuery(`/api/siteMonitor?${new URLSearchParams({ groupName, serviceName }).toString()}`, {
-    refreshInterval: 30000,
-  });
+  const { data, error } = useApiQuery(
+    `/api/siteMonitor?${new URLSearchParams({ groupName, serviceName }).toString()}`,
+    {
+      refreshInterval: 30000,
+    },
+  );
 
   let colorClass = "text-black/20 dark:text-white/40 opacity-20";
   let backgroundClass = "bg-theme-500/10 dark:bg-theme-900/50 px-1.5 py-0.5";

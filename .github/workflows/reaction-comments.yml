@@ -1,4 +1,4 @@
-name: 'Reaction Comments'
+name: "Reaction Comments"
 
 on:
   issue_comment:

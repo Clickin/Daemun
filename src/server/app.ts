@@ -125,7 +125,10 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
   }
 
   app.get("/", async (c) =>
-    (c.render as (component: string, props: unknown) => Response | Promise<Response>)("Home", await loadHomePageProps()),
+    (c.render as (component: string, props: unknown) => Response | Promise<Response>)(
+      "Home",
+      await loadHomePageProps(),
+    ),
   );
 
   if (existsSync(clientRoot)) {

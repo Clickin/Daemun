@@ -20,24 +20,27 @@ describe("widgets/stash/component", () => {
   });
 
   it("renders placeholders initially, then renders stats after fetch", async () => {
-    const fetchMock: typeof fetch = vi.fn<VitestMockProcedure>(async () => ({
-      json: async () => ({
-        scene_count: 1,
-        scenes_played: 2,
-        total_play_count: 3,
-        total_play_duration: 4,
-        scenes_size: 5,
-        scenes_duration: 6,
-        image_count: 7,
-        images_size: 8,
-        gallery_count: 9,
-        performer_count: 10,
-        studio_count: 11,
-        movie_count: 12,
-        tag_count: 13,
-        total_o_count: 14,
-      }),
-    }) as Response);
+    const fetchMock: typeof fetch = vi.fn<VitestMockProcedure>(
+      async () =>
+        ({
+          json: async () => ({
+            scene_count: 1,
+            scenes_played: 2,
+            total_play_count: 3,
+            total_play_duration: 4,
+            scenes_size: 5,
+            scenes_duration: 6,
+            image_count: 7,
+            images_size: 8,
+            gallery_count: 9,
+            performer_count: 10,
+            studio_count: 11,
+            movie_count: 12,
+            tag_count: 13,
+            total_o_count: 14,
+          }),
+        }) as Response,
+    );
     globalThis.fetch = fetchMock;
 
     const service = { widget: { type: "stash", url: "http://x", key: "k" } };

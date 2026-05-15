@@ -18,11 +18,7 @@ export default function Logo({ options }) {
         ) : (
           // fallback to Daemun logo
           <div className="fallback w-12 h-12">
-            <DaemunIcon
-              end="rgba(var(--color-logo-stop))"
-              start="rgba(var(--color-logo-start))"
-              title={null}
-            />
+            <DaemunIcon end="rgba(var(--color-logo-stop))" start="rgba(var(--color-logo-start))" title={null} />
           </div>
         )}
       </Raw>

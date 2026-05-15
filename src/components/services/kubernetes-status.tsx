@@ -9,7 +9,9 @@ interface KubernetesStatusProps {
 
 export default function KubernetesStatus({ service, style }: KubernetesStatusProps) {
   const podSelectorString = service.podSelector !== undefined ? `podSelector=${service.podSelector}` : "";
-  const { data, error } = useApiQuery(`/api/kubernetes/status/${service.namespace}/${service.app}?${podSelectorString}`);
+  const { data, error } = useApiQuery(
+    `/api/kubernetes/status/${service.namespace}/${service.app}?${podSelectorString}`,
+  );
 
   let statusLabel = t("docker.unknown");
   let statusTitle = "";

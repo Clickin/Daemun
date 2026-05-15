@@ -15,7 +15,10 @@
   font-family: "Manrope";
   font-weight: 200 800;
   font-style: normal;
-  src: local("Manrope"), url("./font/Manrope.woff2") format("woff2"), url("./font/Manrope.ttf") format("ttf");
+  src:
+    local("Manrope"),
+    url("./font/Manrope.woff2") format("woff2"),
+    url("./font/Manrope.ttf") format("ttf");
   font-display: swap;
 }
 
@@ -23,6 +26,9 @@
   font-family: "Manrope";
   font-weight: 200 800;
   fint-style: italic;
-  src: local("Manrope"), url("./font/Manrope.woff2") format("woff2"), url("./font/Manrope.ttf") format("ttf");
+  src:
+    local("Manrope"),
+    url("./font/Manrope.woff2") format("woff2"),
+    url("./font/Manrope.ttf") format("ttf");
   font-display: swap;
 }

@@ -188,6 +188,7 @@ labels:
   ...
   homepage.widget.fields: '["field1","field2"]'
 ```
+
 :::
 
 Multiple widgets can be specified by incrementing the index, e.g.

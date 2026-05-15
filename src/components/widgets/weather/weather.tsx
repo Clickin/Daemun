@@ -43,12 +43,14 @@ function Widget({ options }) {
     <Container options={options} additionalClassNames="information-widget-weather">
       <PrimaryText>
         {options.label && `${options.label}, `}
-        {String(t("common.number", {
-          value: options.units === "metric" ? data.current.temp_c : data.current.temp_f,
-          style: "unit",
-          unit,
-          ...options.format,
-        }))}
+        {String(
+          t("common.number", {
+            value: options.units === "metric" ? data.current.temp_c : data.current.temp_f,
+            style: "unit",
+            unit,
+            ...options.format,
+          }),
+        )}
       </PrimaryText>
       <SecondaryText>{data.current.condition.text}</SecondaryText>
       <WidgetIcon icon={mapIcon(condition, timeOfDay)} size="xl" />

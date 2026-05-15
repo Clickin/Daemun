@@ -15,7 +15,9 @@ import {
 
 const { EventStub, compareDateTimezoneStub } = vi.hoisted(() => ({
   EventStub: vi.fn<VitestMockProcedure>(({ event }) => <div data-testid="event">{event.title}</div>),
-  compareDateTimezoneStub: vi.fn<VitestMockProcedure>((date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD")),
+  compareDateTimezoneStub: vi.fn<VitestMockProcedure>(
+    (date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD"),
+  ),
 }));
 
 vi.mock("./event", () => ({

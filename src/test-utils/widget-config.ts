@@ -39,8 +39,7 @@ export function expectWidgetConfigShape(widget: UnknownRecord) {
       }
       if (isRecord(mapping) && "map" in mapping) {
         const map = mapping.map;
-        const proxyName =
-          typeof widget.proxyHandler === "function" ? widget.proxyHandler.name : "genericProxyHandler";
+        const proxyName = typeof widget.proxyHandler === "function" ? widget.proxyHandler.name : "genericProxyHandler";
 
         // Most handlers treat `map` as a transform function. A small number of custom
         // proxies treat it as an options object.

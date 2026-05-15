@@ -42,7 +42,9 @@ describe("components/widgets/openweathermap", () => {
   });
 
   it("auto-requests geolocation when permissions are granted", async () => {
-    const getCurrentPosition = vi.fn<VitestMockProcedure>((success) => success({ coords: { latitude: 30, longitude: 40 } }));
+    const getCurrentPosition = vi.fn<VitestMockProcedure>((success) =>
+      success({ coords: { latitude: 30, longitude: 40 } }),
+    );
     const query = vi.fn<VitestMockProcedure>().mockResolvedValue({ state: "granted" });
     vi.stubGlobal("navigator", {
       permissions: { query },
@@ -60,7 +62,9 @@ describe("components/widgets/openweathermap", () => {
   });
 
   it("requests browser geolocation on click and then renders the updating state", async () => {
-    const getCurrentPosition = vi.fn<VitestMockProcedure>((success) => success({ coords: { latitude: 10, longitude: 20 } }));
+    const getCurrentPosition = vi.fn<VitestMockProcedure>((success) =>
+      success({ coords: { latitude: 10, longitude: 20 } }),
+    );
     vi.stubGlobal("navigator", {
       permissions: { query: vi.fn<VitestMockProcedure>().mockResolvedValue({ state: "prompt" }) },
       geolocation: { getCurrentPosition },

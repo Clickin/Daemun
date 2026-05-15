@@ -14,7 +14,6 @@ Here are some examples of how to configure a widget's metadata object.
 <Tabs>
   <TabItem label="Basic Example">
 
-
 ```js
 import genericProxyHandler from "utils/proxy/handlers/generic";
 
@@ -28,10 +27,8 @@ const widgetExample = {
 };
 ```
 
-
   </TabItem>
   <TabItem label="Advanced Example">
-
 
 ```js
 import credentialedProxyHandler from "utils/proxy/handlers/credentialed";
@@ -63,7 +60,6 @@ const widgetExample = {
 };
 ```
 
-
   </TabItem>
 </Tabs>
 
@@ -90,7 +86,6 @@ Here is an example of the generic proxy handler that makes unauthenticated reque
 <Tabs>
   <TabItem label="widget.js">
 
-
 ```js
 const widgetExample = {
   api: "{url}/api/{endpoint}",
@@ -98,10 +93,8 @@ const widgetExample = {
 };
 ```
 
-
   </TabItem>
   <TabItem label="services.yaml">
-
 
 ```yaml
 - Services:
@@ -112,7 +105,6 @@ const widgetExample = {
           type: yourwidget
           url: http://127.0.0.1:1337
 ```
-
 
   </TabItem>
 </Tabs>
@@ -193,7 +185,6 @@ The `params` property is an array of strings that represent the keys that should
 <Tabs>
   <TabItem label="widget.js">
 
-
 ```js
 const widgetExample = {
   api: "{url}/api/{endpoint}",
@@ -207,18 +198,15 @@ const widgetExample = {
 };
 ```
 
-
   </TabItem>
   <TabItem label="component.jsx">
 
-
-  ```js
-  const { data: statsData, error: statsError } = useWidgetAPI(widget, "stats", {
-    start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    end: new Date(),
-  });
-  ```
-
+```js
+const { data: statsData, error: statsError } = useWidgetAPI(widget, "stats", {
+  start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  end: new Date(),
+});
+```
 
   </TabItem>
 </Tabs>

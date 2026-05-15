@@ -93,8 +93,7 @@ function defaultIconTags(settings: SettingsRecord) {
 function headTags(settings: SettingsRecord) {
   const title = settings.title || "Daemun";
   const description =
-    settings.description ||
-    "A compact self-hosted dashboard with Docker and service API integrations.";
+    settings.description || "A compact self-hosted dashboard with Docker and service API integrations.";
   const color = settings.color || "slate";
   const theme = settings.theme || "dark";
   const themeColor = themes[color]?.[theme] || themes.slate.dark;

@@ -93,18 +93,18 @@ Environment:
 Raw result:
 `benchmarks/results/container-benchmark-2026-05-15T09-49-59-102Z.json`.
 
-| Metric | Daemun node | Daemun nginx | Upstream Homepage |
-| --- | ---: | ---: | ---: |
-| Image size | 75.3 MB | 76.2 MB | 84.2 MB |
-| Idle cgroup memory | 131.8 MiB | 79.2 MiB | 196.9 MiB |
-| Post-stress cgroup memory | 151.1 MiB | 86.0 MiB | 229.2 MiB |
-| Peak cgroup memory | 155.2 MiB | 91.0 MiB | 242.6 MiB |
-| Idle Docker memory | 58.92 MiB | 72.67 MiB | 101.8 MiB |
-| Post-stress Docker memory | 71.75 MiB | 79.3 MiB | 132.3 MiB |
-| Aggregate throughput | 484.40 req/s | 509.57 req/s | 362.57 req/s |
-| Aggregate failures | 0 | 0 | 0 |
-| Aggregate p50 latency | 57.03 ms | 13.84 ms | 93.37 ms |
-| Aggregate p95 latency | 144.15 ms | 210.03 ms | 175.76 ms |
+| Metric                    |  Daemun node | Daemun nginx | Upstream Homepage |
+| ------------------------- | -----------: | -----------: | ----------------: |
+| Image size                |      75.3 MB |      76.2 MB |           84.2 MB |
+| Idle cgroup memory        |    131.8 MiB |     79.2 MiB |         196.9 MiB |
+| Post-stress cgroup memory |    151.1 MiB |     86.0 MiB |         229.2 MiB |
+| Peak cgroup memory        |    155.2 MiB |     91.0 MiB |         242.6 MiB |
+| Idle Docker memory        |    58.92 MiB |    72.67 MiB |         101.8 MiB |
+| Post-stress Docker memory |    71.75 MiB |     79.3 MiB |         132.3 MiB |
+| Aggregate throughput      | 484.40 req/s | 509.57 req/s |      362.57 req/s |
+| Aggregate failures        |            0 |            0 |                 0 |
+| Aggregate p50 latency     |     57.03 ms |     13.84 ms |          93.37 ms |
+| Aggregate p95 latency     |    144.15 ms |    210.03 ms |         175.76 ms |
 
 Browser cold-load timing:
 
@@ -116,13 +116,13 @@ iterations so the nginx image's static-file path is measured on the same terms
 as direct Hono and upstream Homepage.
 
 | Browser metric for `/` | Daemun node | Daemun nginx | Upstream Homepage |
-| --- | ---: | ---: | ---: |
-| TTLB avg | 59.76 ms | 12.49 ms | 60.16 ms |
-| TTLB p50 | 45.60 ms | 11.10 ms | 62.70 ms |
-| FCP avg | 345.14 ms | 291.43 ms | 277.14 ms |
-| FCP p50 | 328.00 ms | 284.00 ms | 272.00 ms |
-| DOMContentLoaded avg | 323.59 ms | 272.99 ms | 284.89 ms |
-| Load avg | 331.81 ms | 279.67 ms | 286.71 ms |
+| ---------------------- | ----------: | -----------: | ----------------: |
+| TTLB avg               |    59.76 ms |     12.49 ms |          60.16 ms |
+| TTLB p50               |    45.60 ms |     11.10 ms |          62.70 ms |
+| FCP avg                |   345.14 ms |    291.43 ms |         277.14 ms |
+| FCP p50                |   328.00 ms |    284.00 ms |         272.00 ms |
+| DOMContentLoaded avg   |   323.59 ms |    272.99 ms |         284.89 ms |
+| Load avg               |   331.81 ms |    279.67 ms |         286.71 ms |
 
 Focused `/` stress result:
 
@@ -131,14 +131,14 @@ Raw result:
 
 Same limits and duration as the mixed benchmark, but with `BENCH_ENDPOINTS=/`.
 
-| `/` only metric | Daemun node | Daemun nginx | Upstream Homepage |
-| --- | ---: | ---: | ---: |
-| Throughput | 6482.50 req/s | 6183.27 req/s | 1414.93 req/s |
-| Failures | 0 | 0 | 0 |
-| p50 latency | 3.28 ms | 3.56 ms | 19.40 ms |
-| p95 latency | 12.08 ms | 12.88 ms | 39.18 ms |
-| p99 latency | 17.30 ms | 18.34 ms | 44.56 ms |
-| Post-stress cgroup memory | 64.4 MiB | 77.8 MiB | 109.1 MiB |
+| `/` only metric           |   Daemun node |  Daemun nginx | Upstream Homepage |
+| ------------------------- | ------------: | ------------: | ----------------: |
+| Throughput                | 6482.50 req/s | 6183.27 req/s |     1414.93 req/s |
+| Failures                  |             0 |             0 |                 0 |
+| p50 latency               |       3.28 ms |       3.56 ms |          19.40 ms |
+| p95 latency               |      12.08 ms |      12.88 ms |          39.18 ms |
+| p99 latency               |      17.30 ms |      18.34 ms |          44.56 ms |
+| Post-stress cgroup memory |      64.4 MiB |      77.8 MiB |         109.1 MiB |
 
 This focused run shows that both Daemun images are much faster than upstream
 Homepage on the baked root route. It does not show a meaningful nginx-vs-node
@@ -150,16 +150,16 @@ the request path.
 
 Endpoint p50 latency:
 
-| Endpoint | Daemun node | Daemun nginx | Upstream Homepage |
-| --- | ---: | ---: | ---: |
-| `/` | 27.09 ms | 1.75 ms | 30.08 ms |
-| Static stylesheet | 61.11 ms | 4.09 ms | 95.64 ms |
-| Static script | 49.20 ms | 3.00 ms | 102.55 ms |
-| `/favicon-32x32.png` | 47.44 ms | 1.21 ms | 75.31 ms |
-| `/api/healthcheck` | 25.75 ms | 33.50 ms | 27.55 ms |
-| `/api/bookmarks` | 82.47 ms | 121.65 ms | 100.90 ms |
-| `/api/widgets` | 82.80 ms | 122.48 ms | 101.12 ms |
-| `/api/services` | 141.07 ms | 206.78 ms | 172.65 ms |
+| Endpoint             | Daemun node | Daemun nginx | Upstream Homepage |
+| -------------------- | ----------: | -----------: | ----------------: |
+| `/`                  |    27.09 ms |      1.75 ms |          30.08 ms |
+| Static stylesheet    |    61.11 ms |      4.09 ms |          95.64 ms |
+| Static script        |    49.20 ms |      3.00 ms |         102.55 ms |
+| `/favicon-32x32.png` |    47.44 ms |      1.21 ms |          75.31 ms |
+| `/api/healthcheck`   |    25.75 ms |     33.50 ms |          27.55 ms |
+| `/api/bookmarks`     |    82.47 ms |    121.65 ms |         100.90 ms |
+| `/api/widgets`       |    82.80 ms |    122.48 ms |         101.12 ms |
+| `/api/services`      |   141.07 ms |    206.78 ms |         172.65 ms |
 
 Interpretation:
 

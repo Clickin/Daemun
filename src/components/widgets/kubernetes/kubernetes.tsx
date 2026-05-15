@@ -25,9 +25,12 @@ export default function Widget({ options }) {
     },
   };
 
-  const { data, error } = useApiQuery(`/api/widgets/kubernetes?${new URLSearchParams({ lang: i18n.language }).toString()}`, {
-    refreshInterval: 1500,
-  });
+  const { data, error } = useApiQuery(
+    `/api/widgets/kubernetes?${new URLSearchParams({ lang: i18n.language }).toString()}`,
+    {
+      refreshInterval: 1500,
+    },
+  );
 
   if (error || data?.error) {
     return <Error options={options} />;

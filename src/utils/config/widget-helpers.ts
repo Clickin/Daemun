@@ -71,7 +71,10 @@ export async function cleanWidgetGroups(widgets: WidgetConfig[]): Promise<Widget
   });
 }
 
-export async function getPrivateWidgetOptions(type: string, widgetIndex: string | number): Promise<WidgetOptions | undefined>;
+export async function getPrivateWidgetOptions(
+  type: string,
+  widgetIndex: string | number,
+): Promise<WidgetOptions | undefined>;
 export async function getPrivateWidgetOptions(): Promise<WidgetConfig[]>;
 export async function getPrivateWidgetOptions(type?: string, widgetIndex?: string | number) {
   const widgets = await widgetsFromConfig();
