@@ -77,6 +77,7 @@ RUN apk add --no-cache openssl curl ca-certificates \
   && mkdir -p /run/nginx /var/lib/nginx/tmp /app/dist/server/ssg
 
 COPY --link nginx-docker/nginx.conf /etc/nginx/nginx.conf
+RUN nginx -t
 COPY --link --chmod=755 nginx-docker/entrypoint.sh /usr/local/bin/daemun-nginx-entrypoint
 
 USER root

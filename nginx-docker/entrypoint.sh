@@ -83,6 +83,24 @@ while [ ! -s "$STATIC_INDEX" ]; do
   sleep 1
 done
 
+deadline=$(( $(date +%s) + 30 ))
+while ! node -e 'const http = require("node:http"); const req = http.request({ socketPath: process.argv[1], path: "/api/healthcheck", headers: { Host: "127.0.0.1:3000" }, timeout: 1000 }, (res) => process.exit(res.statusCode === 200 ? 0 : 1)); req.on("timeout", () => { req.destroy(); process.exit(1); }); req.on("error", () => process.exit(1)); req.end();' "$NODE_SOCKET"; do
+  if ! kill -0 "$NODE_PID" 2>/dev/null; then
+    wait "$NODE_PID" || true
+    echo "Daemun node backend exited before the API socket became healthy"
+    exit 1
+  fi
+
+  if [ "$(date +%s)" -ge "$deadline" ]; then
+    echo "Timed out waiting for Daemun API socket at $NODE_SOCKET"
+    kill -TERM "$NODE_PID" 2>/dev/null || true
+    wait "$NODE_PID" 2>/dev/null || true
+    exit 1
+  fi
+
+  sleep 1
+done
+
 nginx -g "daemon off;" &
 NGINX_PID=$!
 
