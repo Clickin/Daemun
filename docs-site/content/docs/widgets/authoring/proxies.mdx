@@ -1,15 +1,15 @@
 ---
 title: Proxies Guide
-description: Learn about proxy handlers in Homepage, and how to securely fetch data from an API.
+description: Learn about proxy handlers in Daemun, and how to securely fetch data from an API.
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-Homepage includes a set of built-in proxy handlers that can be used to fetch data from an API. We will go over how to use these proxy handlers and briefly cover how to create your own.
+Daemun includes a set of built-in proxy handlers that can be used to fetch data from an API. We will go over how to use these proxy handlers and briefly cover how to create your own.
 
 ## Available Proxy Handlers
 
-Homepage comes with a few built-in proxy handlers that can be used to fetch data from an API. These handlers are located in the `utils/proxy/handlers` directory.
+Daemun comes with a few built-in proxy handlers that can be used to fetch data from an API. These handlers are located in the `utils/proxy/handlers` directory.
 
 ### `genericProxyHandler`
 
@@ -27,7 +27,7 @@ const widgetExample = {
 You can also pass API keys from the widget configuration to the proxy handler, for authenticated requests.
 
 <Tabs>
-  <TabItem label="widget.js">
+  <TabItem label="widget.ts">
 
 ```js
 import genericProxyHandler from "utils/proxy/handlers/generic";
@@ -62,7 +62,7 @@ A proxy handler that makes authenticated requests by setting request headers. Cr
 By default the key is passed as an `X-API-Key` header. If you need to pass the key as something else, either add a case to the credentialedProxyHandler or create a new proxy handler.
 
 <Tabs>
-  <TabItem label="widget.js">
+  <TabItem label="widget.ts">
 
 ```js
 import credentialedProxyHandler from "utils/proxy/handlers/credentialed";
@@ -95,7 +95,7 @@ A proxy handler that makes authenticated JSON-RPC requests to the specified API 
 The endpoint is the method to call and queryParams are used as the parameters.
 
 <Tabs>
-  <TabItem label="component.js">
+  <TabItem label="component.tsx">
 
 ```js
 import Container from "components/services/widget/container";
@@ -109,7 +109,7 @@ export default function Component({ service }) {
 ```
 
   </TabItem>
-  <TabItem label="widget.js">
+  <TabItem label="widget.ts">
 
 ```js
 import jsonrpcProxyHandler from "utils/proxy/handlers/jsonrpc";
@@ -158,7 +158,7 @@ const widgetExample = {
 A proxy handler that makes authenticated requests to the specified Synology API endpoint. This is used exclusively for Synology DSM services.
 
 <Tabs>
-  <TabItem label="widget.js">
+  <TabItem label="widget.ts">
 
 ```js
 import synologyProxyHandler from "utils/proxy/handlers/synology";
@@ -223,7 +223,7 @@ export default async function customProxyHandler(req, res, map) {
 }
 ```
 
-Proxy handlers are a complex topic and require a good understanding of JavaScript and the Homepage codebase. If you are new to Homepage, we recommend using the built-in proxy handlers.
+Proxy handlers are a complex topic and require a good understanding of TypeScript and the Daemun codebase. If you are new to Daemun, we recommend using the built-in proxy handlers.
 
 ## Testing proxy handlers
 
@@ -237,5 +237,5 @@ When you add a new proxy handler or custom widget proxy, include tests that focu
 
 Test locations:
 
-- Shared handlers live in `src/utils/proxy/handlers/*.js` with tests alongside them (for example `src/utils/proxy/handlers/generic.test.js`).
-- Widget-specific proxies live in `src/widgets/<widget>/proxy.js` with tests in `src/widgets/<widget>/proxy.test.js`.
+- Shared handlers live in `src/utils/proxy/handlers/*.ts` with tests alongside them (for example `src/utils/proxy/handlers/generic.test.ts`).
+- Widget-specific proxies live in `src/widgets/<widget>/proxy.ts` with tests in `src/widgets/<widget>/proxy.test.ts`.

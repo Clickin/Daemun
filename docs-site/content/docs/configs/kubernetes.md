@@ -80,7 +80,7 @@ A blank string as a podSelector does not deactivate it, but will actually select
 
 ## Automatic Service Discovery
 
-Homepage features automatic service discovery by Ingress annotations. All configuration options can be applied using typical annotation syntax, beginning with `gethomepage.dev/`.
+Daemun features automatic service discovery by Ingress annotations. For upstream compatibility, all configuration options use the existing annotation syntax beginning with `gethomepage.dev/`.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -113,17 +113,17 @@ spec:
             pathType: Prefix
 ```
 
-When the Kubernetes cluster connection has been properly configured, this service will be automatically discovered and added to your Homepage. **You do not need to specify the `namespace` or `app` values, as they will be automatically inferred.**
+When the Kubernetes cluster connection has been properly configured, this service will be automatically discovered and added to Daemun. **You do not need to specify the `namespace` or `app` values, as they will be automatically inferred.**
 
-If you are using multiple instances of homepage, an `instance` annotation can be specified to limit services to a specific instance. If no instance is provided, the service will be visible on all instances.
+If you are using multiple instances of Daemun, an `instance` annotation can be specified to limit services to a specific instance. If no instance is provided, the service will be visible on all instances.
 
-If you have a single service that needs to be shown on multiple specific instances of homepage (but not on all of them), the service can be annotated by multiple `instance.name` annotations, where `name` can be the names of your specific multiple homepage instances. For example, a service that is annotated with `gethomepage.dev/instance.public: ""` and `gethomepage.dev/instance.internal: ""` will be shown on `public` and `internal` homepage instances.
+If you have a single service that needs to be shown on multiple specific instances of Daemun (but not on all of them), the service can be annotated by multiple `instance.name` annotations, where `name` can be the names of your specific Daemun instances. For example, a service that is annotated with `gethomepage.dev/instance.public: ""` and `gethomepage.dev/instance.internal: ""` will be shown on `public` and `internal` Daemun instances.
 
 Use the `gethomepage.dev/pod-selector` selector to specify the pod used for the health check. For example, a service that is annotated with `gethomepage.dev/pod-selector: app.kubernetes.io/name=deployment` would link to a pod with the label `app.kubernetes.io/name: deployment`.
 
 ### Traefik IngressRoute support
 
-If enabled (with `traefik: true` in kubernetes.yaml), homepage can also read ingresses defined using the Traefik IngressRoute custom resource definition. Due to the complex nature of Traefik routing rules, it is required for the `gethomepage.dev/href` annotation to be set:
+If enabled (with `traefik: true` in kubernetes.yaml), Daemun can also read ingresses defined using the Traefik IngressRoute custom resource definition. Due to the complex nature of Traefik routing rules, it is required for the `gethomepage.dev/href` annotation to be set:
 
 ```yaml
 apiVersion: traefik.io/v1alpha1
@@ -159,11 +159,11 @@ spec:
           weight: 10
 ```
 
-If the `href` attribute is not present, Homepage will ignore the specific IngressRoute.
+If the `href` attribute is not present, Daemun will ignore the specific IngressRoute.
 
 ### Gateway API HttpRoute support
 
-Homepage also features automatic service discovery for Gateway API. Service definitions are read by annotating the HttpRoute custom resource definition and are indentical to the Ingress example as defined in [Automatic Service Discovery](#automatic-service-discovery).
+Daemun also features automatic service discovery for Gateway API. Service definitions are read by annotating the HttpRoute custom resource definition and are identical to the Ingress example as defined in [Automatic Service Discovery](#automatic-service-discovery).
 
 To enable Gateway API HttpRoute update `kubernetes.yaml` to include:
 
@@ -183,8 +183,8 @@ Similarly to Docker service discovery, there currently is no rigid ordering to d
 
 ## Adding extra configuration files
 
-Some Homepage features (for example, [Proxmox](../configs/proxmox/)) require additional configuration files such as `proxmox.yaml`.
-When running Homepage on Kubernetes, these files must be provided via a `ConfigMap` and mounted into the container at `/app/config`.
+Some Daemun features (for example, [Proxmox](../configs/proxmox/)) require additional configuration files such as `proxmox.yaml`.
+When running Daemun on Kubernetes, these files must be provided via a `ConfigMap` and mounted into the container at `/app/config`.
 
 ### ConfigMap example
 
@@ -192,7 +192,7 @@ When running Homepage on Kubernetes, these files must be provided via a `ConfigM
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: homepage
+  name: daemun
 data:
   proxmox.yaml: |
     pve:
@@ -206,6 +206,6 @@ Mount the file into `/app/config` by updating the `Deployment`:
 ```yaml
 volumeMounts:
   - mountPath: /app/config/proxmox.yaml
-    name: homepage-config
+    name: daemun-config
     subPath: proxmox.yaml
 ```

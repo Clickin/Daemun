@@ -1,9 +1,9 @@
 ---
 title: Component Guide
-description: Learn more about the widget component in Homepage, and how to build your widget UI.
+description: Learn more about the widget component in Daemun, and how to build your widget UI.
 ---
 
-Homepage widgets are built using React components. These components are responsible for fetching data from the API and rendering the widget UI. Homepage provides a set of hooks and utilities to help you build your widget component.
+Daemun widgets are built using React components. These components are responsible for fetching data from the API and rendering the widget UI. Daemun provides a set of upstream-compatible hooks and utilities to help you build your widget component.
 
 ## A Basic Widget Component
 
@@ -53,7 +53,7 @@ We'll cover two sections of the widget component: hooks and components.
 
 **`useTranslation`**
 
-This hook is used to translate text and numerical content in widgets. Homepage provides a set of helpers to help you localize your widgets. You can learn more about translations in the [Translations Guide](translations/).
+This hook is used to translate text and numerical content in widgets. Daemun provides a set of helpers to help you localize your widgets. You can learn more about translations in the [Translations Guide](translations/).
 
 **`useWidgetAPI`**
 
@@ -61,9 +61,12 @@ This hook is used to fetch data from the API. We cover this hook in more detail 
 
 #### Components
 
-Homepage provides a set of components to help you build your widget UI. These components are designed to provide a consistent layout, and all widgets are expected to use these components.
+Daemun provides a set of components to help you build your widget UI. These components are designed to provide a consistent layout, and all widgets are expected to use these components.
 
-![Component Sections](/Daemun/docs-assets/sections.webp)
+The shared service widget structure is:
+
+- `<Container>` wraps the widget and handles shared layout and error states.
+- `<Block>` renders one translated label/value pair inside the container.
 
 **`<Container>`**
 

@@ -1,6 +1,6 @@
 ---
 title: Service Widgets
-description: Homepage service widgets.
+description: Daemun service widgets.
 search:
   exclude: true
 ---

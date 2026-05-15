@@ -10,7 +10,7 @@ The `settings.yaml` file allows you to define application level options. For cha
 You can customize the title of the page if you'd like.
 
 ```yaml
-title: My Awesome Homepage
+title: My Awesome Daemun
 ```
 
 ## Description
@@ -18,7 +18,7 @@ title: My Awesome Homepage
 You can customize the description of the page if you'd like.
 
 ```yaml
-description: A description of my awesome homepage
+description: A description of my awesome Daemun dashboard
 ```
 
 ## Start URL
@@ -53,7 +53,7 @@ For example, inside of your Docker Compose file, mount a path to where your imag
 
 ```yaml
 volumes:
-  - /my/homepage/images:/app/public/images
+  - /my/daemun/images:/app/public/images
 ```
 
 and then reference that image:
@@ -127,7 +127,7 @@ Any unspecified level falls back to the built-in defaults.
 
 ## Progressive Web App (PWA)
 
-A progressive web app is an app that can be installed on a device and provide user experience like a native app. Homepage comes with built-in support for PWA with some default configurations, but you can customize them.
+A progressive web app is an app that can be installed on a device and provide user experience like a native app. Daemun comes with built-in support for PWA with some default configurations, but you can customize them.
 
 More information on PWAs can be found in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps).
 
@@ -152,7 +152,7 @@ For icon `src` you can pass either full URL or a local path relative to the `/ap
 
 ### Shortcuts
 
-Shortcuts can be used to specify links to tabs, to be preselected when the homepage is opened as an app.
+Shortcuts can be used to specify links to tabs, to be preselected when Daemun is opened as an app.
 More information about how you can set them can be found in the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/shortcuts).
 
 ```yaml
@@ -168,7 +168,7 @@ pwa:
 
 ### Other PWA configurations
 
-Homepage sets few other PWA configurations, that are based on global settings in `settings.yaml`:
+Daemun sets few other PWA configurations, that are based on global settings in `settings.yaml`:
 
 - `name`, `short_name` - Both equal to the [`title`](#title) setting.
 - `theme_color`, `background_color` - Both based on the [`color`](#color-palette) and [`theme`](#theme) settings.
@@ -190,9 +190,7 @@ layout:
     columns: 4
 ```
 
-As an example, this would produce the following layout:
-
-<img width="1260" alt="Screenshot 2022-09-15 at 8 03 57 PM" src="https://user-images.githubusercontent.com/82196/190466646-8ca94505-0fcf-4964-9687-3a6c7cd3144f.png">
+As an example, this lays the `Media` group out in a row with up to four cards.
 
 ### Icons-Only Layout
 
@@ -291,7 +289,7 @@ Version 0.6.30 introduced a tabbed view to layouts which can be optionally speci
 
 Tabs are sorted based on the order in the layout block. If a group has no tab specified (and tabs are set on other groups), services and bookmarks will be shown on all tabs.
 
-Every tab can be accessed directly by visiting Homepage URL with `#Group` (name lowercase and URI-encoded) at the end of the URL.
+Every tab can be accessed directly by visiting the Daemun URL with `#Group` (name lowercase and URI-encoded) at the end of the URL.
 
 For example, the following would create four tabs:
 
@@ -324,7 +322,7 @@ layout:
 
 ### Full Width
 
-You can make homepage take up the entire window width by adding:
+You can make Daemun take up the entire window width by adding:
 
 ```yaml
 fullWidth: true
@@ -338,7 +336,7 @@ You can set the maximum number of columns of groups on larger screen sizes (note
 maxGroupColumns: 8 # default is 4 for services, 6 for bookmarks, max 8
 ```
 
-By default homepage will max out at 4 columns for services and 6 for bookmarks, thus the minimum for this setting is _5_. Of course, if you're setting this to higher numbers, you may want to consider enabling the [fullWidth](#full-width) option as well.
+By default Daemun will max out at 4 columns for services and 6 for bookmarks, thus the minimum for this setting is _5_. Of course, if you're setting this to higher numbers, you may want to consider enabling the [fullWidth](#full-width) option as well.
 
 If you want to set the maximum columns for bookmark groups separately, you can do so by adding:
 
@@ -400,17 +398,11 @@ By default the feature is disabled
 
 ## Header Style
 
-There are currently 4 options for header styles, you can see each one below.
-
-<img width="1000" alt="underlined" src="https://user-images.githubusercontent.com/82196/194725622-39ce271c-34e5-414d-be53-62d221811f88.png">
+There are currently 4 options for header styles.
 
 ```yaml
 headerStyle: underlined # default style
 ```
-
----
-
-<img width="1000" alt="boxed" src="https://user-images.githubusercontent.com/82196/194725645-abcb8ed9-d017-416f-9e74-cc5642fa982c.png">
 
 ```yaml
 headerStyle: boxed
@@ -418,15 +410,11 @@ headerStyle: boxed
 
 ---
 
-<img width="1000" alt="clean" src="https://user-images.githubusercontent.com/82196/194725650-7a86e818-172d-4d0f-9861-5eae7fecb50a.png">
-
 ```yaml
 headerStyle: clean
 ```
 
 ---
-
-<img width="1000" alt="boxedWidgets" src="https://user-images.githubusercontent.com/5442891/232258758-ed5262d6-f940-462c-b39e-00e54c19b9ce.png">
 
 ```yaml
 headerStyle: boxedWidgets
@@ -437,7 +425,7 @@ headerStyle: boxedWidgets
 In some proxy configurations, it may be necessary to set the documents base URL. You can do this by providing a `base` value, like so:
 
 ```yaml
-base: http://host.local/homepage
+base: http://host.local/daemun
 ```
 
 **_The URL must be a full, absolute URL, or it will be ignored by the browser._**
@@ -458,7 +446,7 @@ You can also specify locales e.g. for the DateTime widget, e.g. en-AU, en-GB, et
 
 ## Link Target
 
-Changes the behaviour of links on the homepage,
+Changes the behaviour of links on the dashboard,
 
 ```yaml
 target: _blank # Possible options include _blank, _self, and _top
@@ -500,9 +488,7 @@ You can then pass `provider` instead of `apiKey` in your widget configuration.
 
 ## Quick Launch
 
-You can use the 'Quick Launch' feature to search services, perform a web search or open a URL. To use Quick Launch, just start typing while on your homepage (as long as the search widget doesn't have focus).
-
-<img width="1000" alt="quicklaunch" src="https://user-images.githubusercontent.com/4887959/216880811-90ff72cb-2990-4475-889b-7c3a31e6beef.png">
+You can use the 'Quick Launch' feature to search services, perform a web search or open a URL. To use Quick Launch, just start typing while on your dashboard (as long as the search widget doesn't have focus).
 
 There are a few optional settings for the Quick Launch feature:
 
@@ -532,7 +518,7 @@ quicklaunch:
   suggestionUrl: https://ac.ecosia.org/autocomplete?type=list&q=
 ```
 
-## Homepage Version & Update Checking
+## Daemun Version & Update Checking
 
 By default the release version is displayed at the bottom of the page. To hide this, use the `hideVersion` setting, like so:
 
@@ -600,7 +586,7 @@ If you have both set, the per-service settings take precedence.
 
 ## Instance Name
 
-Name used by automatic docker service discovery to differentiate between multiple homepage instances.
+Name used by automatic docker service discovery to differentiate between multiple Daemun instances.
 
 For example:
 
@@ -630,7 +616,7 @@ If either value is set to true, the error message will be hidden.
 
 ## Disable Search Engine Indexing
 
-You can request that search engines not to index your Homepage instance by enabling the `disableIndexing` setting.
+You can request that search engines not to index your Daemun instance by enabling the `disableIndexing` setting.
 
 ```yaml
 disableIndexing: true

@@ -6,7 +6,7 @@ description: Stocks Information Widget Configuration
 _(Find the Stocks service widget [here](../services/stocks/))_
 
 The Stocks Information Widget allows you to include basic stock market data in
-your Homepage header. The widget includes the current price of a stock, and the
+your Daemun header. The widget includes the current price of a stock, and the
 change in price for the day.
 
 Finnhub.io is currently the only supported provider for the stocks widget.
@@ -43,6 +43,5 @@ The information widget allows for up to 8 items in the watchlist.
       - BRK.A
 ```
 
-The above configuration would result in something like this:
-
-![Example of Stocks Widget](/Daemun/docs-assets/widget_stocks_demo.png)
+The above configuration renders a compact watchlist in the header, using the
+configured color behavior for daily price movement.

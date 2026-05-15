@@ -49,9 +49,7 @@ You can also pass a `label` option, which allows you to group resources under na
     disk: /mnt/storage
 ```
 
-Which produces something like this,
-
-<img width="373" alt="Resource Groups" src="https://user-images.githubusercontent.com/82196/189524699-e9005138-e049-4a9c-8833-ac06e39882da.png">
+Daemun renders each `label` as a separate resource section.
 
 If you have more than a single disk and would like to group them together under the same label, you can pass an array of paths instead,
 
@@ -64,9 +62,7 @@ If you have more than a single disk and would like to group them together under 
       - /mnt/media
 ```
 
-To produce something like this,
-
-<img width="369" alt="Screenshot 2022-09-11 at 2 15 42 PM" src="https://user-images.githubusercontent.com/82196/189524583-abdf4cc6-99da-430c-b316-16c567db5639.png">
+The paths are grouped under the same `Storage` label.
 
 You can additionally supply an optional `expanded` property set to true in order to show additional details about the resources. By default the expanded property is set to false when not supplied.
 
@@ -80,7 +76,8 @@ You can additionally supply an optional `expanded` property set to true in order
       - /disk3
 ```
 
-![194136533-c4238c82-4d67-41a4-b3c8-18bf26d33ac2](https://user-images.githubusercontent.com/3441425/194728642-a9885274-922b-4027-acf5-a746f58fdfce.png)
+The expanded view includes additional per-disk details in the same resource
+section.
 
 To monitor a named host network interface in Docker (for example `network: eno1`), mount host `/sys` (read-only):
 

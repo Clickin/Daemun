@@ -5,8 +5,6 @@ description: Calendar widget
 
 ## Monthly view
 
-<img alt="calendar" src="https://user-images.githubusercontent.com/5442891/271131282-6767a3ea-573e-4005-aeb9-6e14ee01e845.png">
-
 This widget shows monthly calendar, with optional integrations to show events from supported widgets.
 
 ```yaml
@@ -18,7 +16,7 @@ widget:
   showTime: true # optional - show time for event happening today - defaults to false
   timezone: America/Los_Angeles # optional and only when timezone is not detected properly (slightly slower performance) - force timezone for ical events (if it's the same - no change, if missing or different in ical - will be converted to this timezone)
   integrations: # optional
-    - type: sonarr # active widget type that is currently enabled on homepage - possible values: radarr, sonarr, lidarr, readarr, ical
+    - type: sonarr # active widget type that is currently enabled on Daemun - possible values: radarr, sonarr, lidarr, readarr, ical
       service_group: Media # group name where widget exists
       service_name: Sonarr # service name for that widget
       color: teal # optional - defaults to pre-defined color for the service (teal for sonarr)

@@ -3,7 +3,7 @@ title: API Guide
 description: Get comfortable with making API calls from inside your widget.
 ---
 
-Homepage provides the `useWidgetAPI` hook to help you fetch data from an API. This hook insures that the data is fetched using a proxy, and is critical for security.
+Daemun provides the `useWidgetAPI` hook to help you fetch data from an API. This hook ensures that the data is fetched using a proxy, and is critical for security.
 
 Here is an example of how the `useWidgetAPI` hook looks:
 

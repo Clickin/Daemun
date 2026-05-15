@@ -1,11 +1,11 @@
 ---
 title: Metadata Guide
-description: Explore all the metadata properties that can be used to configure a widget in Homepage.
+description: Explore all the metadata properties that can be used to configure a widget in Daemun.
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-Here, we will go over how to create and configure Homepage widget metadata. Metadata is a JS object that contains information about the widget, such as the API endpoint, proxy handler, and mappings. This metadata is used by Homepage to fetch data from the API and pass it to the widget.
+Here, we will go over how to create and configure Daemun widget metadata. Metadata is a TypeScript object that contains information about the widget, such as the API endpoint, proxy handler, and mappings. This metadata is used by Daemun to fetch data from the API and pass it to the widget.
 
 ## Widgets Configuration
 
@@ -79,12 +79,12 @@ const widgetExample = {
 
 ### `proxyHandler`
 
-The `proxyHandler` property is a function that will be used to make the API request. Homepage includes some built-in proxy handlers that can be used out of the box:
+The `proxyHandler` property is a function that will be used to make the API request. Daemun includes some built-in proxy handlers that can be used out of the box:
 
 Here is an example of the generic proxy handler that makes unauthenticated requests to the specified API endpoint.
 
 <Tabs>
-  <TabItem label="widget.js">
+  <TabItem label="widget.ts">
 
 ```js
 const widgetExample = {
@@ -117,7 +117,7 @@ The `mappings` property is an object that contains information about the API end
 
 :::note[Security Note]
 
-The `mappings` or `allowedEndpoints` property is required for the widget to fetch data from more than a static URL. Homepage uses a whitelist approach to ensure that widgets only access allowed endpoints.
+The `mappings` or `allowedEndpoints` property is required for the widget to fetch data from more than a static URL. Daemun uses a whitelist approach to ensure that widgets only access allowed endpoints.
 :::
 
 ```js
@@ -183,7 +183,7 @@ This configuration will ensure that the API response contains the `total` and `a
 The `params` property is an array of strings that represent the keys that should be passed as parameters to the API endpoint. These keys will be replaced with the actual values at runtime.
 
 <Tabs>
-  <TabItem label="widget.js">
+  <TabItem label="widget.ts">
 
 ```js
 const widgetExample = {
@@ -199,7 +199,7 @@ const widgetExample = {
 ```
 
   </TabItem>
-  <TabItem label="component.jsx">
+  <TabItem label="component.tsx">
 
 ```js
 const { data: statsData, error: statsError } = useWidgetAPI(widget, "stats", {
@@ -302,7 +302,7 @@ The `allowedEndpoints` property is a RegExp that represents the allowed endpoint
 
 :::note[Security Note]
 
-The `mappings` or `allowedEndpoints` property is required for the widget to fetch data from more than a static URL. Homepage uses a whitelist approach to ensure that widgets only access allowed endpoints.
+The `mappings` or `allowedEndpoints` property is required for the widget to fetch data from more than a static URL. Daemun uses a whitelist approach to ensure that widgets only access allowed endpoints.
 :::
 
 ```js

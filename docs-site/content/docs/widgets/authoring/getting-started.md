@@ -1,13 +1,13 @@
 ---
 title: Getting Started
-description: Get started developing for Homepage.
+description: Get started developing for Daemun.
 ---
 
-We'll cover getting homepage up and running on your local machine for development, as well as some guidelines for developing new features and widgets.
+We'll cover getting Daemun up and running on your local machine for development, as well as some guidelines for developing new features and widgets.
 
 ## Development
 
-First, clone the homepage repository.
+First, clone the Daemun repository.
 
 For installing NPM packages, this project uses [pnpm](https://pnpm.io/) (and so should you!):
 
@@ -35,7 +35,7 @@ pnpm lint
 
 ## Testing
 
-Homepage uses [Vitest](https://vitest.dev/) for unit and component tests.
+Daemun uses [Vitest](https://vitest.dev/) for unit and component tests.
 
 Run the test suite:
 
@@ -51,9 +51,9 @@ pnpm test:coverage
 
 ### What tests to include
 
-- New or updated widgets should generally include a component test near the widget component (for example `src/widgets/<widget>/component.test.jsx`) that covers realistic behavior: loading/placeholder state, error state, and a representative "happy path" render.
-- If you add or change a widget definition file (`src/widgets/<widget>/widget.js`), add/update its corresponding unit test (`src/widgets/<widget>/widget.test.js`) to cover the config/mapping behavior.
-- If your widget requires a custom proxy (`src/widgets/<widget>/proxy.js`), add a proxy unit test (`src/widgets/<widget>/proxy.test.js`) that validates:
+- New or updated widgets should generally include a component test near the widget component (for example `src/widgets/<widget>/component.test.tsx`) that covers realistic behavior: loading/placeholder state, error state, and a representative "happy path" render.
+- If you add or change a widget definition file (`src/widgets/<widget>/widget.ts`), add/update its corresponding unit test (`src/widgets/<widget>/widget.test.ts`) to cover the config/mapping behavior.
+- If your widget requires a custom proxy (`src/widgets/<widget>/proxy.ts`), add a proxy unit test (`src/widgets/<widget>/proxy.test.ts`) that validates:
   - request construction (URL, query params, headers/auth)
   - response mapping (what the widget consumes)
   - error pathways (upstream error, unexpected payloads)
@@ -70,7 +70,7 @@ pnpm test
 
 ## Preferring self-hosted open-source software
 
-In general, homepage is meant to be a dashboard for 'self-hosted' services and we believe it is a small way we can help showcase this kind of software. While exceptions are made, mostly when there is no viable
+In general, Daemun is meant to be a dashboard for 'self-hosted' services and we believe it is a small way we can help showcase this kind of software. While exceptions are made, mostly when there is no viable
 self-hosted / open-source alternative, we ask that any widgets, etc. are developed primarily for a self-hosted tool.
 
 <a id="new-feature-guidelines"></a>
@@ -90,5 +90,5 @@ To ensure cohesiveness of various widgets, the following should be used as a gui
 - Widgets should be no more than 4 blocks wide and generally conform to the styling / design choices of other widgets
 - Minimize the number of API calls
 - Avoid the use of custom proxy unless absolutely necessary
-- Widgets should be 'read-only', as in they should not make write changes using the relevant tool's API. Homepage widgets are designed to surface information, not to be a (usually worse) replacement for the tool itself.
+- Widgets should be 'read-only', as in they should not make write changes using the relevant tool's API. Daemun widgets are designed to surface information, not to be a (usually worse) replacement for the tool itself.
 - Widgets should not allow manually overriding the "refresh interval" setting, as misconfigured refresh intervals can easily lead to performance issues for users.

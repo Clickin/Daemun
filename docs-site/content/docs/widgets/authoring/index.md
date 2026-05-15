@@ -8,7 +8,7 @@ Widgets are a core component of Daemun. They are used to display information abo
 
 ## Overview
 
-If you are new to Homepage widgets, and are looking to create a new widget, please follow along with the guide here: [Widget Tutorial](tutorial/).
+If you are new to Daemun widgets, and are looking to create a new widget, please follow along with the guide here: [Widget Tutorial](tutorial/).
 
 ### Translations
 
@@ -18,7 +18,7 @@ To learn more about translations, please refer to the guide here: [Translations 
 
 ### Widget Component
 
-The widget component is the core of the widget. It is responsible for [fetching data from the API](api/) and rendering the widget UI. Daemun keeps the inherited Homepage widget hooks and utilities for compatibility.
+The widget component is the core of the widget. It is responsible for [fetching data from the API](api/) and rendering the widget UI. Daemun keeps the inherited widget hooks and utilities for compatibility with upstream configuration.
 
 To learn more about widget components, please refer to the guide here: [Component Guide](component/).
 

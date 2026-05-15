@@ -15,27 +15,27 @@ hide:
 
 ## Service Widget Errors
 
-All service widgets work essentially the same, that is, homepage makes a proxied call to an API made available by that service. The majority of the time widgets don't work it is a configuration issue. Of course, sometimes things do break. Some basic steps to check:
+All service widgets work essentially the same, that is, Daemun makes a proxied call to an API made available by that service. The majority of the time widgets don't work it is a configuration issue. Of course, sometimes things do break. Some basic steps to check:
 
 1.  URLs should not end with a / or other API path. Each widget will handle the path on its own.
 
 2.  All services with a widget require a unique name as well as a unique group (and all subgroups) name.
 
-3.  Verify the homepage installation can connect to the IP address or host you are using for the widget `url`. This is most simply achieved by pinging the server from the homepage machine, in Docker this means _from inside the container_ itself, e.g.:
+3.  Verify the Daemun installation can connect to the IP address or host you are using for the widget `url`. This is most simply achieved by pinging the server from the Daemun container, e.g.:
 
     ```
     docker exec daemun ping SERVICEIPORDOMAIN
     ```
 
-    If your homepage install (container) cannot reach the service then you need to figure out why, for example in Docker this can mean putting the two containers on the same network, checking firewall issues, etc.
+    If your Daemun container cannot reach the service then you need to figure out why, for example in Docker this can mean putting the two containers on the same network, checking firewall issues, etc.
 
-4.  If you have verified that homepage can in fact reach the service then you can also check the API output using e.g. `curl`, which is often helpful if you do need to file a bug report. Again, depending on your networking setup this may need to be run from _inside the container_ as IP / hostname resolution can differ inside vs outside.
+4.  If you have verified that Daemun can in fact reach the service then you can also check the API output using e.g. `curl`, which is often helpful if you do need to file a bug report. Again, depending on your networking setup this may need to be run from _inside the container_ as IP / hostname resolution can differ inside vs outside.
 
     > **Note**
     >
     > `curl` is not installed in the base image by default but can be added inside the container with `apk add curl`.
 
-    The exact API endpoints and authentication vary of course, but in many cases instructions can be found by searching the web or if you feel comfortable looking at the homepage source code (e.g. `src/widgets/{widget}/widget.js`).
+    The exact API endpoints and authentication vary of course, but in many cases instructions can be found by searching the web or by looking at the Daemun source code (e.g. `src/widgets/{widget}/widget.ts`).
 
     It is out of the scope of this to go into full detail about how to , but an example for PiHole would be:
 

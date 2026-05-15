@@ -30,8 +30,7 @@ By default, the description will use the hostname of the link, but you can overr
           href: https://youtube.com/
 ```
 
-which renders to (depending on your theme, etc.):
-
-<img width="1000" alt="Bookmarks" src="https://user-images.githubusercontent.com/19408/269307009-d7e45885-230f-4e07-b421-9822017ae878.png">
+Daemun renders these entries as compact bookmark cards. When both `icon` and
+`abbr` are present, the icon is shown and the abbreviation is ignored.
 
 The default [bookmarks.yaml](https://github.com/Clickin/Daemun/blob/main/src/skeleton/bookmarks.yaml) is a working example.

@@ -19,7 +19,7 @@ Groups are defined as top-level array entries.
         href: http://localhost/
 ```
 
-<img width="1038" alt="Service Groups" src="https://user-images.githubusercontent.com/82196/187040754-28065242-4534-4409-881c-93d1921c6141.png">
+Daemun renders each top-level entry as a separate service section.
 
 ### Nested Groups
 
@@ -58,7 +58,8 @@ Services are defined as array entries on groups,
         href: http://localhost/
 ```
 
-<img width="1038" alt="Service Services" src="https://user-images.githubusercontent.com/82196/187040763-038023a2-8bee-4d87-b5cc-13447e7365a4.png">
+Daemun renders each service as a card inside its group, using the group order
+from `services.yaml` unless a layout override is provided.
 
 ### Service Widgets
 
@@ -208,7 +209,8 @@ Services may have descriptions,
         description: This is another service
 ```
 
-<img width="1038" alt="Service Descriptions" src="https://user-images.githubusercontent.com/82196/187040817-11a3d0eb-c997-4ef9-8f06-2d03a11332b6.png">
+Descriptions are shown under the service name when the selected card layout has
+room for them.
 
 ## Icons
 
@@ -251,7 +253,8 @@ Material Design Icons for **brands** were deprecated and may be removed in the f
         description: My cool service
 ```
 
-<img width="1038" alt="Service Icons" src="https://user-images.githubusercontent.com/82196/187040777-da1361d7-f0c4-4531-95db-136cd00a1611.png">
+The example above resolves the Sonarr and Radarr icons from Dashboard Icons and
+uses a Material Design icon for the generic service.
 
 ## Ping
 
@@ -275,8 +278,6 @@ Because ping uses the ping command on the underlying host, in some cases you may
         href: http://radarr.host/
         ping: some.other.host
 ```
-
-<img width="1038" alt="Ping" src="https://github.com/gethomepage/homepage/assets/88257202/7bc13bd3-0d0b-44e3-888c-a20e069a3233">
 
 You can also apply different styles to the ping indicator by using the `statusStyle` property, see [settings](settings/#status-style).
 
@@ -325,16 +326,12 @@ Services may be connected to a Docker container, either running on the local mac
         container: other-container
 ```
 
-<img width="1038" alt="Service Containers" src="https://github.com/gethomepage/homepage/assets/88257202/4c685783-52c6-4e55-afb3-affe9baac09b">
-
 **Clicking on the status label of a service with Docker integration enabled will expand the container stats, where you can see CPU, Memory, and Network activity.**
 
 :::note
 
 This can also be controlled with `showStats`. See [show docker stats](docker/#show-stats) for more information
 :::
-
-<img width="1038" alt="Docker Stats Expanded" src="https://github.com/gethomepage/homepage/assets/88257202/f95fd595-449e-48ae-af67-fd89618904ec">
 
 ## Service Integrations
 
@@ -366,4 +363,5 @@ Here is an example of a Radarr & Sonarr service, with their respective integrati
           key: apikeyapikeyapikeyapikeyapikey
 ```
 
-<img width="1038" alt="Service Integrations" src="https://user-images.githubusercontent.com/82196/187040838-6cd518c2-4f08-41ef-8aa6-364df5e2660e.png">
+The widget appears inside the service card and uses the same server-side proxy
+path as other service widgets.
