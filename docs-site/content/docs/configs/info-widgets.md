@@ -1,24 +1,57 @@
 ---
 title: Information Widgets
-description: Homepage info widgets.
+description: Daemun information widget configuration.
 ---
 
-Information widgets are widgets that provide information about your system or environment and are displayed at the top of the homepage. You can find a list of all available info widgets under the [Info Widgets](../widgets/info/index.md) section.
+Information widgets provide dashboard-level information about your system or
+environment. They are configured in `widgets.yaml` and are displayed above the
+service and bookmark sections.
 
-Info widgets are defined in the widgets.yaml
+Each widget has its own detailed page under [Info Widgets](../widgets/info/).
 
-Each widget has its own configuration options, which are detailed in the widget's documentation.
+## Available Widgets
 
-## Layout
+- [Date & Time](../widgets/info/datetime/)
+- [Glances](../widgets/info/glances/)
+- [Greeting](../widgets/info/greeting/)
+- [Kubernetes](../widgets/info/kubernetes/)
+- [Logo](../widgets/info/logo/)
+- [Longhorn](../widgets/info/longhorn/)
+- [Open-Meteo](../widgets/info/openmeteo/)
+- [OpenWeatherMap](../widgets/info/openweathermap/)
+- [Resources](../widgets/info/resources/)
+- [Search](../widgets/info/search/)
+- [Stocks](../widgets/info/stocks/)
+- [UniFi Controller](../widgets/info/unifi_controller/)
 
-Info widgets are displayed in the order they are defined in the `widgets.yaml` file. You can change the order by moving the widgets around in the file. However, some widgets (weather, search and datetime) are aligned to the right side of the screen which can affect the layout of the widgets.
+## Basic Example
 
-## Adding A Link
+```yaml
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+
+- search:
+    provider: duckduckgo
+    target: _blank
+```
+
+## Configuration
+
+Info widgets are defined as top-level entries in `widgets.yaml`. Each widget
+has its own options, documented on the widget-specific page.
+
+They are displayed in the order they are defined. Some widgets, including
+weather, search, and date/time, are aligned to the right side of the screen, so
+their placement can affect the final header layout.
+
+## Adding a Link
 
 You can add a link to an info widget such as the logo or text widgets by adding an `href` option, for example:
 
 ```yaml
-logo:
-  href: https://example.com
-  target: _blank # Optional, can be set in settings
+- logo:
+    href: https://example.com
+    target: _blank # Optional, can be set in settings
 ```

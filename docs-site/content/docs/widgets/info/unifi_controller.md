@@ -3,7 +3,7 @@ title: Unifi Controller
 description: Unifi Controller Information Widget Configuration
 ---
 
-_(Find the Unifi Controller service widget [here](../services/unifi-controller.md))_
+_(Find the Unifi Controller service widget [here](../services/unifi-controller/))_
 
 You can display general connectivity status from your Unifi (Network) Controller.
 

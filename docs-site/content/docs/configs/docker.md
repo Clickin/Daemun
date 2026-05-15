@@ -204,7 +204,7 @@ labels: ...
 
 To pass custom HTTP headers with a widget request when using labels, use the same dot-notation: `homepage.widget.headers.X-Auth-Key=secret` (or `homepage.widgets[0].headers.X-Auth-Key=secret` when multiple widgets are present).
 
-You can add specify fields for e.g. the [CustomAPI](../widgets/services/customapi.md) widget by using array-style dot notation:
+You can add specify fields for e.g. the [CustomAPI](../widgets/services/customapi/) widget by using array-style dot notation:
 
 ```yaml
 labels:
@@ -254,7 +254,7 @@ In order to detect every service within the Docker swarm it is necessary that se
 
 ## Multiple Daemun Instances
 
-The optional field `instanceName` can be configured in [settings.yaml](settings.md#instance-name) to differentiate between multiple Daemun instances.
+The optional field `instanceName` can be configured in [settings.yaml](settings/#instance-name) to differentiate between multiple Daemun instances.
 
 To limit a label to an instance, insert `.instance.{{instanceName}}` after the `homepage` prefix.
 
@@ -286,4 +286,4 @@ You can show the docker stats by clicking the status indicator but this can also
   showStats: true
 ```
 
-Also see the settings for [show docker stats](settings.md#show-container-stats).
+Also see the settings for [show docker stats](settings/#show-container-stats).

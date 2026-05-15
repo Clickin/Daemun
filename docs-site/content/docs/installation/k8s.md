@@ -184,7 +184,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 3000
+    - port: 80
       targetPort: http
       protocol: TCP
       name: http
@@ -312,7 +312,7 @@ spec:
               service:
                 name: daemun
                 port:
-                  number: 3000
+                  number: 80
 ```
 
 ### Multiple Replicas
@@ -337,7 +337,7 @@ spec:
       services:
         - kind: Service
           name: daemun
-          port: 3000
+          port: 80
           sticky:
             cookie:
               httpOnly: true

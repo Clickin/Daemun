@@ -1,10 +1,10 @@
 ---
 title: Configuration
-description: Homepage Configuration
+description: Daemun configuration.
 icon: material/cog
 ---
 
-Homepage uses YAML for configuration, YAML stands for "YAML Ain't Markup Language.". It's a human-readable data serialization format that's a superset of JSON. Great for config files, easy to read and write. Supports complex data types like lists and objects. **Indentation matters.** If you already use Docker Compose, you already use YAML.
+Daemun uses YAML for configuration. YAML stands for "YAML Ain't Markup Language." It's a human-readable data serialization format that's a superset of JSON. Great for config files, easy to read and write. Supports complex data types like lists and objects. **Indentation matters.** If you already use Docker Compose, you already use YAML.
 
 Here are some tips when writing YAML:
 

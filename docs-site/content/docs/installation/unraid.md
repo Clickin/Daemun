@@ -10,7 +10,7 @@ Daemun can be run on UNRAID with a custom Docker container template. If you alre
 - In the UNRAID webGUI, go to the **Apps** tab.
 - Create a new Docker container from the UNRAID webGUI.
 - Set the repository/image to `ghcr.io/clickin/daemun:latest`.
-- Expose port `3000` and mount your config directory to `/app/config`.
+- Expose port `80` and mount your config directory to `/app/config`.
 - Set `HOMEPAGE_ALLOWED_HOSTS` to the host name and port you use to open Daemun.
 - Change the parameters to your liking.
   - Click on **APPLY**.
@@ -31,7 +31,7 @@ You may need to set the permissions of the folders to be able to edit the files.
 
 ## Some Other Notes
 
-- To use the [Docker integration](../configs/docker.md), you only need to use the `container:` parameter. There is no need to set the server.
+- To use the [Docker integration](../configs/docker/), you only need to use the `container:` parameter. There is no need to set the server.
 
 :::note
 
@@ -45,4 +45,4 @@ You may need to set the permissions of the folders to be able to edit the files.
         container: plex
 ```
 
-- When you upload a new image into the **/images** folder, you will need to restart the container for it to show up in the WebUI. Please see the [service icons](../configs/services.md#icons) for more information.
+- When you upload a new image into the **/images** folder, you will need to restart the container for it to show up in the WebUI. Please see the [service icons](../configs/services/#icons) for more information.

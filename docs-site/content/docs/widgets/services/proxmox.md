@@ -7,7 +7,7 @@ Learn more about [Proxmox](https://www.proxmox.com/en/).
 
 This widget shows the running and total counts of both QEMU VMs and LX Containers in the Proxmox cluster. It also shows the CPU and memory usage of the first node in the cluster.
 
-See the [Proxmox configuration documentation](../../configs/proxmox.md#create-token) for details on creating API tokens.
+See the [Proxmox configuration documentation](../../configs/proxmox/#create-token) for details on creating API tokens.
 
 Use `username@pam!Token ID` as the `username` (e.g `api@pam!homepage`) setting and `Secret` as the `password` setting.
 

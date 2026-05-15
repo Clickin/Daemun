@@ -29,7 +29,7 @@ The `widget` argument is the metadata object for the widget. It contains informa
 
 ### `endpoint`
 
-The `endpoint` argument is the name of the endpoint to fetch data from. This is [defined in the widget metadata object](metadata.md#endpoint). The `useWidgetAPI` hook uses this argument to determine which endpoint to fetch data from.
+The `endpoint` argument is the name of the endpoint to fetch data from. This is [defined in the widget metadata object](metadata/#endpoint). The `useWidgetAPI` hook uses this argument to determine which endpoint to fetch data from.
 
 If no endpoint is provided, the `useWidgetAPI` hook will call the API endpoint defined in the widget metadata object directly.
 
@@ -47,4 +47,4 @@ export default function Component({ service }) {
 }
 ```
 
-The `params` must be [whitelisted in the widget metadata object](metadata.md#params). This is done to prevent arbitrary query parameters from being passed to the API.
+The `params` must be [whitelisted in the widget metadata object](metadata/#params). This is done to prevent arbitrary query parameters from being passed to the API.

@@ -13,11 +13,11 @@ export default defineConfig({
       description: "A compact Hono and Vite dashboard for self-hosted services.",
       disable404Route: true,
       editLink: {
-        baseUrl: "https://github.com/Clickin/Daemun/edit/main/docs-site/content/docs/",
+        baseUrl: "https://github.com/Clickin/Daemun/edit/main/docs-site/",
       },
-      favicon: "/daemun.ico",
+      favicon: "/favicon.svg",
       logo: {
-        src: "../public/android-chrome-192x192.png",
+        src: "../public/daemun.svg",
       },
       pagefind: true,
       social: [

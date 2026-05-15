@@ -9,7 +9,7 @@ hide:
 ## General Troubleshooting Tips
 
 - For API errors, clicking the "API Error Information" button in the widget will usually show some helpful information as to whether the issue is reaching the service host, an authentication issue, etc.
-- Check config/logs/homepage.log, on docker simply e.g. `docker logs homepage`. This may provide some insight into the reason for an error.
+- Check `config/logs/daemun.log` or the container logs, for example `docker logs daemun`. This may provide some insight into the reason for an error.
 - Check the browser error console, this can also sometimes provide useful information.
 - Consider setting the `ENV` variable `LOG_LEVEL` to `debug`.
 
@@ -24,7 +24,7 @@ All service widgets work essentially the same, that is, homepage makes a proxied
 3.  Verify the homepage installation can connect to the IP address or host you are using for the widget `url`. This is most simply achieved by pinging the server from the homepage machine, in Docker this means _from inside the container_ itself, e.g.:
 
     ```
-    docker exec homepage ping SERVICEIPORDOMAIN
+    docker exec daemun ping SERVICEIPORDOMAIN
     ```
 
     If your homepage install (container) cannot reach the service then you need to figure out why, for example in Docker this can mean putting the two containers on the same network, checking firewall issues, etc.
@@ -65,4 +65,4 @@ All service widgets work essentially the same, that is, homepage makes a proxied
 
 ## Missing custom icons
 
-If, after correctly adding and mapping your custom icons via the [Icons](../configs/services.md#icons) instructions, you are still unable to see your icons please try recreating your container.
+If, after correctly adding and mapping your custom icons via the [Icons](../configs/services/#icons) instructions, you are still unable to see your icons please try recreating your container.

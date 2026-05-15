@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   // Vitest uses Vite/esbuild, so enable the modern JSX runtime
-  // to avoid requiring `import React from "react"` in every JSX file.
+  // to avoid requiring `import React from "react"` in every TSX file.
   esbuild: {
     jsx: "automatic",
   },
@@ -22,25 +22,25 @@ export default defineConfig({
     environment: "node",
     // Use worker threads instead of forked processes to reduce overhead and avoid noisy per-process Node warnings.
     pool: "threads",
-    setupFiles: ["./vitest.setup.js"],
-    include: ["src/**/*.test.{js,jsx,ts,tsx}", "src/**/*.spec.{js,jsx,ts,tsx}", "test/**/*.test.{js,jsx,ts,tsx}"],
-    exclude: ["src/server/browserless-smoke.test.jsx"],
+    setupFiles: ["./vitest.setup.mjs"],
+    include: ["src/**/*.test.{ts,tsx}", "src/**/*.spec.{ts,tsx}", "test/**/*.test.{ts,tsx}"],
+    exclude: ["src/server/browserless-smoke.test.tsx"],
     coverage: {
       provider: "v8",
       all: true,
       reporter: ["text", "lcov", "json-summary"],
-      include: ["src/**/*.{js,jsx,ts,tsx}"],
+      include: ["src/**/*.{ts,tsx}"],
       exclude: [
         // Ignore build artifacts / generated reports
         "dist/**",
         "coverage/**",
         // Exclude tests and test harness code from coverage totals.
-        "src/**/*.test.{js,jsx,ts,tsx}",
-        "src/**/*.spec.{js,jsx,ts,tsx}",
+        "src/**/*.test.{ts,tsx}",
+        "src/**/*.spec.{ts,tsx}",
         "test/**",
         "src/test-utils/**",
-        "src/widgets/widgets.js",
-        "src/widgets/components.js",
+        "src/widgets/widgets.ts",
+        "src/widgets/components.ts",
         "src/skeleton/custom.js",
         "vitest.config.mjs",
       ],

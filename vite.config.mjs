@@ -91,8 +91,8 @@ export default defineConfig((configEnv) => {
           outDir: "dist/server",
           rollupOptions: {
             input: {
-              app: "src/server/app.js",
-              index: "src/server/index.js",
+              app: "src/server/app.ts",
+              index: "src/server/index.ts",
             },
             output: {
               banner: "const __filename = import.meta.filename; const __dirname = import.meta.dirname;",
@@ -107,7 +107,7 @@ export default defineConfig((configEnv) => {
           manifest: true,
           outDir: "dist/client",
           rollupOptions: {
-            input: "src/client.jsx",
+            input: "src/client.tsx",
             output: {
               manualChunks: clientManualChunks,
             },

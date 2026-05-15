@@ -3,7 +3,7 @@ title: Stocks
 description: Stocks Information Widget Configuration
 ---
 
-_(Find the Stocks service widget [here](../services/stocks.md))_
+_(Find the Stocks service widget [here](../services/stocks/))_
 
 The Stocks Information Widget allows you to include basic stock market data in
 your Homepage header. The widget includes the current price of a stock, and the

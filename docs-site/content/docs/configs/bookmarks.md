@@ -3,11 +3,11 @@ title: Bookmarks
 description: Bookmark Configuration
 ---
 
-Bookmarks are configured in the `bookmarks.yaml` file. They function much the same as [Services](services.md), in how groups and lists work. They're just much simpler, smaller, and contain no extra features other than being a link out.
+Bookmarks are configured in the `bookmarks.yaml` file. They function much the same as [Services](services/), in how groups and lists work. They're just much simpler, smaller, and contain no extra features other than being a link out.
 
 Daemun's design expects `abbr` to be 2 letters, but is not otherwise forced.
 
-You can also use an icon for bookmarks similar to the [options for service icons](services.md#icons). If both icon and abbreviation are supplied, the icon takes precedence.
+You can also use an icon for bookmarks similar to the [options for service icons](services/#icons). If both icon and abbreviation are supplied, the icon takes precedence.
 
 By default, the description will use the hostname of the link, but you can override it with a custom description.
 

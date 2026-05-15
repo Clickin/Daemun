@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="720" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a0f17"/>
+      <stop offset=".55" stop-color="#101827"/>
+      <stop offset="1" stop-color="#111315"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6ed7ff"/>
+      <stop offset="1" stop-color="#0072ce"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <rect x="64" y="52" width="1152" height="616" rx="28" fill="#0f1622" stroke="#263446"/>
+  <g transform="translate(92 82)">
+    <rect width="72" height="72" rx="18" fill="url(#mark)"/>
+    <path d="M17 31c6-1 10-5 12-10 4 3 18 3 22 0 2 5 6 9 12 10-1 6-5 9-10 7-5-1-10-2-17-2s-12 1-17 2c-5 2-9-1-10-7Z" fill="#fff"/>
+    <path d="M22 39h28v5h-3v18h-6V44H31v18h-6V44h-3v-5Z" fill="#fff"/>
+    <path d="M32 46h8v17h-8V46Z" fill="#fff"/>
+    <text x="96" y="31" fill="#f8fafc" font-size="38" font-weight="800">Daemun</text>
+    <text x="96" y="61" fill="#9aa8b7" font-size="18">Static-first homelab dashboard</text>
+  </g>
+  <g transform="translate(904 96)">
+    <rect width="260" height="46" rx="23" fill="#141d2a" stroke="#263446"/>
+    <text x="24" y="30" fill="#9aa8b7" font-size="16">Search services...</text>
+  </g>
+
+    <g transform="translate(92 260)">
+      <rect width="336" height="160" rx="18" fill="#17202d" stroke="#263446"/>
+      <circle cx="34" cy="34" r="13" fill="#22c55e"/>
+      <text x="58" y="39" fill="#f7fafc" font-size="24" font-weight="700">Media</text>
+      <text x="26" y="78" fill="#9aa8b7" font-size="16">Jellyfin, Sonarr, Radarr</text>
+      <rect x="26" y="106" width="284" height="9" rx="5" fill="#273346"/>
+      <rect x="26" y="106" width="182" height="9" rx="5" fill="#22c55e"/>
+    </g>
+
+    <g transform="translate(460 260)">
+      <rect width="336" height="160" rx="18" fill="#17202d" stroke="#263446"/>
+      <circle cx="34" cy="34" r="13" fill="#38bdf8"/>
+      <text x="58" y="39" fill="#f7fafc" font-size="24" font-weight="700">Infrastructure</text>
+      <text x="26" y="78" fill="#9aa8b7" font-size="16">Proxmox, Grafana, Traefik</text>
+      <rect x="26" y="106" width="284" height="9" rx="5" fill="#273346"/>
+      <rect x="26" y="106" width="182" height="9" rx="5" fill="#38bdf8"/>
+    </g>
+
+    <g transform="translate(828 260)">
+      <rect width="336" height="160" rx="18" fill="#17202d" stroke="#263446"/>
+      <circle cx="34" cy="34" r="13" fill="#f59e0b"/>
+      <text x="58" y="39" fill="#f7fafc" font-size="24" font-weight="700">Storage</text>
+      <text x="26" y="78" fill="#9aa8b7" font-size="16">NAS, Backups, Sync</text>
+      <rect x="26" y="106" width="284" height="9" rx="5" fill="#273346"/>
+      <rect x="26" y="106" width="182" height="9" rx="5" fill="#f59e0b"/>
+    </g>
+
+    <g transform="translate(92 452)">
+      <rect width="336" height="160" rx="18" fill="#17202d" stroke="#263446"/>
+      <circle cx="34" cy="34" r="13" fill="#a78bfa"/>
+      <text x="58" y="39" fill="#f7fafc" font-size="24" font-weight="700">Automation</text>
+      <text x="26" y="78" fill="#9aa8b7" font-size="16">Home Assistant, MQTT</text>
+      <rect x="26" y="106" width="284" height="9" rx="5" fill="#273346"/>
+      <rect x="26" y="106" width="182" height="9" rx="5" fill="#a78bfa"/>
+    </g>
+
+    <g transform="translate(460 452)">
+      <rect width="336" height="160" rx="18" fill="#17202d" stroke="#263446"/>
+      <circle cx="34" cy="34" r="13" fill="#fb7185"/>
+      <text x="58" y="39" fill="#f7fafc" font-size="24" font-weight="700">Monitoring</text>
+      <text x="26" y="78" fill="#9aa8b7" font-size="16">Glances, Uptime, Logs</text>
+      <rect x="26" y="106" width="284" height="9" rx="5" fill="#273346"/>
+      <rect x="26" y="106" width="182" height="9" rx="5" fill="#fb7185"/>
+    </g>
+
+    <g transform="translate(828 452)">
+      <rect width="336" height="160" rx="18" fill="#17202d" stroke="#263446"/>
+      <circle cx="34" cy="34" r="13" fill="#2dd4bf"/>
+      <text x="58" y="39" fill="#f7fafc" font-size="24" font-weight="700">Links</text>
+      <text x="26" y="78" fill="#9aa8b7" font-size="16">Docs, Git, Homelab</text>
+      <rect x="26" y="106" width="284" height="9" rx="5" fill="#273346"/>
+      <rect x="26" y="106" width="182" height="9" rx="5" fill="#2dd4bf"/>
+    </g>
+  <g transform="translate(92 636)">
+    <text fill="#6ed7ff" font-size="16" font-weight="700">nginx + Hono</text>
+    <text x="118" fill="#9aa8b7" font-size="16">YAML config baked into the first page, widgets refreshed through API calls.</text>
+  </g>
+</svg>

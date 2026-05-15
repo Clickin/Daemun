@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const baselinePath = path.join(root, "tools/release-gate/upstream-baseline.json");
-const localWidgetRegistryPath = path.join(root, "src/widgets/widgets.js");
+const localWidgetRegistryPath = path.join(root, "src/widgets/widgets.ts");
 const widgetRegistryPath = "src/widgets/widgets.js";
 
 async function readJson(filePath) {
@@ -85,7 +85,7 @@ function collectBlockingProblems(upstreamBaseline, localRegistry) {
   const missingRegistryKeys = difference(upstreamBaseline.registryKeys, localRegistry.registryKeys);
   const missingImportDirs = difference(upstreamBaseline.importDirs, localRegistry.importDirs);
   const missingWidgetFiles = upstreamBaseline.importDirs.filter(
-    (dir) => !existsSync(path.join(root, "src/widgets", dir, "widget.js")),
+    (dir) => !existsSync(path.join(root, "src/widgets", dir, "widget.ts")),
   );
 
   return { missingImportDirs, missingRegistryKeys, missingWidgetFiles };

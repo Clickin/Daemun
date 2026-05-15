@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { request } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -27,12 +27,16 @@ const config = {
   buildDaemunNode: process.env.BENCH_BUILD_DAEMUN_NODE !== "0" && process.env.BENCH_BUILD_DAEMUN !== "0",
   buildDaemunNginx: process.env.BENCH_BUILD_DAEMUN_NGINX !== "0" && process.env.BENCH_BUILD_DAEMUN !== "0",
   pullHomepage: process.env.BENCH_PULL_HOMEPAGE !== "0",
-  cpus: process.env.BENCH_CPUS || "1",
-  memory: process.env.BENCH_MEMORY || "256m",
+  cpus: process.env.BENCH_CPUS?.trim() || null,
+  memory: process.env.BENCH_MEMORY || "512m",
   durationMs: Number(process.env.BENCH_DURATION_MS || 30_000),
   warmupMs: Number(process.env.BENCH_WARMUP_MS || 5_000),
   concurrency: Number(process.env.BENCH_CONCURRENCY || 32),
   sampleDuringStress: process.env.BENCH_SAMPLE_DURING_STRESS === "1",
+  browserTimings: process.env.BENCH_BROWSER_TIMINGS !== "0",
+  browserBin: process.env.BENCH_BROWSER_BIN || process.env.CHROME_PATH || process.env.CHROMIUM_PATH || process.env.MSEDGE_PATH,
+  browserIterations: Number(process.env.BENCH_BROWSER_ITERATIONS || 7),
+  browserWarmupIterations: Number(process.env.BENCH_BROWSER_WARMUP_ITERATIONS || 1),
   endpoints: configuredEndpoints,
   fixtureConfigDir: path.resolve(process.env.BENCH_CONFIG_DIR || "src/test-utils/fixtures/smoke-config"),
 };
@@ -112,19 +116,11 @@ function startContainer(target) {
   const name = `daemun-bench-${target.label}-${Date.now()}`;
   const configDir = prepareConfig(target.label);
 
-  const args = [
-    "run",
-    "--detach",
-    "--rm",
-    "--name",
-    name,
-    "--cpus",
-    config.cpus,
-    "--memory",
-    config.memory,
-    "--memory-swap",
-    config.memory,
-  ];
+  const args = ["run", "--detach", "--rm", "--name", name, "--memory", config.memory, "--memory-swap", config.memory];
+
+  if (config.cpus) {
+    args.push("--cpus", config.cpus);
+  }
 
   if (target.allowAllHosts) {
     args.push("--env", "HOMEPAGE_ALLOWED_HOSTS=*");
@@ -210,6 +206,325 @@ function percentile(values, percentileValue) {
   return Number(sorted[index].toFixed(2));
 }
 
+function maxValue(values) {
+  if (values.length === 0) return null;
+  let max = values[0];
+  for (let index = 1; index < values.length; index += 1) {
+    if (values[index] > max) max = values[index];
+  }
+  return Number(max.toFixed(2));
+}
+
+function average(values) {
+  const measured = values.filter((value) => Number.isFinite(value));
+  if (measured.length === 0) return null;
+  return Number((measured.reduce((sum, value) => sum + value, 0) / measured.length).toFixed(2));
+}
+
+function summarizeMetric(samples, key) {
+  const values = samples.map((sample) => sample[key]).filter((value) => Number.isFinite(value));
+  return {
+    avg: average(values),
+    p50: percentile(values, 50),
+    p95: percentile(values, 95),
+    min: values.length ? Number(Math.min(...values).toFixed(2)) : null,
+    max: values.length ? Number(Math.max(...values).toFixed(2)) : null,
+  };
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function waitForProcessExit(child, timeoutMs = 5_000) {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, timeoutMs);
+    child.once("exit", () => {
+      clearTimeout(timer);
+      resolve();
+    });
+  });
+}
+
+async function removeDirectoryWithRetry(directory) {
+  let lastError;
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    try {
+      rmSync(directory, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      lastError = error;
+      await delay(100 * (attempt + 1));
+    }
+  }
+
+  throw lastError;
+}
+
+function findCommandOnPath(command) {
+  const lookup = process.platform === "win32" ? "where" : "which";
+  const result = spawnSync(lookup, [command], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  if (result.status !== 0) return null;
+  return result.stdout
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .find(Boolean);
+}
+
+function browserCandidates() {
+  const candidates = [];
+  if (config.browserBin) candidates.push(config.browserBin);
+
+  if (process.platform === "win32") {
+    for (const base of [process.env.PROGRAMFILES, process.env["PROGRAMFILES(X86)"], process.env.LOCALAPPDATA]) {
+      if (!base) continue;
+      candidates.push(
+        path.join(base, "Google", "Chrome", "Application", "chrome.exe"),
+        path.join(base, "Microsoft", "Edge", "Application", "msedge.exe"),
+        path.join(base, "Chromium", "Application", "chrome.exe"),
+      );
+    }
+  } else if (process.platform === "darwin") {
+    candidates.push(
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+      "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    );
+  } else {
+    candidates.push(
+      findCommandOnPath("google-chrome-stable"),
+      findCommandOnPath("google-chrome"),
+      findCommandOnPath("chromium"),
+      findCommandOnPath("chromium-browser"),
+      findCommandOnPath("microsoft-edge"),
+    );
+  }
+
+  return candidates.filter((candidate, index, all) => candidate && all.indexOf(candidate) === index);
+}
+
+function findBrowserExecutable() {
+  for (const candidate of browserCandidates()) {
+    if (candidate && existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
+async function waitForDevToolsPort(userDataDir) {
+  const portFile = path.join(userDataDir, "DevToolsActivePort");
+  const deadline = Date.now() + 15_000;
+  let lastError;
+
+  while (Date.now() < deadline) {
+    try {
+      if (existsSync(portFile)) {
+        const [port, token] = readFileSync(portFile, "utf8").trim().split(/\r?\n/);
+        if (port && token) return { port: Number(port), token };
+      }
+    } catch (error) {
+      lastError = error;
+    }
+    await delay(100);
+  }
+
+  throw new Error(`Browser did not expose DevToolsActivePort${lastError ? `: ${lastError.message}` : ""}`);
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5_000) });
+  if (!response.ok) throw new Error(`${url} returned ${response.status}`);
+  return response.json();
+}
+
+function createCdpConnection(wsUrl) {
+  let id = 0;
+  const pending = new Map();
+  const socket = new WebSocket(wsUrl);
+
+  const opened = new Promise((resolve, reject) => {
+    socket.addEventListener("open", resolve, { once: true });
+    socket.addEventListener("error", () => reject(new Error(`Could not connect to ${wsUrl}`)), { once: true });
+  });
+
+  socket.addEventListener("message", (event) => {
+    const message = JSON.parse(event.data);
+    if (!message.id) return;
+    const requestState = pending.get(message.id);
+    if (!requestState) return;
+    pending.delete(message.id);
+    if (message.error) {
+      requestState.reject(new Error(`${requestState.method} failed: ${message.error.message}`));
+    } else {
+      requestState.resolve(message.result ?? {});
+    }
+  });
+
+  return {
+    async ready() {
+      await opened;
+    },
+    send(method, params = {}, sessionId = undefined) {
+      id += 1;
+      const message = { id, method, params };
+      if (sessionId) message.sessionId = sessionId;
+      socket.send(JSON.stringify(message));
+      return new Promise((resolve, reject) => {
+        pending.set(id, { method, resolve, reject });
+      });
+    },
+    close() {
+      socket.close();
+    },
+  };
+}
+
+async function launchBrowser() {
+  const executable = findBrowserExecutable();
+  if (!executable) {
+    return { skipped: true, reason: "No Chrome, Edge, or Chromium executable found. Set BENCH_BROWSER_BIN to enable." };
+  }
+
+  const userDataDir = mkdtempSync(path.join(tmpdir(), "daemun-bench-browser-"));
+  const child = spawn(
+    executable,
+    [
+      "--headless=new",
+      "--disable-background-networking",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-gpu",
+      "--disable-sync",
+      "--hide-scrollbars",
+      "--no-default-browser-check",
+      "--no-first-run",
+      "--remote-debugging-port=0",
+      `--user-data-dir=${userDataDir}`,
+      "about:blank",
+    ],
+    { stdio: "ignore" },
+  );
+
+  try {
+    const { port } = await waitForDevToolsPort(userDataDir);
+    const version = await fetchJson(`http://127.0.0.1:${port}/json/version`);
+    return {
+      executable,
+      port,
+      userDataDir,
+      version,
+      child,
+      async close() {
+        if (child.exitCode === null && child.signalCode === null) child.kill();
+        await waitForProcessExit(child);
+        await removeDirectoryWithRetry(userDataDir);
+      },
+    };
+  } catch (error) {
+    if (child.exitCode === null && child.signalCode === null) child.kill();
+    await waitForProcessExit(child);
+    await removeDirectoryWithRetry(userDataDir);
+    throw error;
+  }
+}
+
+async function waitForPageLoad(cdp, sessionId, timeoutMs = 15_000) {
+  const startedAt = Date.now();
+  let completedNavigation;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    const { result } = await cdp.send(
+      "Runtime.evaluate",
+      {
+        expression: `(() => {
+          const navigation = performance.getEntriesByType("navigation")[0];
+          const fcp = performance.getEntriesByName("first-contentful-paint")[0];
+          return {
+            readyState: document.readyState,
+            ttlbMs: navigation ? navigation.responseEnd - navigation.startTime : null,
+            fcpMs: fcp ? fcp.startTime : null,
+            domContentLoadedMs: navigation ? navigation.domContentLoadedEventEnd - navigation.startTime : null,
+            loadMs: navigation ? navigation.loadEventEnd - navigation.startTime : null,
+            transferSize: navigation ? navigation.transferSize : null
+          };
+        })()`,
+        returnByValue: true,
+      },
+      sessionId,
+    );
+
+    const value = result.value;
+    if (value?.readyState === "complete" && Number.isFinite(value.ttlbMs) && Number.isFinite(value.loadMs)) {
+      completedNavigation = {
+        domContentLoadedMs: Number(value.domContentLoadedMs.toFixed(2)),
+        fcpMs: Number.isFinite(value.fcpMs) ? Number(value.fcpMs.toFixed(2)) : null,
+        loadMs: Number(value.loadMs.toFixed(2)),
+        transferSize: value.transferSize,
+        ttlbMs: Number(value.ttlbMs.toFixed(2)),
+      };
+
+      if (completedNavigation.fcpMs !== null || Date.now() - startedAt > 5_000) return completedNavigation;
+    }
+
+    await delay(50);
+  }
+
+  if (completedNavigation) return completedNavigation;
+  throw new Error("Timed out waiting for page load metrics");
+}
+
+async function measureBrowserTimings(baseUrl) {
+  if (!config.browserTimings) return { skipped: true, reason: "Disabled by BENCH_BROWSER_TIMINGS=0" };
+  const browser = await launchBrowser();
+  if (browser.skipped) return browser;
+
+  const cdp = createCdpConnection(browser.version.webSocketDebuggerUrl);
+  const samples = [];
+
+  try {
+    await cdp.ready();
+    const { targetId } = await cdp.send("Target.createTarget", { url: "about:blank" });
+    const { sessionId } = await cdp.send("Target.attachToTarget", { flatten: true, targetId });
+    await cdp.send("Page.enable", {}, sessionId);
+    await cdp.send("Network.enable", {}, sessionId);
+    await cdp.send("Network.setCacheDisabled", { cacheDisabled: true }, sessionId);
+
+    const totalIterations = config.browserWarmupIterations + config.browserIterations;
+    for (let index = 0; index < totalIterations; index += 1) {
+      await cdp.send("Network.clearBrowserCache", {}, sessionId);
+      await cdp.send("Page.navigate", { url: `${baseUrl}/?bench=${Date.now()}-${index}` }, sessionId);
+      const sample = await waitForPageLoad(cdp, sessionId);
+      if (index >= config.browserWarmupIterations) samples.push(sample);
+    }
+
+    await cdp.send("Target.closeTarget", { targetId });
+
+    return {
+      browser: {
+        executable: browser.executable,
+        product: browser.version.Browser,
+        protocolVersion: browser.version["Protocol-Version"],
+        userAgent: browser.version["User-Agent"],
+      },
+      iterations: config.browserIterations,
+      warmupIterations: config.browserWarmupIterations,
+      url: "/",
+      metrics: {
+        ttlbMs: summarizeMetric(samples, "ttlbMs"),
+        fcpMs: summarizeMetric(samples, "fcpMs"),
+        domContentLoadedMs: summarizeMetric(samples, "domContentLoadedMs"),
+        loadMs: summarizeMetric(samples, "loadMs"),
+      },
+      samples,
+    };
+  } finally {
+    cdp.close();
+    await browser.close();
+  }
+}
+
 async function load(baseUrl, durationMs, concurrency, endpoints) {
   const deadline = Date.now() + durationMs;
   const latencies = [];
@@ -250,7 +565,7 @@ async function load(baseUrl, durationMs, concurrency, endpoints) {
       p50: percentile(latencies, 50),
       p95: percentile(latencies, 95),
       p99: percentile(latencies, 99),
-      max: latencies.length ? Number(Math.max(...latencies).toFixed(2)) : null,
+      max: maxValue(latencies),
     },
     statuses: Object.fromEntries([...statuses.entries()].map(([key, value]) => [String(key), value])),
     byEndpoint: Object.fromEntries(
@@ -264,7 +579,7 @@ async function load(baseUrl, durationMs, concurrency, endpoints) {
             p50: percentile(value.latencies, 50),
             p95: percentile(value.latencies, 95),
             p99: percentile(value.latencies, 99),
-            max: value.latencies.length ? Number(Math.max(...value.latencies).toFixed(2)) : null,
+            max: maxValue(value.latencies),
           },
           statuses: Object.fromEntries([...value.statuses.entries()].map(([key, count]) => [String(key), count])),
         },
@@ -322,6 +637,7 @@ async function measureTarget(target) {
       process: readProcessStatus(container.name),
       docker: sampleDockerStats(container.name),
     };
+    const browserTimings = await measureBrowserTimings(baseUrl);
 
     await load(baseUrl, config.warmupMs, Math.min(8, config.concurrency), endpoints);
 
@@ -351,6 +667,7 @@ async function measureTarget(target) {
       baseUrl,
       endpoints,
       idle,
+      browserTimings,
       stress,
       after,
       samples,

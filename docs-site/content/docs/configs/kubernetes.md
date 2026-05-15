@@ -175,7 +175,7 @@ gateway: true # enable gateway-api
 
 If you are using the unofficial helm chart ensure that the `ClusterRole` has required permissions for `gateway.networking.k8s.io`.
 
-See [ClusterRole and ClusterRoleBinding](../installation/k8s.md#clusterrole-and-clusterrolebinding)
+See [ClusterRole and ClusterRoleBinding](../installation/k8s/#clusterrole-and-clusterrolebinding)
 
 ## Caveats
 
@@ -183,7 +183,7 @@ Similarly to Docker service discovery, there currently is no rigid ordering to d
 
 ## Adding extra configuration files
 
-Some Homepage features (for example, [Proxmox](../configs/proxmox.md)) require additional configuration files such as `proxmox.yaml`.
+Some Homepage features (for example, [Proxmox](../configs/proxmox/)) require additional configuration files such as `proxmox.yaml`.
 When running Homepage on Kubernetes, these files must be provided via a `ConfigMap` and mounted into the container at `/app/config`.
 
 ### ConfigMap example

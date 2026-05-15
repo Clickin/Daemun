@@ -58,7 +58,7 @@ All widgets that fetch data from dynamic endpoints should have either `mappings`
 
 ## Including translation strings in your widget
 
-Refer to the [translations guide](translations.md) for more details. The Homepage community prides itself on being multilingual, and we strongly encourage you to add translations for your widgets.
+Refer to the [translations guide](translations/) for more details. The Homepage community prides itself on being multilingual, and we strongly encourage you to add translations for your widgets.
 
 ## Create the widget component
 
@@ -163,7 +163,7 @@ Here we use the `t` function from the `useTranslation` hook to translate the dat
 
 We're using the `common.number` translation key to format the data values as numbers. This allows for easy localization of numbers, such as using commas or periods as decimal separators.
 
-There are a large number of `common` numerical translation keys available, which you can learn more about in the [Translation Guide](translations.md).
+There are a large number of `common` numerical translation keys available, which you can learn more about in the [Translation Guide](translations/).
 
 ```js title="src/widgets/yourwidget/component.jsx" linenums="26"
 return (

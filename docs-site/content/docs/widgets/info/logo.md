@@ -3,7 +3,7 @@ title: Logo
 description: Logo Information Widget Configuration
 ---
 
-This allows you to display the homepage logo, you can optionally specify your own icon using similar options as other icons, see [service icons](../../configs/services.md#icons).
+This allows you to display the Daemun logo. You can optionally specify your own icon using similar options as other icons; see [service icons](../../configs/services/#icons).
 
 ```yaml
 - logo:

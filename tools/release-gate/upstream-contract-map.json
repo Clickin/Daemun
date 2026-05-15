@@ -8,167 +8,167 @@
   "contracts": [
     {
       "upstreamPath": "src/__tests__/pages/_app.test.jsx",
-      "contractPaths": ["src/app.test.jsx", "src/server/root-view.test.js"],
+      "contractPaths": ["src/app.test.tsx", "src/server/root-view.test.ts"],
       "rationale": "Next _app is replaced by the Inertia app provider tree plus Hono root viewport/head contract."
     },
     {
       "upstreamPath": "src/__tests__/pages/_document.test.jsx",
-      "contractPaths": ["src/server/root-view.test.js"],
+      "contractPaths": ["src/server/root-view.test.ts"],
       "rationale": "Next _document is replaced by the Hono root view that owns PWA meta tags, manifest, custom CSS, and client asset tags."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/bookmarks.test.js",
-      "contractPaths": ["test/pages/api/bookmarks.test.js"],
+      "contractPaths": ["test/pages/api/bookmarks.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/config/[path].test.js",
-      "contractPaths": ["test/pages/api/config/[path].test.js"],
+      "contractPaths": ["test/pages/api/config/[path].test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/docker/stats/[...service].test.js",
-      "contractPaths": ["test/pages/api/docker/stats/[...service].test.js"],
+      "contractPaths": ["test/pages/api/docker/stats/[...service].test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/docker/status/[...service].test.js",
-      "contractPaths": ["test/pages/api/docker/status/[...service].test.js"],
+      "contractPaths": ["test/pages/api/docker/status/[...service].test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/hash.test.js",
-      "contractPaths": ["test/pages/api/hash.test.js"],
+      "contractPaths": ["test/pages/api/hash.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/healthcheck.test.js",
-      "contractPaths": ["test/pages/api/healthcheck.test.js"],
+      "contractPaths": ["test/pages/api/healthcheck.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/kubernetes/stats/[...service].test.js",
-      "contractPaths": ["test/pages/api/kubernetes/stats/[...service].test.js"],
+      "contractPaths": ["test/pages/api/kubernetes/stats/[...service].test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/kubernetes/status/[...service].test.js",
-      "contractPaths": ["test/pages/api/kubernetes/status/[...service].test.js"],
+      "contractPaths": ["test/pages/api/kubernetes/status/[...service].test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/ping.test.js",
-      "contractPaths": ["test/pages/api/ping.test.js"],
+      "contractPaths": ["test/pages/api/ping.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/proxmox/stats/[...service].test.js",
-      "contractPaths": ["test/pages/api/proxmox/stats/[...service].test.js"],
+      "contractPaths": ["test/pages/api/proxmox/stats/[...service].test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/releases.test.js",
-      "contractPaths": ["test/pages/api/releases.test.js"],
+      "contractPaths": ["test/pages/api/releases.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/revalidate.test.js",
-      "contractPaths": ["test/pages/api/revalidate.test.js"],
+      "contractPaths": ["test/pages/api/revalidate.test.ts"],
       "rationale": "Next ISR revalidation is replaced by the same API response plus Daemun static-home refresh."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/search/searchSuggestion.test.js",
-      "contractPaths": ["test/pages/api/search/searchSuggestion.test.js"],
+      "contractPaths": ["test/pages/api/search/searchSuggestion.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/services/index.test.js",
-      "contractPaths": ["test/pages/api/services/index.test.js"],
+      "contractPaths": ["test/pages/api/services/index.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/services/proxy.test.js",
-      "contractPaths": ["test/pages/api/services/proxy.test.js"],
+      "contractPaths": ["test/pages/api/services/proxy.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/siteMonitor.test.js",
-      "contractPaths": ["test/pages/api/siteMonitor.test.js"],
+      "contractPaths": ["test/pages/api/siteMonitor.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/theme.test.js",
-      "contractPaths": ["test/pages/api/theme.test.js"],
+      "contractPaths": ["test/pages/api/theme.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/validate.test.js",
-      "contractPaths": ["test/pages/api/validate.test.js"],
+      "contractPaths": ["test/pages/api/validate.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/glances.test.js",
-      "contractPaths": ["test/pages/api/widgets/glances.test.js"],
+      "contractPaths": ["test/pages/api/widgets/glances.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/index.test.js",
-      "contractPaths": ["test/pages/api/widgets/index.test.js"],
+      "contractPaths": ["test/pages/api/widgets/index.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/kubernetes.test.js",
-      "contractPaths": ["test/pages/api/widgets/kubernetes.test.js"],
+      "contractPaths": ["test/pages/api/widgets/kubernetes.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/longhorn.test.js",
-      "contractPaths": ["test/pages/api/widgets/longhorn.test.js"],
+      "contractPaths": ["test/pages/api/widgets/longhorn.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/openmeteo.test.js",
-      "contractPaths": ["test/pages/api/widgets/openmeteo.test.js"],
+      "contractPaths": ["test/pages/api/widgets/openmeteo.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/openweathermap.test.js",
-      "contractPaths": ["test/pages/api/widgets/openweathermap.test.js"],
+      "contractPaths": ["test/pages/api/widgets/openweathermap.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/resources.test.js",
-      "contractPaths": ["test/pages/api/widgets/resources.test.js"],
+      "contractPaths": ["test/pages/api/widgets/resources.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/stocks.test.js",
-      "contractPaths": ["test/pages/api/widgets/stocks.test.js"],
+      "contractPaths": ["test/pages/api/widgets/stocks.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/api/widgets/weather.test.js",
-      "contractPaths": ["test/pages/api/widgets/weather.test.js"],
+      "contractPaths": ["test/pages/api/widgets/weather.test.ts"],
       "rationale": "API response contract is preserved through the Hono route adapter."
     },
     {
       "upstreamPath": "src/__tests__/pages/browserconfig.xml.test.js",
-      "contractPaths": ["src/server/static-pages.test.js", "src/server/app.test.js"],
+      "contractPaths": ["src/server/static-pages.test.ts", "src/server/app.test.ts"],
       "rationale": "Next browserconfig page is replaced by a Hono static route and shared payload builder."
     },
     {
       "upstreamPath": "src/__tests__/pages/index.test.jsx",
-      "contractPaths": ["src/server/home-props.test.js", "test/pages/index.test.jsx"],
+      "contractPaths": ["src/server/home-props.test.ts", "test/pages/index.test.tsx"],
       "rationale": "Next getStaticProps becomes Inertia initial props; the React page behavior remains a component contract."
     },
     {
       "upstreamPath": "src/__tests__/pages/robots.txt.test.js",
-      "contractPaths": ["src/server/static-pages.test.js", "src/server/app.test.js"],
+      "contractPaths": ["src/server/static-pages.test.ts", "src/server/app.test.ts"],
       "rationale": "Next robots page is replaced by a Hono static route and shared payload builder."
     },
     {
       "upstreamPath": "src/__tests__/pages/site.webmanifest.test.js",
-      "contractPaths": ["src/server/static-pages.test.js", "src/server/app.test.js"],
+      "contractPaths": ["src/server/static-pages.test.ts", "src/server/app.test.ts"],
       "rationale": "Next manifest page is replaced by a Hono static route and shared payload builder."
     }
   ]

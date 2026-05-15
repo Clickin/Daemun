@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     ...baseConfig.test,
     exclude: [],
-    include: ["src/server/browserless-smoke.test.jsx"],
+    include: ["src/server/browserless-smoke.test.tsx"],
     testTimeout: 30_000,
   },
 });

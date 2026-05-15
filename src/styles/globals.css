@@ -39,7 +39,7 @@
 
 html,
 body,
-#__next {
+#app {
   height: 100%;
   margin: 0;
   padding: 0;

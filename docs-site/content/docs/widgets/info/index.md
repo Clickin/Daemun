@@ -1,21 +1,22 @@
 ---
 title: Info Widgets
-description: Homepage info widgets.
+description: Daemun information widgets.
 search:
   exclude: true
 ---
 
-You can also find a list of all available info widgets in the sidebar navigation.
+These information widgets are configured in `widgets.yaml` and rendered above
+the service and bookmark sections.
 
-- [Date & Time](datetime.md)
-- [Glances](glances.md)
-- [Greeting](greeting.md)
-- [Kubernetes](kubernetes.md)
-- [Logo](logo.md)
-- [Longhorn](longhorn.md)
-- [OpenMeteo](openmeteo.md)
-- [OpenWeatherMap](openweathermap.md)
-- [Resources](resources.md)
-- [Search](search.md)
-- [Stocks](stocks.md)
-- [UniFi Controller](unifi_controller.md)
+- [Date & Time](datetime/)
+- [Glances](glances/)
+- [Greeting](greeting/)
+- [Kubernetes](kubernetes/)
+- [Logo](logo/)
+- [Longhorn](longhorn/)
+- [OpenMeteo](openmeteo/)
+- [OpenWeatherMap](openweathermap/)
+- [Resources](resources/)
+- [Search](search/)
+- [Stocks](stocks/)
+- [UniFi Controller](unifi_controller/)

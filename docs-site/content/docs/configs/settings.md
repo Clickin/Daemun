@@ -47,7 +47,7 @@ If you'd like to use a background image instead of the solid theme color, you ma
 background: https://images.unsplash.com/photo-1502790671504-542ad42d5189?auto=format&fit=crop&w=2560&q=80
 ```
 
-Or you may pass the path to a local image relative to e.g. `/app/public/images` directory.
+Or you may pass the path to a local image relative to e.g. `/app/public/images` directory. In the default Docker image, nginx serves `/images/background.png` directly from `/app/public/images/background.png`.
 
 For example, inside of your Docker Compose file, mount a path to where your images are kept:
 
@@ -135,7 +135,7 @@ More information on PWAs can be found in [MDN Web Docs](https://developer.mozill
 
 You can set custom icons for installable apps. More information about how you can set them can be found in the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons).
 
-The default value is the Homepage icon in sizes 192x192 and 512x512.
+The default value is the Daemun icon in sizes 192x192 and 512x512.
 
 ```yaml
 pwa:
@@ -266,7 +266,7 @@ layout:
 
 ### Category Icons
 
-You can also add an icon to a category under the `layout` setting similar to the [options for service icons](services.md#icons), e.g.
+You can also add an icon to a category under the `layout` setting similar to the [options for service icons](services/#icons), e.g.
 
 ```yaml
   Home Management & Info:
@@ -279,7 +279,7 @@ You can also add an icon to a category under the `layout` setting similar to the
 ### Icon Style
 
 The default style for icons (e.g. `icon: mdi-XXXX`) is a gradient, or you can specify that prefixed icons match your theme with a 'flat' style using the setting below.
-More information about prefixed icons can be found in [options for service icons](services.md#icons).
+More information about prefixed icons can be found in [options for service icons](services/#icons).
 
 ```yaml
 iconStyle: theme # optional, defaults to gradient
@@ -548,7 +548,7 @@ disableUpdateCheck: true
 
 ## Log Path
 
-By default the homepage logfile is written to the a `logs` subdirectory of the `config` folder. In order to customize this path, you can set the `logpath` setting. A `logs` folder will be created in that location where the logfile will be written.
+By default the Daemun logfile is written to a `logs` subdirectory of the `config` folder. In order to customize this path, you can set the `logpath` setting. A `logs` folder will be created in that location where the logfile will be written.
 
 ```yaml
 logpath: /logfile/path

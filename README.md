@@ -24,6 +24,9 @@ runtime and project identity now belong to Daemun.
 - `pnpm` owns the app, docs, test, and build workflows.
 - Astro Starlight replaces the old Python documentation stack.
 - Starlight search uses Pagefind.
+- The default Docker image runs the Node/Hono server directly on port `3000`.
+- The `*-nginx` Docker tags put nginx in front of Daemun over a Unix socket and
+  listen on port `80`.
 - Docker images are built around the generated `dist` output plus only the
   native runtime dependencies that cannot be bundled.
 
@@ -60,7 +63,7 @@ services:
     image: ghcr.io/clickin/daemun:latest
     container_name: daemun
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: daemun.example.com
+      HOMEPAGE_ALLOWED_HOSTS: daemun.example.com:3000
       PUID: 1000
       PGID: 1000
     ports:
@@ -75,7 +78,7 @@ Or with `docker run`:
 
 ```bash
 docker run --name daemun \
-  -e HOMEPAGE_ALLOWED_HOSTS=daemun.example.com \
+  -e HOMEPAGE_ALLOWED_HOSTS=daemun.example.com:3000 \
   -e PUID=1000 \
   -e PGID=1000 \
   -p 3000:3000 \
@@ -84,6 +87,10 @@ docker run --name daemun \
   --restart unless-stopped \
   ghcr.io/clickin/daemun:latest
 ```
+
+The default image serves `/`, static assets, and API requests from the direct
+Node/Hono runtime. Use `ghcr.io/clickin/daemun:latest-nginx` if you specifically
+want nginx in front of Daemun on port `80`.
 
 ## Build From Source
 

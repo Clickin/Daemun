@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Optional explicit version override (for example: 2.0.0)"
+        description: "Optional explicit version override (for example: 1.14.0)"
         required: false
         type: string
 

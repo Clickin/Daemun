@@ -3,7 +3,7 @@ title: Stocks
 description: Stocks Service Widget Configuration
 ---
 
-_(Find the Stocks information widget [here](../info/stocks.md))_
+_(Find the Stocks information widget [here](../info/stocks/))_
 
 The widget includes:
 

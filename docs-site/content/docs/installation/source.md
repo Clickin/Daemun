@@ -33,4 +33,4 @@ HOMEPAGE_ALLOWED_HOSTS=localhost:3000 pnpm start
 
 When updating Daemun versions you will need to rebuild the static files, i.e. repeat the process above.
 
-See [HOMEPAGE_ALLOWED_HOSTS](index.md#homepage_allowed_hosts) for more information on this environment variable.
+See [HOMEPAGE_ALLOWED_HOSTS](./#homepage_allowed_hosts) for more information on this environment variable.

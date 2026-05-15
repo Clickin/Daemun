@@ -1,10 +1,10 @@
 ---
 title: Widgets
-description: Find information on how to configure specific widgets in Homepage.
+description: Find information on how to configure specific widgets in Daemun.
 icon: material/widgets
 ---
 
-Homepage has two types of widgets: info and service. Below we'll cover each type and how to configure them.
+Daemun has two types of widgets: info and service. Below we'll cover each type and how to configure them.
 
 The left navigation of this site contains links to all available widgets.
 
@@ -28,7 +28,7 @@ Service widgets are used to display the status of a service, often a web service
         slug: aaaaaaabbbbb
 ```
 
-More detail on configuring service widgets can be found in the [Service Widgets Config](../configs/services.md) section.
+More detail on configuring service widgets can be found in the [Service Widgets Config](../configs/services/) section.
 
 ## Info Widgets
 
@@ -42,4 +42,4 @@ Info widgets are used to display information in the header, often about your sys
     cache: 5
 ```
 
-More detail on configuring info widgets can be found in the [Info Widgets Config](../configs/info-widgets.md) section.
+More detail on configuring info widgets can be found in the [Info Widgets Config](../configs/info-widgets/) section.

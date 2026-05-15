@@ -14,10 +14,45 @@ services:
       - 3000:3000
     volumes:
       - /path/to/config:/app/config # Make sure your local config directory exists
+      - /path/to/icons:/app/public/icons:ro # (optional) For local service icons
+      - /path/to/images:/app/public/images:ro # (optional) For local backgrounds
       - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: localhost:3000 # required, may need port. See the install overview.
+      HOMEPAGE_ALLOWED_HOSTS: localhost:3000 # required. See the install overview.
 ```
+
+The default image runs the direct Node/Hono runtime on port `3000`. If you want
+nginx to serve the baked home page and static assets in front of Daemun, use
+`ghcr.io/clickin/daemun:latest-nginx` and expose `80:80`.
+
+### Static Files
+
+Daemun serves static files from `/app/public` inside the container. Mount only
+the subdirectories you need, rather than replacing the entire `/app/public`
+directory.
+
+Common mounts:
+
+```yaml
+volumes:
+  - /path/to/icons:/app/public/icons:ro
+  - /path/to/images:/app/public/images:ro
+```
+
+Then reference those files by their public path:
+
+```yaml
+background: /images/background.png
+
+- Media:
+    - Jellyfin:
+        icon: /icons/jellyfin.png
+        href: https://jellyfin.example.com
+```
+
+In this example, Daemun serves `/icons/jellyfin.png` from
+`/app/public/icons/jellyfin.png` and `/images/background.png` from
+`/app/public/images/background.png`.
 
 ### Running as non-root
 
@@ -36,9 +71,11 @@ services:
       - 3000:3000
     volumes:
       - /path/to/config:/app/config # Make sure your local config directory exists
+      - /path/to/icons:/app/public/icons:ro # (optional) For local service icons
+      - /path/to/images:/app/public/images:ro # (optional) For local backgrounds
       - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations, see alternative methods
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: localhost:3000 # required, may need port. See the install overview.
+      HOMEPAGE_ALLOWED_HOSTS: localhost:3000 # required. See the install overview.
       PUID: $PUID
       PGID: $PGID
 ```
@@ -46,7 +83,7 @@ services:
 ### With Docker Run
 
 ```bash
-docker run -p 3000:3000 -e HOMEPAGE_ALLOWED_HOSTS=localhost:3000 -v /path/to/config:/app/config -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/clickin/daemun:latest
+docker run -p 3000:3000 -e HOMEPAGE_ALLOWED_HOSTS=localhost:3000 -v /path/to/config:/app/config -v /path/to/icons:/app/public/icons:ro -v /path/to/images:/app/public/images:ro -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/clickin/daemun:latest
 ```
 
 ### Using Environment Secrets

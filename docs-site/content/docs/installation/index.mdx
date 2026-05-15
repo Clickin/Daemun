@@ -27,8 +27,8 @@ Daemun keeps the inherited `HOMEPAGE_ALLOWED_HOSTS` environment variable for
 deployment compatibility.
 
 The value is a comma-separated list of allowed hosts, sometimes including the
-port, that may host your Daemun install. `localhost:3000` and
-`127.0.0.1:3000` are always included. For example:
+port, that may host your Daemun install. The default image listens on port
+`3000`; the optional nginx image is usually exposed on port `80`. For example:
 
 ```bash
 HOMEPAGE_ALLOWED_HOSTS=daemun.example.com,192.168.1.2:3000

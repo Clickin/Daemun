@@ -64,7 +64,7 @@ Services are defined as array entries on groups,
 
 Each service can have widgets attached to it (often matching the service type, but that's not forced).
 
-In addition to the href of the service, you can also specify the target location in which to open that link. See [Link Target](settings.md#link-target) for more details.
+In addition to the href of the service, you can also specify the target location in which to open that link. See [Link Target](settings/#link-target) for more details.
 
 Using Emby as an example, this is how you would attach the Emby service widget.
 
@@ -224,7 +224,7 @@ You can specify a custom color for `mdi` and `si` icons by adding a hex color co
 
 To use a remote icon, use the absolute URL (e.g. `https://...`).
 
-To use a local icon, first create a Docker mount to `/app/public/icons` and then reference your icon as `/icons/myicon.png`. You will need to restart the container when adding new icons.
+To use a local icon, first create a Docker mount to `/app/public/icons` and then reference your icon as `/icons/myicon.png`. In the default Docker image, nginx serves that path directly from `/app/public/icons/myicon.png`.
 
 :::caution
 
@@ -278,7 +278,7 @@ Services may have an optional `ping` property that allows you to monitor the ava
 
 <img width="1038" alt="Ping" src="https://github.com/gethomepage/homepage/assets/88257202/7bc13bd3-0d0b-44e3-888c-a20e069a3233">
 
-You can also apply different styles to the ping indicator by using the `statusStyle` property, see [settings](settings.md#status-style).
+You can also apply different styles to the ping indicator by using the `statusStyle` property, see [settings](settings/#status-style).
 
 ## Site Monitor
 
@@ -303,7 +303,7 @@ The site monitor feature works by making an http `HEAD` request to the URL, and 
         siteMonitor: http://some.other.host/
 ```
 
-You can also apply different styles to the site monitor indicator by using the `statusStyle` property, see [settings](settings.md#status-style).
+You can also apply different styles to the site monitor indicator by using the `statusStyle` property, see [settings](settings/#status-style).
 
 ## Docker Integration
 
@@ -331,7 +331,7 @@ Services may be connected to a Docker container, either running on the local mac
 
 :::note
 
-  This can also be controlled with `showStats`. See [show docker stats](docker.md#show-stats) for more information
+  This can also be controlled with `showStats`. See [show docker stats](docker/#show-stats) for more information
 :::
 
 <img width="1038" alt="Docker Stats Expanded" src="https://github.com/gethomepage/homepage/assets/88257202/f95fd595-449e-48ae-af67-fd89618904ec">
@@ -340,7 +340,7 @@ Services may be connected to a Docker container, either running on the local mac
 
 Services may also have a service widget (or integration) attached to them, this works independently of the Docker integration.
 
-You can find information and configuration for each of the supported integrations on the [Widgets](../widgets/index.md) page.
+You can find information and configuration for each of the supported integrations on the [Widgets](../widgets/) page.
 
 Here is an example of a Radarr & Sonarr service, with their respective integrations.
 

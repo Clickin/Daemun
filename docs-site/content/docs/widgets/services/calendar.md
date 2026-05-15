@@ -49,9 +49,9 @@ widget:
 
 ## Integrations
 
-Currently integrated widgets are [sonarr](sonarr.md), [radarr](radarr.md), [lidarr](lidarr.md) and [readarr](readarr.md).
+Currently integrated widgets are [sonarr](sonarr/), [radarr](radarr/), [lidarr](lidarr/) and [readarr](readarr/).
 
-Supported colors can be found on [color palette](../../configs/settings.md#color-palette).
+Supported colors can be found on [color palette](../../configs/settings/#color-palette).
 
 ### iCal
 
