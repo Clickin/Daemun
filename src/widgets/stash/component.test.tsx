@@ -20,7 +20,7 @@ describe("widgets/stash/component", () => {
   });
 
   it("renders placeholders initially, then renders stats after fetch", async () => {
-    globalThis.fetch = vi.fn(async () => ({
+    const fetchMock: typeof fetch = vi.fn(async () => ({
       json: async () => ({
         scene_count: 1,
         scenes_played: 2,
@@ -37,7 +37,8 @@ describe("widgets/stash/component", () => {
         tag_count: 13,
         total_o_count: 14,
       }),
-    }));
+    }) as Response);
+    globalThis.fetch = fetchMock;
 
     const service = { widget: { type: "stash", url: "http://x", key: "k" } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });

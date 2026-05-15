@@ -22,7 +22,14 @@ describe("widgets/komodo/component", () => {
       .mockReturnValueOnce({ data: undefined, error: undefined }) // stacks
       .mockReturnValueOnce({ data: undefined, error: undefined }); // servers (disabled)
 
-    const service = { widget: { type: "komodo", showStacks: true, showSummary: false } };
+    const service = {
+      widget: {
+        type: "komodo",
+        showStacks: true,
+        showSummary: false,
+        fields: undefined as string[] | undefined,
+      },
+    };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["total", "running", "down", "unhealthy"]);

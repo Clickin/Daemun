@@ -269,14 +269,14 @@ export default function Component({ service }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <div className="font-thin pl-2">{itemName}</div>
+                    <div className="font-thin pl-2">{String(itemName)}</div>
                     <div className="flex flex-row text-right">
                       <div className="font-bold mr-2">{formatValue(t, mappings, itemLabel)}</div>
                     </div>
                   </a>
                 ) : (
                   <div key={`${itemName}-${index}`} className={className}>
-                    <div className="font-thin pl-2">{itemName}</div>
+                    <div className="font-thin pl-2">{String(itemName)}</div>
                     <div className="flex flex-row text-right">
                       <div className="font-bold mr-2">{formatValue(t, mappings, itemLabel)}</div>
                     </div>

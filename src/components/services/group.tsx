@@ -6,20 +6,33 @@ import { useEffect, useRef } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 
 import { columnMap } from "../../utils/layout/columns";
+import type { LayoutRecord, ServiceGroupRecord } from "../../types";
+
+interface ServicesGroupProps {
+  group: ServiceGroupRecord;
+  layout?: LayoutRecord;
+  maxGroupColumns?: number | string;
+  disableCollapse?: boolean;
+  useEqualHeights?: boolean;
+  groupsInitiallyCollapsed?: boolean;
+  isSubgroup?: boolean;
+}
 
 export default function ServicesGroup({
   group,
   layout,
   maxGroupColumns,
-  disableCollapse,
-  useEqualHeights,
-  groupsInitiallyCollapsed,
-  isSubgroup,
-}) {
-  const panel = useRef();
+  disableCollapse = false,
+  useEqualHeights = false,
+  groupsInitiallyCollapsed = false,
+  isSubgroup = false,
+}: ServicesGroupProps) {
+  const panel = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (layout?.initiallyCollapsed ?? groupsInitiallyCollapsed) panel.current.style.height = `0`;
+    if (layout?.initiallyCollapsed ?? groupsInitiallyCollapsed) {
+      if (panel.current) panel.current.style.height = `0`;
+    }
   }, [layout, groupsInitiallyCollapsed]);
 
   let groupPadding = layout?.header === false ? "px-1" : "p-1 pb-0";
@@ -59,22 +72,25 @@ export default function ServicesGroup({
               </Disclosure.Button>
             )}
             <Transition
+              as="div"
               // Otherwise the transition group does display: none and cancels animation
               className="block!"
               unmount={false}
               beforeLeave={() => {
+                if (!panel.current) return;
                 panel.current.style.height = `${panel.current.scrollHeight}px`;
                 setTimeout(() => {
-                  panel.current.style.height = `0`;
+                  if (panel.current) panel.current.style.height = `0`;
                 }, 1);
               }}
               beforeEnter={() => {
+                if (!panel.current) return;
                 panel.current.style.height = `0px`;
                 setTimeout(() => {
-                  panel.current.style.height = `${panel.current.scrollHeight}px`;
+                  if (panel.current) panel.current.style.height = `${panel.current.scrollHeight}px`;
                 }, 1);
                 setTimeout(() => {
-                  panel.current.style.height = "auto";
+                  if (panel.current) panel.current.style.height = "auto";
                 }, 150); // animation is 150ms
               }}
             >
@@ -96,7 +112,7 @@ export default function ServicesGroup({
                       <ServicesGroup
                         key={subgroup.name}
                         group={subgroup}
-                        layout={layout?.[subgroup.name]}
+                        layout={layout?.[subgroup.name] as LayoutRecord | undefined}
                         maxGroupColumns={maxGroupColumns}
                         disableCollapse={disableCollapse}
                         useEqualHeights={useEqualHeights}

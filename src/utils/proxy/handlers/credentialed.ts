@@ -12,7 +12,7 @@ function basicAuthHeader(widget) {
   return `Basic ${Buffer.from(`${widget.username}:${widget.password}`).toString("base64")}`;
 }
 
-export default async function credentialedProxyHandler(req, res, map) {
+export default async function credentialedProxyHandler(req, res, map = undefined) {
   const { group, service, endpoint, index } = req.query;
 
   if (group && service) {

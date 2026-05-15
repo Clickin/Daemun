@@ -12,6 +12,8 @@ import PrimaryText from "../widget/primary_text";
 import SecondaryText from "../widget/secondary_text";
 import WidgetIcon from "../widget/widget_icon";
 
+type LocationState = false | { latitude: number | string; longitude: number | string };
+
 function Widget({ options }) {
   const { t } = useTranslation();
 
@@ -24,8 +26,8 @@ function Widget({ options }) {
   if (!data) {
     return (
       <Container options={options} additionalClassNames="information-widget-openmeteo">
-        <PrimaryText>{t("weather.updating")}</PrimaryText>
-        <SecondaryText>{t("weather.wait")}</SecondaryText>
+        <PrimaryText>{String(t("weather.updating"))}</PrimaryText>
+        <SecondaryText>{String(t("weather.wait"))}</SecondaryText>
         <WidgetIcon icon={WiCloudDown} size="l" />
       </Container>
     );
@@ -42,14 +44,14 @@ function Widget({ options }) {
     <Container options={options} additionalClassNames="information-widget-openmeteo">
       <PrimaryText>
         {options.label && `${options.label}, `}
-        {t("common.number", {
+        {String(t("common.number", {
           value: data.current_weather.temperature,
           style: "unit",
           unit,
           ...options.format,
-        })}
+        }))}
       </PrimaryText>
-      <SecondaryText>{t(`wmo.${data.current_weather.weathercode}-${timeOfDay}`)}</SecondaryText>
+      <SecondaryText>{String(t(`wmo.${data.current_weather.weathercode}-${timeOfDay}`))}</SecondaryText>
       <WidgetIcon icon={mapIcon(condition, timeOfDay)} size="xl" />
     </Container>
   );
@@ -57,7 +59,7 @@ function Widget({ options }) {
 
 export default function OpenMeteo({ options }) {
   const { t } = useTranslation();
-  const [location, setLocation] = useState(false);
+  const [location, setLocation] = useState<LocationState>(false);
   const [requesting, setRequesting] = useState(false);
 
   if (!location && options.latitude && options.longitude) {
@@ -101,8 +103,8 @@ export default function OpenMeteo({ options }) {
         callback={requestLocation}
         additionalClassNames="information-widget-openmeteo-location-button"
       >
-        <PrimaryText>{t("weather.current")}</PrimaryText>
-        <SecondaryText>{t("weather.allow")}</SecondaryText>
+        <PrimaryText>{String(t("weather.current"))}</PrimaryText>
+        <SecondaryText>{String(t("weather.allow"))}</SecondaryText>
         <WidgetIcon icon={requesting ? MdLocationSearching : MdLocationDisabled} size="m" pulse />
       </ContainerButton>
     );

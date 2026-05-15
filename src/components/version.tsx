@@ -14,8 +14,8 @@ export default function Version({ disableUpdateCheck = false }) {
   const version = process.env.VITE_VERSION?.length ? process.env.VITE_VERSION : "dev";
 
   // use Intl.DateTimeFormat to format the date
-  const formatDate = (date) => {
-    const options = {
+  const formatDate = (date: string) => {
+    const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "short",
       day: "numeric",

@@ -10,10 +10,10 @@ describe("widgets/jdownloader/tools", () => {
   });
 
   it("uniqueRid returns an integer", () => {
-    vi.spyOn(Math, "random").mockReturnValueOnce(0.123);
+    const randomSpy = vi.spyOn(Math, "random").mockReturnValueOnce(0.123);
     expect(uniqueRid()).toBeTypeOf("number");
     expect(Number.isInteger(uniqueRid())).toBe(true);
-    Math.random.mockRestore();
+    randomSpy.mockRestore();
   });
 
   it("validateRid throws when mismatched", () => {

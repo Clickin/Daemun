@@ -11,6 +11,8 @@ import {
 import * as shvl from "utils/config/shvl";
 import createLogger from "utils/logger";
 
+import type { ServiceRecord } from "../../types";
+
 const logger = createLogger("resource-helpers");
 const kc = getKubeConfig();
 
@@ -87,7 +89,7 @@ export function isDiscoverable(resource, instanceName) {
 }
 
 export async function constructedServiceFromResource(resource) {
-  let constructedService = {
+  let constructedService: ServiceRecord = {
     app: resource.metadata.annotations[`${ANNOTATION_BASE}/app`] || resource.metadata.name,
     namespace: resource.metadata.namespace,
     href: resource.metadata.annotations[`${ANNOTATION_BASE}/href`] || (await getUrlSchema(resource)),

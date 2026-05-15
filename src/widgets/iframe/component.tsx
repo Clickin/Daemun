@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import Container from "components/services/widget/container";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 export default function Component({ service }) {
   const [refreshTimer, setRefreshTimer] = useState(0);
@@ -16,7 +16,8 @@ export default function Component({ service }) {
     }
   }, [refreshTimer, widget?.refreshInterval]);
 
-  const scrollingDisableStyle = widget?.allowScrolling === "no" ? { pointerEvents: "none", overflow: "hidden" } : {};
+  const scrollingDisableStyle: CSSProperties =
+    widget?.allowScrolling === "no" ? { pointerEvents: "none", overflow: "hidden" } : {};
 
   const classes = widget?.classes || "h-60 sm:h-60 md:h-60 lg:h-60 xl:h-60 2xl:h-72";
 
@@ -38,9 +39,7 @@ export default function Component({ service }) {
           referrerPolicy={widget?.referrerPolicy}
           loading={widget?.loadingStrategy}
           scrolling={widget?.allowScrolling}
-          style={{
-            scrollingDisableStyle,
-          }}
+          style={scrollingDisableStyle}
           className={`rounded-sm w-full ${classes}`}
         />
       </div>

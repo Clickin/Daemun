@@ -79,9 +79,20 @@ export default async function handler(req, res) {
         return null;
       });
 
-    const stats = {
+    const stats: {
+      cpu: number;
+      cpuLimit: number;
+      cpuUsage: number;
+      mem: number;
+      memLimit: number;
+      memUsage: number;
+    } = {
       mem: 0,
       cpu: 0,
+      cpuLimit: 0,
+      memLimit: 0,
+      cpuUsage: 0,
+      memUsage: 0,
     };
 
     if (namespaceMetrics) {

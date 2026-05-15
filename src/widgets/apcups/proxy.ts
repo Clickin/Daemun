@@ -6,7 +6,16 @@ import createLogger from "utils/logger";
 
 const logger = createLogger("apcupsProxyHandler");
 
-function parseResponse(buffer) {
+type ApcupsStatus = Record<string, string | undefined>;
+
+interface ApcupsSummary {
+  bcharge?: string;
+  load?: string;
+  status?: string;
+  timeleft?: string;
+}
+
+function parseResponse(buffer: Buffer) {
   let ptr = 0;
   const output = [];
   while (ptr < buffer.length) {
@@ -19,23 +28,23 @@ function parseResponse(buffer) {
   return output;
 }
 
-function statusAsJSON(statusOutput) {
+function statusAsJSON(statusOutput: string[] = []): ApcupsStatus {
   return statusOutput?.reduce((output, line) => {
     if (!line || line.startsWith("END APC")) return output;
     const [key, value] = line.trim().split(":");
     const newOutput = { ...output };
     newOutput[key.trim()] = value?.trim();
     return newOutput;
-  }, {});
+  }, {} as ApcupsStatus);
 }
 
 async function getStatus(host = "127.0.0.1", port = 3551) {
-  return new Promise((resolve, reject) => {
+  return new Promise<string[]>((resolve, reject) => {
     const socket = new net.Socket();
     socket.setTimeout(5000);
     socket.connect({ host, port });
 
-    const response = [];
+    const response: Buffer[] = [];
 
     socket.on("connect", () => {
       const CMD = "status";
@@ -47,6 +56,7 @@ async function getStatus(host = "127.0.0.1", port = 3551) {
     });
 
     socket.on("data", (data) => {
+      if (!Buffer.isBuffer(data)) return;
       response.push(data);
 
       if (data.readUInt16BE(data.length - 2) === 0) {
@@ -93,10 +103,10 @@ export default async function apcupsProxyHandler(req, res) {
   }
 
   const url = new URL(widget.url);
-  const data = {};
+  const data: ApcupsSummary = {};
 
   try {
-    const statusData = await getStatus(url.hostname, url.port);
+    const statusData = await getStatus(url.hostname, Number(url.port || 3551));
     const jsonData = statusAsJSON(statusData);
 
     data.status = jsonData.STATUS;
@@ -105,7 +115,7 @@ export default async function apcupsProxyHandler(req, res) {
     data.timeleft = jsonData.TIMELEFT;
   } catch (e) {
     logger.error(e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
   }
 
   return res.status(200).send(data);

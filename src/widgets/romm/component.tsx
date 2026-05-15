@@ -16,7 +16,7 @@ export default function Component({ service }) {
     return <Container service={service} error={responseError} />;
   }
 
-  if (!widget.fields?.length > 0) {
+  if (!(widget.fields?.length > 0)) {
     widget.fields = ROMM_DEFAULT_FIELDS;
   } else if (widget.fields.length > MAX_ALLOWED_FIELDS) {
     widget.fields = widget.fields.slice(0, MAX_ALLOWED_FIELDS);

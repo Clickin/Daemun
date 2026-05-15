@@ -3,7 +3,14 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import CustomTooltip from "./custom_tooltip";
 
-class Chart extends PureComponent {
+interface ChartProps {
+  dataPoints: Record<string, unknown>[];
+  formatter: (value: unknown) => string;
+  label: string[];
+  max?: unknown;
+}
+
+class Chart extends PureComponent<ChartProps> {
   render() {
     const { dataPoints, formatter, label } = this.props;
 
@@ -32,7 +39,7 @@ class Chart extends PureComponent {
                 allowEscapeViewBox={{ x: false, y: false }}
                 formatter={formatter}
                 content={<CustomTooltip formatter={formatter} />}
-                classNames="rounded-md text-xs p-0.5"
+                wrapperClassName="rounded-md text-xs p-0.5"
                 contentStyle={{
                   backgroundColor: "rgb(var(--color-800))",
                   color: "rgb(var(--color-100))",

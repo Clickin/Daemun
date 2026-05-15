@@ -12,7 +12,14 @@ export default async function gamedigProxyHandler(req, res) {
   const url = new URL(serviceWidget.url);
 
   try {
-    const gamedigOptions = {
+    const gamedigOptions: {
+      checkOldIDs: boolean;
+      givenPortOnly: boolean;
+      host: string;
+      port: string;
+      token?: string;
+      type: string;
+    } = {
       type: serviceWidget.serverType,
       host: url.hostname,
       port: url.port,

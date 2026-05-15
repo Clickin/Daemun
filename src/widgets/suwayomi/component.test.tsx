@@ -19,7 +19,7 @@ describe("widgets/suwayomi/component", () => {
   it("defaults fields while loading and renders placeholders", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "suwayomi" } };
+    const service = { widget: { type: "suwayomi", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["download", "nondownload", "read", "unread"]);

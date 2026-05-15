@@ -1,4 +1,10 @@
-export const searchProviderData = {
+interface SearchProviderData {
+  name: string;
+  suggestionUrl?: string;
+  url: string | false;
+}
+
+export const searchProviderData: Record<string, SearchProviderData> = {
   google: {
     name: "Google",
     url: "https://www.google.com/search?q=",

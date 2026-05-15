@@ -1,10 +1,19 @@
 import classNames from "classnames";
-import { useContext } from "react";
+import { useContext, type ReactNode } from "react";
 import { SettingsContext } from "utils/contexts/settings";
 
 import Error from "./error";
 
-export default function Container({ children, widget, error = null, chart = true, className = "" }) {
+interface ContainerProps {
+  chart?: boolean;
+  children?: ReactNode;
+  className?: string;
+  error?: unknown;
+  service?: unknown;
+  widget?: { hideErrors?: boolean };
+}
+
+export default function Container({ children, widget, error = null, chart = true, className = "" }: ContainerProps) {
   const { settings } = useContext(SettingsContext);
   const hideErrors = settings.hideErrors || widget?.hideErrors;
 

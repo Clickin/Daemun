@@ -5,17 +5,23 @@ import React from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("recharts", () => ({
-  ResponsiveContainer: ({ children }) => <div data-testid="ResponsiveContainer">{children}</div>,
-  AreaChart: ({ children, stackOffset }) => (
+  ResponsiveContainer: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="ResponsiveContainer">{children}</div>
+  ),
+  AreaChart: ({ children, stackOffset }: { children?: React.ReactNode; stackOffset?: string }) => (
     <div data-testid="AreaChart" data-stackoffset={stackOffset ?? ""}>
       {
         // Filter out raw SVG elements (defs/linearGradient/stop) so jsdom doesn't warn.
-        React.Children.toArray(children).filter((child) => typeof child?.type === "function")
+        React.Children.toArray(children).filter(
+          (child) => React.isValidElement(child) && typeof child.type === "function",
+        )
       }
     </div>
   ),
-  Area: ({ name, dataKey }) => <div data-testid="Area" data-name={name} data-key={dataKey} />,
-  Tooltip: ({ content }) => <div data-testid="Tooltip">{content}</div>,
+  Area: ({ name, dataKey }: { dataKey?: string; name?: string }) => (
+    <div data-testid="Area" data-name={name} data-key={dataKey} />
+  ),
+  Tooltip: ({ content }: { content?: React.ReactNode }) => <div data-testid="Tooltip">{content}</div>,
 }));
 
 import ChartDual from "./chart_dual";

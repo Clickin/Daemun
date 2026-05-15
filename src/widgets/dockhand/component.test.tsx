@@ -19,7 +19,7 @@ describe("widgets/dockhand/component", () => {
   it("defaults fields and filters to 4 blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "dockhand" } };
+    const service = { widget: { type: "dockhand", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["running", "total", "cpu", "memory"]);

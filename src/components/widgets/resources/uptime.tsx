@@ -17,10 +17,10 @@ export default function Uptime({ refresh = 1500 }) {
   }
 
   if (!data) {
-    return <Resource icon={FaRegClock} value="-" label={t("resources.uptime")} percentage="0" />;
+    return <Resource icon={FaRegClock} value="-" label={t("resources.uptime")} percentage={0} />;
   }
 
-  const percent = Math.round((new Date().getSeconds() / 60) * 100).toString();
+  const percent = Math.round((new Date().getSeconds() / 60) * 100);
 
   return (
     <Resource

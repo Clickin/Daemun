@@ -21,7 +21,7 @@ describe("widgets/backrest/component", () => {
   it("defaults widget.fields and filters placeholders down to 4 blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "backrest" } };
+    const service = { widget: { type: "backrest", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual([

@@ -117,7 +117,7 @@ export function addDaemunFormatters(i18next) {
     const i = options.binary ? 2 : Math.floor(Math.log(value) / Math.log(k));
 
     const formatted = new Intl.NumberFormat(lng, { maximumFractionDigits: dm, minimumFractionDigits: dm }).format(
-      parseFloat(value / k ** i),
+      value / k ** i,
     );
 
     return `${formatted} ${sizes[i]}/s`;
@@ -137,5 +137,5 @@ export function addDaemunFormatters(i18next) {
 
 export const daemunFormatterPlugin = {
   init: addDaemunFormatters,
-  type: "3rdParty",
+  type: "3rdParty" as const,
 };

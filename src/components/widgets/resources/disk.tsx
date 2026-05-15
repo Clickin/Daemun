@@ -5,7 +5,7 @@ import { useApiQuery } from "utils/query/api-query";
 import Error from "../widget/error";
 import Resource from "../widget/resource";
 
-export default function Disk({ options, expanded, diskUnits, refresh = 1500 }) {
+export default function Disk({ options, expanded, diskUnits = "bytes", refresh = 1500 }) {
   const { t } = useTranslation();
   const diskUnitsName = diskUnits === "bbytes" ? "common.bbytes" : "common.bytes";
 
@@ -26,7 +26,7 @@ export default function Disk({ options, expanded, diskUnits, refresh = 1500 }) {
         expandedValue="-"
         expandedLabel={t("resources.total")}
         expanded={expanded}
-        percentage="0"
+        percentage={0}
       />
     );
   }

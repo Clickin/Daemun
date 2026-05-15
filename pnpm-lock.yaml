@@ -49,13 +49,16 @@ importers:
         version: 6.0.1(vite@8.0.12(@types/node@25.7.0)(esbuild@0.27.7)(jiti@2.6.1))
       '@vitest/coverage-v8':
         specifier: ^3.2.4
-        version: 3.2.4(vitest@3.2.4(@types/debug@4.1.13)(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0))
+        version: 3.2.4(vitest@3.2.4(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0))
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
       compare-versions:
         specifier: ^6.1.1
         version: 6.1.1
+      dayjs:
+        specifier: ^1.11.20
+        version: 1.11.20
       dockerode:
         specifier: ^4.0.10
         version: 4.0.10
@@ -83,9 +86,6 @@ importers:
       json-rpc-2.0:
         specifier: ^1.7.1
         version: 1.7.1
-      luxon:
-        specifier: ^3.6.1
-        version: 3.6.1
       memory-cache:
         specifier: ^0.2.0
         version: 0.2.0
@@ -142,7 +142,7 @@ importers:
         version: 8.0.12(@types/node@25.7.0)(esbuild@0.27.7)(jiti@2.6.1)
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/debug@4.1.13)(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0)
+        version: 3.2.4(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0)
       winston:
         specifier: ^3.19.0
         version: 3.19.0
@@ -2023,6 +2023,9 @@ packages:
     resolution: {integrity: sha512-23XHcCF+coGYevirZceTVD7NdJOqVn+49IHyxgszm+JIiHLoB2TkmPtsYkNWT1pvRSGkc35L6NHs0yHkN2SumA==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
+  dayjs@1.11.20:
+    resolution: {integrity: sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==}
+
   debug@4.4.1:
     resolution: {integrity: sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==}
     engines: {node: '>=6.0'}
@@ -2777,10 +2780,6 @@ packages:
   lru-cache@11.3.6:
     resolution: {integrity: sha512-Gf/KoL3C/MlI7Bt0PGI9I+TeTC/I6r/csU58N4BSNc4lppLBeKsOdFYkK+dX0ABDUMJNfCHTyPpzwwO21Awd3A==}
     engines: {node: 20 || >=22}
-
-  luxon@3.6.1:
-    resolution: {integrity: sha512-tJLxrKJhO2ukZ5z0gyjY1zPh3Rh88Ej9P7jNrZiHMUXHae1yvI2imgOZtL1TO8TW6biMMKfTtAOoEJANgtWBMQ==}
-    engines: {node: '>=12'}
 
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -3624,9 +3623,8 @@ packages:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
 
   systeminformation@5.31.6:
-    resolution:
-      { integrity: sha512-Uv2b2uGGM6ns+26czgW2cYRabYdnswM0ddSOOlryHOaelzsmDSet1iM/NT7VOYxW8x/BW+HkY+b1Ve2pLTSGSA== }
-    engines: { node: ">=8.0.0" }
+    resolution: {integrity: sha512-Uv2b2uGGM6ns+26czgW2cYRabYdnswM0ddSOOlryHOaelzsmDSet1iM/NT7VOYxW8x/BW+HkY+b1Ve2pLTSGSA==}
+    engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
 
@@ -5397,7 +5395,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-rc.7
       vite: 8.0.12(@types/node@25.7.0)(esbuild@0.27.7)(jiti@2.6.1)
 
-  '@vitest/coverage-v8@3.2.4(vitest@3.2.4(@types/debug@4.1.13)(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0))':
+  '@vitest/coverage-v8@3.2.4(vitest@3.2.4(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
@@ -5412,7 +5410,7 @@ snapshots:
       std-env: 3.10.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.13)(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0)
+      vitest: 3.2.4(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -5870,6 +5868,8 @@ snapshots:
       whatwg-url: 16.0.1
     transitivePeerDependencies:
       - '@noble/hashes'
+
+  dayjs@1.11.20: {}
 
   debug@4.4.1:
     dependencies:
@@ -6731,8 +6731,6 @@ snapshots:
   lru-cache@11.2.6: {}
 
   lru-cache@11.3.6: {}
-
-  luxon@3.6.1: {}
 
   lz-string@1.5.0: {}
 
@@ -8033,10 +8031,6 @@ snapshots:
 
   symbol-tree@3.2.4: {}
 
-  synckit@0.11.12:
-    dependencies:
-      "@pkgr/core": 0.2.9
-
   systeminformation@5.31.6: {}
 
   tabbable@6.4.0: {}
@@ -8345,7 +8339,7 @@ snapshots:
     optionalDependencies:
       vite: 7.3.2(@types/node@25.7.0)(jiti@2.6.1)(lightningcss@1.32.0)
 
-  vitest@3.2.4(@types/debug@4.1.13)(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0):
+  vitest@3.2.4(@types/node@25.7.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.32.0):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.4
@@ -8371,7 +8365,6 @@ snapshots:
       vite-node: 3.2.4(@types/node@25.7.0)(jiti@2.6.1)(lightningcss@1.32.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/debug': 4.1.13
       '@types/node': 25.7.0
       jsdom: 28.1.0
     transitivePeerDependencies:

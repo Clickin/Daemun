@@ -19,7 +19,7 @@ describe("widgets/romm/component", () => {
   it("defaults fields to 4 and shows placeholders (container filters to selected fields)", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "romm" } };
+    const service = { widget: { type: "romm", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["platforms", "totalRoms", "saves", "states"]);

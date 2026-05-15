@@ -2,8 +2,17 @@ import classNames from "classnames";
 import Item from "components/services/item";
 
 import { columnMap } from "../../utils/layout/columns";
+import type { LayoutRecord, ServiceRecord } from "../../types";
 
-export default function List({ groupName, services, layout, useEqualHeights, header }) {
+interface ServicesListProps {
+  groupName: string;
+  services: ServiceRecord[];
+  layout?: LayoutRecord;
+  useEqualHeights?: boolean;
+  header?: boolean;
+}
+
+export default function List({ groupName, services, layout, useEqualHeights, header }: ServicesListProps) {
   return (
     <ul
       className={classNames(

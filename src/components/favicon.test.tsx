@@ -14,7 +14,9 @@ describe("components/favicon", () => {
 
   it("appends a shortcut icon link after rendering the SVG to canvas", async () => {
     const drawImage = vi.fn();
-    const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({ drawImage });
+    const getContextSpy = vi
+      .spyOn(HTMLCanvasElement.prototype, "getContext")
+      .mockReturnValue({ drawImage } as unknown as CanvasRenderingContext2D);
     const toDataURLSpy = vi
       .spyOn(HTMLCanvasElement.prototype, "toDataURL")
       .mockReturnValue("data:image/x-icon;base64,AAA");
@@ -25,12 +27,12 @@ describe("components/favicon", () => {
       </ColorContext.Provider>,
     );
 
-    const img = container.querySelector("img");
+    const img = container.querySelector("img") as HTMLImageElement;
     await waitFor(() => {
       expect(typeof img.onload).toBe("function");
     });
 
-    img.onload();
+    img.onload?.call(img, new Event("load"));
 
     const link = document.head.querySelector('link[rel="shortcut icon"]');
     expect(link).not.toBeNull();
@@ -48,7 +50,7 @@ describe("components/favicon", () => {
       return {
         ...actual,
         // Run the effect immediately to hit the defensive guard before refs are attached.
-        useEffect: (fn) => fn(),
+        useEffect: (fn: () => void) => fn(),
       };
     });
 

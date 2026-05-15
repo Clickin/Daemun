@@ -19,7 +19,7 @@ describe("widgets/slskd/component", () => {
   it("defaults fields to 4 and renders placeholders while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "slskd" } };
+    const service = { widget: { type: "slskd", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["slskStatus", "downloads", "uploads", "sharedFiles"]);

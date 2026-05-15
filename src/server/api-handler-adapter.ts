@@ -148,11 +148,11 @@ function toResponse(c: Context, res: NextApiResponseCompat): Response {
   const headers = toHeaderRecord(res.headers);
 
   if (res.body === undefined) {
-    return c.body(null, status, headers);
+    return new Response(null, { headers, status });
   }
 
   if (isBodyInit(res.body)) {
-    return c.body(res.body, status, headers);
+    return new Response(res.body, { headers, status });
   }
 
   if (!res.headers.has("content-type")) {
@@ -160,7 +160,7 @@ function toResponse(c: Context, res: NextApiResponseCompat): Response {
     headers["content-type"] = "application/json; charset=utf-8";
   }
 
-  return c.json(res.body, status, headers);
+  return new Response(JSON.stringify(res.body), { headers, status });
 }
 
 export function splitCatchAll(value: string | undefined): string[] {

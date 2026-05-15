@@ -91,7 +91,7 @@ function toError(url, synologyError) {
   // commeon codes (100 => 199) from:
   // https://global.download.synology.com/download/Document/Software/DeveloperGuide/Os/DSM/All/enu/DSM_Login_Web_API_Guide_enu.pdf
   const code = synologyError.error?.code ?? synologyError.error ?? synologyError.code ?? 100;
-  const error = { code };
+  const error: { code: unknown; error?: string } = { code };
   switch (code) {
     case 102:
       error.error = "The requested API does not exist.";

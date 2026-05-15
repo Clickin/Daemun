@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { fireEvent, render, screen } from "@testing-library/react";
+import type { ElementType, HTMLAttributes, ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { ColorContext } from "utils/contexts/color";
@@ -10,19 +11,26 @@ vi.mock("@headlessui/react", async () => {
   const React = await import("react");
   const { Fragment } = React;
 
-  function passthrough({ as: As = "div", children, ...props }) {
+  function passthrough({
+    as: As = "div",
+    children,
+    ...props
+  }: HTMLAttributes<HTMLElement> & {
+    as?: ElementType;
+    children?: ReactNode | ((state: { open: boolean }) => ReactNode);
+  }) {
     if (As === Fragment) return <>{typeof children === "function" ? children({ open: true }) : children}</>;
     const content = typeof children === "function" ? children({ open: true }) : children;
     return <As {...props}>{content}</As>;
   }
 
-  function Popover({ children }) {
+  function Popover({ children }: { children?: ReactNode | ((state: { open: boolean }) => ReactNode) }) {
     return <div>{typeof children === "function" ? children({ open: true }) : children}</div>;
   }
-  function PopoverButton(props) {
+  function PopoverButton(props: HTMLAttributes<HTMLButtonElement>) {
     return <button type="button" {...props} />;
   }
-  function PopoverPanel(props) {
+  function PopoverPanel(props: HTMLAttributes<HTMLDivElement>) {
     return <div {...props} />;
   }
   Popover.Button = PopoverButton;

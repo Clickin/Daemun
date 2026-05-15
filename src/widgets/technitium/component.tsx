@@ -21,7 +21,7 @@ export default function Component({ service }) {
   const { data: statsData, error: statsError } = useWidgetAPI(widget, "stats", params);
 
   // Default fields
-  if (!widget.fields?.length > 0) {
+  if (!(widget.fields?.length > 0)) {
     widget.fields = technitiumDefaultFields;
   }
 

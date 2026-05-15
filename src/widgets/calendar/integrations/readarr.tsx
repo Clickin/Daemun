@@ -1,8 +1,8 @@
-import { DateTime } from "luxon";
 import { useEffect } from "react";
 
 import Error from "../../../components/services/widget/error";
 import useWidgetAPI from "../../../utils/proxy/use-widget-api";
+import { parseCalendarDate } from "../date";
 
 export default function Integration({ config, params, setEvents, hideErrors = false }) {
   const { data: readarrData, error: readarrError } = useWidgetAPI(config, "calendar", {
@@ -24,7 +24,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
 
       eventsToAdd[title] = {
         title,
-        date: DateTime.fromISO(event.releaseDate),
+        date: parseCalendarDate(event.releaseDate),
         color: config?.color ?? "rose",
         isCompleted: event.grabbed,
         additional: "",

@@ -1,7 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { useApiQuery } from "utils/query/api-query";
 
-export default function SiteMonitor({ groupName, serviceName, style }) {
+interface SiteMonitorProps {
+  groupName: string;
+  serviceName?: string;
+  style?: string;
+}
+
+export default function SiteMonitor({ groupName, serviceName = "", style }: SiteMonitorProps) {
   const { t } = useTranslation();
   const { data, error } = useApiQuery(`/api/siteMonitor?${new URLSearchParams({ groupName, serviceName }).toString()}`, {
     refreshInterval: 30000,

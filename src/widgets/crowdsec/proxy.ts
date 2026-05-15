@@ -27,7 +27,7 @@ async function login(widget, service) {
 
   let dataParsed;
   try {
-    dataParsed = JSON.parse(data);
+    dataParsed = JSON.parse(data.toString());
   } catch {
     logger.error("Failed to parse Crowdsec login response, status: %d", status);
     cache.del(`${sessionTokenCacheKey}.${service}`);
@@ -40,7 +40,7 @@ async function login(widget, service) {
     return null;
   }
 
-  const ttl = Math.max(new Date(dataParsed.expire) - new Date(), 1);
+  const ttl = Math.max(new Date(dataParsed.expire).getTime() - Date.now(), 1);
   cache.put(`${sessionTokenCacheKey}.${service}`, dataParsed.token, ttl);
 
   return dataParsed.token;

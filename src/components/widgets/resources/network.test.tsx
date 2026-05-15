@@ -4,8 +4,10 @@ import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
-  useApiQueryMock: vi.fn(),
-  Resource: vi.fn(() => <div data-testid="resource" />),
+  useApiQueryMock: vi.fn((..._args: unknown[]) => undefined),
+  Resource: vi.fn((props: Record<string, unknown>) => (
+    <div data-testid="resource" data-prop-count={Object.keys(props).length} />
+  )),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
@@ -38,7 +40,7 @@ describe("components/widgets/resources/network", () => {
 
     render(<Network options={{ network: "en0", expanded: true }} />);
 
-    const props = Resource.mock.calls[0][0];
+    const props = Resource.mock.calls[0]![0];
     expect(props.value).toContain("1");
     expect(props.value).toContain("↑");
     expect(props.label).toContain("3");
@@ -48,7 +50,7 @@ describe("components/widgets/resources/network", () => {
   });
 
   it("renders Error when query errors", () => {
-    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new globalThis.Error("nope") });
 
     render(<Network options={{ network: "en0" }} />);
 

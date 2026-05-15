@@ -4,6 +4,8 @@ import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 import { httpProxy } from "utils/proxy/http";
 
+import type { UnknownRecord } from "../../types";
+
 const proxyName = "omadaProxyHandler";
 const sessionCacheKey = `${proxyName}__session`;
 
@@ -35,7 +37,7 @@ function getCookieHeader(responseHeaders) {
 }
 
 async function login(loginUrl, username, password, controllerVersionMajor, sessionCacheId) {
-  const params = {
+  const params: UnknownRecord = {
     username,
     password,
   };
@@ -155,9 +157,9 @@ export default async function omadaProxyHandler(req, res) {
           const { token, cookieHeader } = session;
 
           let sitesUrl;
-          let body = {};
-          let params = { token };
-          let headers = { "Csrf-Token": token };
+          let body: UnknownRecord = {};
+          let params: UnknownRecord = { token };
+          let headers: Record<string, string> = { "Csrf-Token": token };
           if (cookieHeader) {
             headers.Cookie = cookieHeader;
           }

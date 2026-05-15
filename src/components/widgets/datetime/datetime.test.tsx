@@ -13,7 +13,12 @@ describe("components/widgets/datetime", () => {
     try {
       vi.setSystemTime(new Date("2020-01-01T00:00:00.000Z"));
 
-      const format = { timeZone: "UTC", hour: "2-digit", minute: "2-digit", second: "2-digit" };
+      const format: Intl.DateTimeFormatOptions = {
+        timeZone: "UTC",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      };
       const expected0 = new Intl.DateTimeFormat("en-US", format).format(new Date());
 
       renderWithProviders(<DateTime options={{ locale: "en-US", format }} />, { settings: { target: "_self" } });

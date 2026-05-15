@@ -1,9 +1,9 @@
-import { DateTime } from "luxon";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import Error from "../../../components/services/widget/error";
 import useWidgetAPI from "../../../utils/proxy/use-widget-api";
+import { parseCalendarDate } from "../date";
 
 export default function Integration({ config, params, setEvents, hideErrors = false }) {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
       if (event.inCinemas) {
         eventsToAdd[cinemaTitle] = {
           title: cinemaTitle,
-          date: DateTime.fromISO(event.inCinemas),
+          date: parseCalendarDate(event.inCinemas),
           color: config?.color ?? "amber",
           isCompleted: event.hasFile,
           additional: "",
@@ -38,7 +38,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
       if (event.physicalRelease) {
         eventsToAdd[physicalTitle] = {
           title: physicalTitle,
-          date: DateTime.fromISO(event.physicalRelease),
+          date: parseCalendarDate(event.physicalRelease),
           color: config?.color ?? "cyan",
           isCompleted: event.hasFile,
           additional: "",
@@ -49,7 +49,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
       if (event.digitalRelease) {
         eventsToAdd[digitalTitle] = {
           title: digitalTitle,
-          date: DateTime.fromISO(event.digitalRelease),
+          date: parseCalendarDate(event.digitalRelease),
           color: config?.color ?? "emerald",
           isCompleted: event.hasFile,
           additional: "",

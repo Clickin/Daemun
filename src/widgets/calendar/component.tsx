@@ -1,11 +1,10 @@
 import Container from "components/services/widget/container";
-import { DateTime } from "luxon";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { SettingsContext } from "utils/contexts/settings";
 import dynamic from "utils/dynamic";
 
 import Agenda from "./agenda";
+import { addCalendarMonths, createCurrentCalendarDate, subtractCalendarMonths, toCalendarDateKey } from "./date";
 import Monthly from "./monthly";
 
 const integrationComponents = {
@@ -45,11 +44,9 @@ const colorVariants = {
 
 export default function Component({ service }) {
   const { widget } = service;
-  const { i18n } = useTranslation();
   const [showDate, setShowDate] = useState(null);
   const [events, setEvents] = useState({});
-  const nowDate = DateTime.now().setLocale(i18n.language);
-  const currentDate = widget?.timezone ? nowDate.setZone(widget?.timezone).startOf("day") : nowDate;
+  const currentDate = createCurrentCalendarDate(widget?.timezone);
   const { settings } = useContext(SettingsContext);
 
   useEffect(() => {
@@ -67,8 +64,8 @@ export default function Component({ service }) {
     };
 
     if (showDate) {
-      constructedParams.start = showDate.minus({ months: 3 }).toFormat("yyyy-MM-dd");
-      constructedParams.end = showDate.plus({ months: 3 }).toFormat("yyyy-MM-dd");
+      constructedParams.start = toCalendarDateKey(subtractCalendarMonths(showDate, 3));
+      constructedParams.end = toCalendarDateKey(addCalendarMonths(showDate, 3));
     }
 
     return constructedParams;
@@ -109,25 +106,22 @@ export default function Component({ service }) {
         </div>
         {(!widget?.view || widget?.view === "monthly") && (
           <Monthly
-            key={`monthly-${showDate?.toFormat("yyyy-MM-dd")}`}
+            key={`monthly-${showDate ? toCalendarDateKey(showDate) : ""}`}
             service={service}
             colorVariants={colorVariants}
             events={events}
             showDate={showDate}
             setShowDate={setShowDate}
             currentDate={currentDate}
-            className="flex"
           />
         )}
         {widget?.view === "agenda" && (
           <Agenda
-            key={`agenda-${showDate?.toFormat("yyyy-MM-dd")}`}
+            key={`agenda-${showDate ? toCalendarDateKey(showDate) : ""}`}
             service={service}
             colorVariants={colorVariants}
             events={events}
             showDate={showDate}
-            setShowDate={setShowDate}
-            className="flex"
           />
         )}
       </div>

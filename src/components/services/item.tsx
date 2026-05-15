@@ -3,6 +3,7 @@ import ResolvedIcon from "components/resolvedicon";
 import { useContext, useState } from "react";
 import { SettingsContext } from "utils/contexts/settings";
 import dynamic from "utils/dynamic";
+import type { ServiceRecord } from "../../types";
 
 import KubernetesStatus from "./kubernetes-status";
 import Ping from "./ping";
@@ -15,7 +16,13 @@ const Docker = dynamic(() => import("widgets/docker/component"));
 const Kubernetes = dynamic(() => import("widgets/kubernetes/component"));
 const ProxmoxVM = dynamic(() => import("widgets/proxmoxvm/component"));
 
-export default function Item({ service, groupName, useEqualHeights }) {
+interface ServiceItemProps {
+  service: ServiceRecord;
+  groupName: string;
+  useEqualHeights?: boolean;
+}
+
+export default function Item({ service, groupName, useEqualHeights }: ServiceItemProps) {
   const hasLink = service.href && service.href !== "#";
   const { settings } = useContext(SettingsContext);
   const showStats = service.showStats === false ? false : settings.showStats;
@@ -187,8 +194,8 @@ export default function Item({ service, groupName, useEqualHeights }) {
           </div>
         )}
 
-        {service.widgets.map((widget) => (
-          <Widget widget={widget} service={service} key={widget.index} />
+        {(service.widgets ?? []).map((widget, index) => (
+          <Widget widget={widget} service={service} key={String(widget.index ?? index)} />
         ))}
       </div>
     </li>

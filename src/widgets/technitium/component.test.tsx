@@ -19,7 +19,7 @@ describe("widgets/technitium/component", () => {
   it("defaults fields to 4 and filters loading placeholders accordingly", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "technitium" } };
+    const service = { widget: { type: "technitium", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(technitiumDefaultFields);

@@ -13,7 +13,7 @@ export default async function minecraftProxyHandler(req, res) {
   try {
     const pingResponse = await mc.lookup({
       host: url.hostname,
-      port: url.port || 25565,
+      port: Number(url.port || 25565),
     });
     res.status(200).send({
       version: pingResponse.status.version.name,

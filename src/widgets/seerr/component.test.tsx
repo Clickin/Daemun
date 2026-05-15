@@ -20,7 +20,7 @@ describe("widgets/seerr/component", () => {
       .mockReturnValueOnce({ data: undefined, error: undefined }) // request/count
       .mockReturnValueOnce({ data: undefined, error: undefined }); // issue/count disabled (endpoint = "")
 
-    const service = { widget: { type: "seerr", url: "http://x" } };
+    const service = { widget: { type: "seerr", url: "http://x", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(seerrDefaultFields);
@@ -39,7 +39,7 @@ describe("widgets/seerr/component", () => {
       .mockReturnValueOnce({ data: undefined, error: undefined }) // request/count
       .mockReturnValueOnce({ data: undefined, error: undefined }); // issue/count disabled (endpoint = "")
 
-    const service = { widget: { type: "jellyseerr", url: "http://x" } };
+    const service = { widget: { type: "jellyseerr", url: "http://x", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(seerrDefaultFields);
@@ -55,7 +55,7 @@ describe("widgets/seerr/component", () => {
       .mockReturnValueOnce({ data: undefined, error: undefined }) // request/count
       .mockReturnValueOnce({ data: undefined, error: undefined }); // issue/count disabled (endpoint = "")
 
-    const service = { widget: { type: "overseerr", url: "http://x" } };
+    const service = { widget: { type: "overseerr", url: "http://x", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(seerrDefaultFields);

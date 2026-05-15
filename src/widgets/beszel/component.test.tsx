@@ -20,7 +20,7 @@ describe("widgets/beszel/component", () => {
   it("renders placeholders while loading (systems view)", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "beszel" } };
+    const service = { widget: { type: "beszel", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["systems", "up"]);
@@ -63,7 +63,7 @@ describe("widgets/beszel/component", () => {
       error: undefined,
     });
 
-    const service = { widget: { type: "beszel", systemId: "sys1" } };
+    const service = { widget: { type: "beszel", systemId: "sys1", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["name", "status", "cpu", "memory"]);

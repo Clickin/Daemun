@@ -16,7 +16,8 @@ describe("widgets/unmanic/component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    globalThis.fetch = vi.fn(async () => ({ json: async () => ({ recordsTotal: 7 }) }));
+    const fetchMock: typeof fetch = vi.fn(async () => ({ json: async () => ({ recordsTotal: 7 }) }) as Response);
+    globalThis.fetch = fetchMock;
   });
 
   afterEach(() => {

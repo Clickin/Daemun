@@ -40,18 +40,18 @@ export default function Widget({ options }) {
   if (!data) {
     return (
       <Resources options={options} additionalClassNames="information-widget-glances">
-        {options.cpu !== false && <Resource icon={FiCpu} label={t("glances.wait")} percentage="0" />}
-        {options.mem !== false && <Resource icon={FaMemory} label={t("glances.wait")} percentage="0" />}
+        {options.cpu !== false && <Resource icon={FiCpu} label={t("glances.wait")} percentage={0} />}
+        {options.mem !== false && <Resource icon={FaMemory} label={t("glances.wait")} percentage={0} />}
         {options.disk && !Array.isArray(options.disk) && (
-          <Resource key={options.disk} icon={FiHardDrive} label={t("glances.wait")} percentage="0" />
+          <Resource key={options.disk} icon={FiHardDrive} label={t("glances.wait")} percentage={0} />
         )}
         {options.disk &&
           Array.isArray(options.disk) &&
           options.disk.map((disk) => (
-            <Resource key={`disk_${disk}`} icon={FiHardDrive} label={t("glances.wait")} percentage="0" />
+            <Resource key={`disk_${disk}`} icon={FiHardDrive} label={t("glances.wait")} percentage={0} />
           ))}
-        {options.cputemp && <Resource icon={FaThermometerHalf} label={t("glances.wait")} percentage="0" />}
-        {options.uptime && <Resource icon={FaRegClock} label={t("glances.wait")} percentage="0" />}
+        {options.cputemp && <Resource icon={FaThermometerHalf} label={t("glances.wait")} percentage={0} />}
+        {options.uptime && <Resource icon={FaRegClock} label={t("glances.wait")} percentage={0} />}
         {options.label && <WidgetLabel label={options.label} />}
       </Resources>
     );
@@ -171,7 +171,7 @@ export default function Widget({ options }) {
           icon={FaRegClock}
           value={data.uptime.replace(" days,", t("glances.days")).replace(/:\d\d:\d\d$/g, t("glances.hours"))}
           label={t("glances.uptime")}
-          percentage={Math.round((new Date().getSeconds() / 60) * 100).toString()}
+          percentage={Math.round((new Date().getSeconds() / 60) * 100)}
         />
       )}
       {options.label && <WidgetLabel label={options.label} />}

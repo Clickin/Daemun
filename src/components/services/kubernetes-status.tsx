@@ -1,7 +1,13 @@
 import { t } from "i18next";
 import { useApiQuery } from "utils/query/api-query";
+import type { ServiceRecord } from "../../types";
 
-export default function KubernetesStatus({ service, style }) {
+interface KubernetesStatusProps {
+  service: ServiceRecord;
+  style?: string;
+}
+
+export default function KubernetesStatus({ service, style }: KubernetesStatusProps) {
   const podSelectorString = service.podSelector !== undefined ? `podSelector=${service.podSelector}` : "";
   const { data, error } = useApiQuery(`/api/kubernetes/status/${service.namespace}/${service.app}?${podSelectorString}`);
 

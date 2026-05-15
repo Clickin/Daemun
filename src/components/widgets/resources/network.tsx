@@ -26,7 +26,7 @@ export default function Network({ options, refresh = 1500 }) {
         label="- ↓"
         expandedValue="- ↑"
         expandedLabel="- ↓"
-        percentage="0"
+        percentage={0}
         wide
       />
     );

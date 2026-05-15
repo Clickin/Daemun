@@ -43,7 +43,7 @@ const { state, winston, checkAndCopyConfig, getSettings } = vi.hoisted(() => {
     state,
     winston,
     checkAndCopyConfig: vi.fn(),
-    getSettings: vi.fn(() => ({ logpath: "/tmp" })),
+    getSettings: vi.fn<() => { logpath?: string }>(() => ({ logpath: "/tmp" })),
   };
 });
 

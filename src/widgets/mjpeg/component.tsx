@@ -37,7 +37,10 @@ export default function Component({ service }) {
           src={stream}
           alt="stream"
           onError={(e) => {
-            e.target.parentElement.parentElement.className = "tv-static";
+            const target = e.target as HTMLElement;
+            if (target.parentElement?.parentElement) {
+              target.parentElement.parentElement.className = "tv-static";
+            }
           }}
         />
         <Image layout="fill" objectFit={fit} className="drop-shadow-2xl" src={stream} alt="stream" />

@@ -55,7 +55,7 @@ function clientManualChunks(id) {
       return "vendor-data";
     }
 
-    if (normalizedId.includes("/date-fns/") || normalizedId.includes("/dayjs/") || normalizedId.includes("/luxon/")) {
+    if (normalizedId.includes("/date-fns/") || normalizedId.includes("/dayjs/")) {
       return "vendor-date";
     }
 

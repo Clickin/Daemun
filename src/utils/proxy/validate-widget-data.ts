@@ -1,14 +1,30 @@
 import createLogger from "utils/logger";
 import widgets from "widgets/widgets";
 
+import type { UnknownRecord } from "../../types";
+
 const logger = createLogger("validateWidgetData");
 
-export default function validateWidgetData(widget, endpoint, data) {
+interface WidgetMapping {
+  allowEmpty?: boolean;
+  endpoint?: string;
+  validate?: string[];
+}
+
+interface WidgetDefinition {
+  mappings?: Record<string, WidgetMapping>;
+}
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return Boolean(value) && typeof value === "object";
+}
+
+export default function validateWidgetData(widget, endpoint, data: Buffer | unknown) {
   let valid = true;
-  let dataParsed = data;
-  let error;
-  let mapping;
-  const mappings = widgets[widget.type]?.mappings;
+  let dataParsed: unknown = data;
+  let error: unknown;
+  let mapping: WidgetMapping | undefined;
+  const mappings = (widgets[widget.type] as WidgetDefinition | undefined)?.mappings;
   if (mappings) {
     mapping = Object.values(mappings).find((m) => m.endpoint === endpoint);
   }
@@ -17,7 +33,7 @@ export default function validateWidgetData(widget, endpoint, data) {
 
   if (Buffer.isBuffer(data)) {
     try {
-      dataParsed = JSON.parse(data);
+      dataParsed = JSON.parse(data.toString());
     } catch (e) {
       try {
         // try once more stripping whitespace
@@ -29,7 +45,7 @@ export default function validateWidgetData(widget, endpoint, data) {
     }
   }
 
-  if (dataParsed && Object.entries(dataParsed).length) {
+  if (isRecord(dataParsed) && Object.entries(dataParsed).length) {
     mapping?.validate?.forEach((key) => {
       if (dataParsed[key] === undefined) {
         valid = false;

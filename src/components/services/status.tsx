@@ -1,7 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { useApiQuery } from "utils/query/api-query";
+import type { ServiceRecord } from "../../types";
 
-export default function Status({ service, style }) {
+interface StatusProps {
+  service: ServiceRecord;
+  style?: string;
+}
+
+export default function Status({ service, style }: StatusProps) {
   const { t } = useTranslation();
 
   const { data, error } = useApiQuery(`/api/docker/status/${service.container}/${service.server || ""}`);

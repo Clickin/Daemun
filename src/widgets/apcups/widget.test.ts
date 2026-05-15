@@ -8,6 +8,6 @@ describe("apcups widget config", () => {
   it("exports a valid widget config", () => {
     expectWidgetConfigShape(widget);
     // apcups talks TCP directly, so it does not use an `{url}/...` API template.
-    expect(widget.api).toBeUndefined();
+    expect("api" in widget ? widget.api : undefined).toBeUndefined();
   });
 });

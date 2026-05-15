@@ -18,13 +18,13 @@ describe("utils/config/shvl", () => {
   });
 
   it("set blocks prototype pollution", () => {
-    const obj = {};
+    const obj: { polluted?: unknown } = {};
     set(obj, "__proto__.polluted", true);
     set(obj, "a.__proto__.polluted", true);
     set(obj, "constructor.prototype.polluted", true);
 
     expect(obj.polluted).toBeUndefined();
-    expect({}.polluted).toBeUndefined();
-    expect(Object.prototype.polluted).toBeUndefined();
+    expect(({} as { polluted?: unknown }).polluted).toBeUndefined();
+    expect((Object.prototype as { polluted?: unknown }).polluted).toBeUndefined();
   });
 });

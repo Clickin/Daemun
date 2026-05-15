@@ -1,28 +1,39 @@
 // @vitest-environment jsdom
 
 import { render, screen, waitFor } from "@testing-library/react";
+import type { ElementType, ForwardedRef, HTMLAttributes, ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@headlessui/react", async () => {
   const React = await import("react");
   const { Fragment } = React;
 
-  function Transition({ as: As = Fragment, children }) {
+  function Transition({ as: As = Fragment, children }: { as?: ElementType; children?: ReactNode }) {
     if (As === Fragment) return <>{children}</>;
     return <As>{children}</As>;
   }
 
-  function Disclosure({ defaultOpen = true, children }) {
+  function Disclosure({
+    defaultOpen = true,
+    children,
+  }: {
+    defaultOpen?: boolean;
+    children?: ReactNode | ((state: { open: boolean }) => ReactNode);
+  }) {
     const content = typeof children === "function" ? children({ open: defaultOpen }) : children;
     return <div>{content}</div>;
   }
 
-  function DisclosureButton(props) {
+  function DisclosureButton(props: HTMLAttributes<HTMLButtonElement>) {
     return <button type="button" {...props} />;
   }
 
-  const DisclosurePanel = React.forwardRef(function DisclosurePanel(props, ref) {
-    return <div ref={ref} data-testid="disclosure-panel" {...props} static="true" />;
+  const DisclosurePanel = React.forwardRef(function DisclosurePanel(
+    props: HTMLAttributes<HTMLDivElement> & { static?: boolean },
+    ref: ForwardedRef<HTMLDivElement>,
+  ) {
+    const { static: _static, ...rest } = props;
+    return <div ref={ref} data-testid="disclosure-panel" {...rest} />;
   });
 
   Disclosure.Button = DisclosureButton;
@@ -38,7 +49,7 @@ vi.mock("components/resolvedicon", () => ({
 }));
 
 vi.mock("components/services/list", () => ({
-  default: function ServicesListMock({ groupName, services }) {
+  default: function ServicesListMock({ groupName, services }: { groupName?: string; services?: unknown[] }) {
     return (
       <div data-testid="services-list-mock">
         {groupName}:{services?.length ?? 0}

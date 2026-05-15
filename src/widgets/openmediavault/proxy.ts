@@ -69,17 +69,17 @@ async function tryLogin(widget) {
 
   if (resp.status !== 200) {
     logger.error("HTTP %d logging in to OpenMediaVault. Data: %s", resp.status, resp.data);
-    return [false, resp];
+    return [false, resp] as const;
   }
 
   const json = JSON.parse(resp.data.toString());
   if (json.response.authenticated !== true) {
     logger.error("Login error in OpenMediaVault. Data: %s", resp.data);
     resp.status = 401;
-    return [false, resp];
+    return [false, resp] as const;
   }
 
-  return [true, resp];
+  return [true, resp] as const;
 }
 async function processBg(url, filename) {
   const resp = await poll(BG_MAX_RETRIES, (pos) =>

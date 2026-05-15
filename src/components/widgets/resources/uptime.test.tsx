@@ -4,8 +4,10 @@ import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
-  useApiQueryMock: vi.fn(),
-  Resource: vi.fn(() => <div data-testid="resource" />),
+  useApiQueryMock: vi.fn((..._args: unknown[]) => undefined),
+  Resource: vi.fn((props: Record<string, unknown>) => (
+    <div data-testid="resource" data-prop-count={Object.keys(props).length} />
+  )),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
@@ -25,7 +27,7 @@ describe("components/widgets/resources/uptime", () => {
 
     render(<Uptime />);
     expect(Resource).toHaveBeenCalled();
-    expect(Resource.mock.calls[0][0].value).toBe("-");
+    expect(Resource.mock.calls[0]![0].value).toBe("-");
   });
 
   it("renders formatted duration and sets percentage based on current seconds", () => {
@@ -36,16 +38,16 @@ describe("components/widgets/resources/uptime", () => {
       useApiQueryMock.mockReturnValue({ data: { uptime: 1234 }, error: undefined });
       render(<Uptime />);
 
-      const props = Resource.mock.calls[0][0];
+      const props = Resource.mock.calls[0]![0];
       expect(props.value).toBe("1234");
-      expect(props.percentage).toBe("50");
+      expect(props.percentage).toBe(50);
     } finally {
       vi.useRealTimers();
     }
   });
 
   it("renders Error when query errors", () => {
-    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new globalThis.Error("nope") });
 
     render(<Uptime />);
 

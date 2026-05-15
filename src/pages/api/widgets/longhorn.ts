@@ -59,7 +59,7 @@ export default async function handler(req, res) {
   }
 
   const apiUrl = `${url}/v1/nodes`;
-  const headers = {
+  const headers: Record<string, string> = {
     "Accept-Encoding": "application/json",
   };
   if (username && password) {

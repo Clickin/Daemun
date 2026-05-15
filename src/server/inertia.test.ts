@@ -11,7 +11,9 @@ describe("inertia middleware", () => {
   it("returns an Inertia page object for X-Inertia requests", async () => {
     const app = new Hono();
     app.use(inertia({ version: "test-version" }));
-    app.get("/", (c) => c.render("Home", { message: "hello" }));
+    app.get("/", (c) =>
+      (c.render as (component: string, props: Record<string, unknown>) => Response)("Home", { message: "hello" }),
+    );
 
     const response = await app.request("http://example.test/?q=1", {
       headers: {
@@ -33,7 +35,7 @@ describe("inertia middleware", () => {
   it("returns 409 when the client Inertia asset version is stale", async () => {
     const app = new Hono();
     app.use(inertia({ version: "current" }));
-    app.get("/", (c) => c.render("Home", {}));
+    app.get("/", (c) => (c.render as (component: string, props: Record<string, unknown>) => Response)("Home", {}));
 
     const response = await app.request("http://example.test/dashboard", {
       headers: {

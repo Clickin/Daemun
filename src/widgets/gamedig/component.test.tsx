@@ -19,7 +19,7 @@ describe("widgets/gamedig/component", () => {
   it("defaults fields and filters blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "gamedig", url: "http://x" } };
+    const service = { widget: { type: "gamedig", url: "http://x", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["map", "currentPlayers", "ping"]);

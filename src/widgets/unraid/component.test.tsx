@@ -23,7 +23,7 @@ describe("widgets/unraid/component", () => {
   it("defaults widget.fields and filters down to 4 visible blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "unraid" } };
+    const service = { widget: { type: "unraid", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     // Component sets default fields

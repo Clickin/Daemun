@@ -24,18 +24,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-export function get(object, path, def) {
-  // Split the path into keys and reduce the object to the target value
-  return (object = path.split(/[.[\]]+/).reduce(function (obj, p) {
-    // Check each nested object to see if the key exists
-    return obj && obj[p] !== undefined ? obj[p] : undefined;
-  }, object)) === undefined
-    ? // If the final value is undefined, return the default value
-      def
-    : object; // Otherwise, return the value found
+type NestedRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is NestedRecord {
+  return Boolean(value) && typeof value === "object";
 }
 
-export function set(obj, path, val) {
+export function get<T = unknown>(object: unknown, path: string, def?: T): T | unknown {
+  // Split the path into keys and reduce the object to the target value
+  const value = path.split(/[.[\]]+/).reduce<unknown>(function (obj, p) {
+    // Check each nested object to see if the key exists
+    return isRecord(obj) && obj[p] !== undefined ? obj[p] : undefined;
+  }, object);
+
+  return value === undefined
+    ? // If the final value is undefined, return the default value
+      def
+    : value; // Otherwise, return the value found
+}
+
+export function set<T extends NestedRecord>(obj: T, path: string, val: unknown): T {
   // Split the path into keys and filter out any empty strings
   const keys = path.split(/[.[\]]+/).filter(Boolean);
 
@@ -43,10 +51,10 @@ export function set(obj, path, val) {
   const lastKey = keys.pop();
 
   // Prevent setting dangerous keys like __proto__
-  if (/^(__proto__|constructor|prototype)$/.test(lastKey)) return obj;
+  if (!lastKey || /^(__proto__|constructor|prototype)$/.test(lastKey)) return obj;
 
   // Reduce the object to the nested object where we want to set the value
-  keys.reduce((acc, key, i) => {
+  const target = keys.reduce<NestedRecord>((acc, key, i) => {
     // Again, block dangerous keys
     if (/^(__proto__|constructor|prototype)$/.test(key)) return {};
 
@@ -57,8 +65,10 @@ export function set(obj, path, val) {
     acc[key] = Array.isArray(acc[key]) ? acc[key] : isIndex ? [] : acc[key] || {};
 
     // Return nested object for next iteration
-    return acc[key];
-  }, obj)[lastKey] = val; // Finally set the value
+    return isRecord(acc[key]) ? acc[key] : {};
+  }, obj);
+
+  target[lastKey] = val; // Finally set the value
 
   return obj;
 }

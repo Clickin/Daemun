@@ -1,27 +1,37 @@
 // @vitest-environment jsdom
 
 import { render, screen, waitFor } from "@testing-library/react";
+import type { ElementType, ForwardedRef, HTMLAttributes, ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@headlessui/react", async () => {
   const React = await import("react");
   const { Fragment } = React;
 
-  function Transition({ as: As = Fragment, children }) {
+  function Transition({ as: As = Fragment, children }: { as?: ElementType; children?: ReactNode }) {
     if (As === Fragment) return <>{children}</>;
     return <As>{children}</As>;
   }
 
-  function Disclosure({ defaultOpen = true, children }) {
+  function Disclosure({
+    defaultOpen = true,
+    children,
+  }: {
+    defaultOpen?: boolean;
+    children?: ReactNode | ((state: { open: boolean }) => ReactNode);
+  }) {
     const content = typeof children === "function" ? children({ open: defaultOpen }) : children;
     return <div>{content}</div>;
   }
 
-  function DisclosureButton(props) {
+  function DisclosureButton(props: HTMLAttributes<HTMLButtonElement>) {
     return <button type="button" {...props} />;
   }
 
-  const DisclosurePanel = React.forwardRef(function DisclosurePanel(props, ref) {
+  const DisclosurePanel = React.forwardRef(function DisclosurePanel(
+    props: HTMLAttributes<HTMLDivElement> & { static?: boolean },
+    ref: ForwardedRef<HTMLDivElement>,
+  ) {
     // HeadlessUI uses a boolean `static` prop; avoid forwarding it to the DOM.
     const { static: _static, ...rest } = props;
     return <div ref={ref} data-testid="disclosure-panel" {...rest} />;
@@ -34,13 +44,13 @@ vi.mock("@headlessui/react", async () => {
 });
 
 vi.mock("components/bookmarks/list", () => ({
-  default: function BookmarksListMock({ bookmarks }) {
+  default: function BookmarksListMock({ bookmarks }: { bookmarks?: unknown[] }) {
     return <div data-testid="bookmarks-list">count:{bookmarks?.length ?? 0}</div>;
   },
 }));
 
 vi.mock("components/errorboundry", () => ({
-  default: function ErrorBoundaryMock({ children }) {
+  default: function ErrorBoundaryMock({ children }: { children?: ReactNode }) {
     return <>{children}</>;
   },
 }));

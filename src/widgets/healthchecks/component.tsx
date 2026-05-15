@@ -7,7 +7,7 @@ import useWidgetAPI from "utils/proxy/use-widget-api";
 function formatDate(dateString, language) {
   const date = new Date(dateString);
   const now = new Date();
-  let dateOptions = {
+  let dateOptions: Intl.DateTimeFormatOptions = {
     month: "numeric",
     day: "numeric",
     hour: "numeric",

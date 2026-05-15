@@ -19,7 +19,7 @@ describe("widgets/esphome/component", () => {
   it("defaults fields and filters placeholders to 4 blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "esphome" } };
+    const service = { widget: { type: "esphome", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["online", "offline", "offline_alt", "total"]);

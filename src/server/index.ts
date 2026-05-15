@@ -29,7 +29,7 @@ async function listen() {
   await fs.rm(socketPath, { force: true });
 
   const socketServer = createAdaptorServer({ fetch: app.fetch, hostname });
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     socketServer.once("error", reject);
     socketServer.listen(socketPath, () => {
       socketServer.off("error", reject);

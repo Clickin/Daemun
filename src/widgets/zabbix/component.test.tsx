@@ -19,7 +19,7 @@ describe("widgets/zabbix/component", () => {
   it("defaults fields to 4 and filters placeholders accordingly", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "zabbix" } };
+    const service = { widget: { type: "zabbix", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["warning", "average", "high", "disaster"]);

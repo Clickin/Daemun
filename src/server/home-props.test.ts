@@ -62,7 +62,7 @@ describe("loadHomePageProps", () => {
   });
 
   it("normalizes legacy language codes", async () => {
-    getSettings.mockReturnValueOnce({ language: "zh-CN", providers: {} });
+    getSettings.mockReturnValueOnce({ language: "zh-CN", providers: {}, title: "Daemun" });
 
     const { loadHomePageProps } = await import("./home-props");
     const result = await loadHomePageProps();

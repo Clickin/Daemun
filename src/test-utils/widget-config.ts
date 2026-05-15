@@ -1,13 +1,19 @@
 import { expect } from "vitest";
+import type { UnknownRecord } from "../types";
 
-export function expectWidgetConfigShape(widget) {
+function isRecord(value: unknown): value is UnknownRecord {
+  return Boolean(value) && typeof value === "object";
+}
+
+export function expectWidgetConfigShape(widget: UnknownRecord) {
   expect(widget).toBeTruthy();
   expect(widget).toBeTypeOf("object");
 
   if ("api" in widget) {
     expect(widget.api).toBeTypeOf("string");
     // Widget APIs are either service-backed (`{url}` template) or third-party API URLs.
-    expect(widget.api.includes("{url}") || /^https?:\/\//.test(widget.api)).toBe(true);
+    const api = String(widget.api);
+    expect(api.includes("{url}") || /^https?:\/\//.test(api)).toBe(true);
   }
 
   if ("proxyHandler" in widget) {
@@ -18,7 +24,7 @@ export function expectWidgetConfigShape(widget) {
     expect(widget.allowedEndpoints).toBeInstanceOf(RegExp);
   }
 
-  if ("mappings" in widget) {
+  if ("mappings" in widget && isRecord(widget.mappings)) {
     expect(widget.mappings).toBeTruthy();
     expect(widget.mappings).toBeTypeOf("object");
 
@@ -27,13 +33,14 @@ export function expectWidgetConfigShape(widget) {
       expect(mapping).toBeTruthy();
       expect(mapping).toBeTypeOf("object");
 
-      if ("endpoint" in mapping) {
+      if (isRecord(mapping) && "endpoint" in mapping) {
         expect(mapping.endpoint).toBeTypeOf("string");
-        expect(mapping.endpoint.length).toBeGreaterThan(0);
+        expect(String(mapping.endpoint).length).toBeGreaterThan(0);
       }
-      if ("map" in mapping) {
+      if (isRecord(mapping) && "map" in mapping) {
         const map = mapping.map;
-        const proxyName = widget.proxyHandler?.name ?? "genericProxyHandler";
+        const proxyName =
+          typeof widget.proxyHandler === "function" ? widget.proxyHandler.name : "genericProxyHandler";
 
         // Most handlers treat `map` as a transform function. A small number of custom
         // proxies treat it as an options object.

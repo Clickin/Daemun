@@ -13,7 +13,7 @@ export default function Component({ service }) {
   const { data: systems, error: systemsError } = useWidgetAPI(widget, "systems");
 
   const MAX_ALLOWED_FIELDS = 4;
-  if (!widget.fields?.length > 0) {
+  if (!(widget.fields?.length > 0)) {
     widget.fields = systemId ? ["name", "status", "cpu", "memory"] : ["systems", "up"];
   }
   if (widget.fields?.length > MAX_ALLOWED_FIELDS) {

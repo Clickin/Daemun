@@ -6,6 +6,22 @@ import createLogger from "../../../utils/logger";
 
 const logger = createLogger("widget");
 
+interface NodeMetricsSummary {
+  cpu: {
+    load?: number;
+    percent?: number;
+    total: number;
+  };
+  memory: {
+    free?: number;
+    percent?: number;
+    total: number;
+    used?: number;
+  };
+  name: string;
+  ready: boolean;
+}
+
 export default async function handler(req, res) {
   try {
     const kc = getKubeConfig();
@@ -32,15 +48,19 @@ export default async function handler(req, res) {
     let memTotal = 0;
     let memUsage = 0;
 
-    const nodeMap = {};
+    const nodeMap: Record<string, NodeMetricsSummary> = {};
     nodes.items.forEach((node) => {
+      const nodeName = node.metadata?.name;
+      if (!nodeName || !node.status?.capacity?.cpu || !node.status.capacity.memory) return;
+
       const cpu = Number.parseInt(node.status.capacity.cpu, 10);
       const mem = parseMemory(node.status.capacity.memory);
       const ready =
         node.status.conditions.filter((condition) => condition.type === "Ready" && condition.status === "True").length >
         0;
-      nodeMap[node.metadata.name] = {
-        name: node.metadata.name,
+
+      nodeMap[nodeName] = {
+        name: nodeName,
         ready,
         cpu: {
           total: cpu,
@@ -60,11 +80,17 @@ export default async function handler(req, res) {
         const mem = parseMemory(nodeMetric.usage.memory);
         cpuUsage += cpu;
         memUsage += mem;
-        nodeMap[nodeMetric.metadata.name].cpu.load = cpu;
-        nodeMap[nodeMetric.metadata.name].cpu.percent = (cpu / nodeMap[nodeMetric.metadata.name].cpu.total) * 100;
-        nodeMap[nodeMetric.metadata.name].memory.used = mem;
-        nodeMap[nodeMetric.metadata.name].memory.free = nodeMap[nodeMetric.metadata.name].memory.total - mem;
-        nodeMap[nodeMetric.metadata.name].memory.percent = (mem / nodeMap[nodeMetric.metadata.name].memory.total) * 100;
+        const nodeName = nodeMetric.metadata.name;
+        const nodeSummary = nodeMap[nodeName];
+        if (!nodeSummary) {
+          throw new Error(`Metrics returned unknown node '${nodeName}'`);
+        }
+
+        nodeSummary.cpu.load = cpu;
+        nodeSummary.cpu.percent = (cpu / nodeSummary.cpu.total) * 100;
+        nodeSummary.memory.used = mem;
+        nodeSummary.memory.free = nodeSummary.memory.total - mem;
+        nodeSummary.memory.percent = (mem / nodeSummary.memory.total) * 100;
       });
     } catch (error) {
       logger.error("Error getting metrics, ensure you have metrics-server installed:", JSON.stringify(error));
@@ -89,7 +115,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       cluster,
-      nodes: Object.entries(nodeMap).map(([name, node]) => ({ name, ...node })),
+      nodes: Object.values(nodeMap),
     });
   } catch (e) {
     if (e) logger.error(e);

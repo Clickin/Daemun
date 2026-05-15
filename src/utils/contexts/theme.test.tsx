@@ -11,11 +11,23 @@ function Reader() {
   return <div data-testid="value">{theme}</div>;
 }
 
+function matchMediaMock(matches: boolean): typeof window.matchMedia {
+  return vi.fn((query: string) => ({
+    addEventListener: vi.fn(),
+    addListener: vi.fn(),
+    dispatchEvent: vi.fn(() => false),
+    matches,
+    media: query,
+    onchange: null,
+    removeEventListener: vi.fn(),
+    removeListener: vi.fn(),
+  }));
+}
+
 describe("utils/contexts/theme", () => {
   it("initializes from localStorage and writes html classes", async () => {
     // jsdom doesn't implement matchMedia by default; ensure it exists for getInitialTheme.
-    window.matchMedia =
-      window.matchMedia || vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    window.matchMedia = window.matchMedia || matchMediaMock(false);
 
     localStorage.setItem("theme-mode", "light");
     document.documentElement.className = "";
@@ -32,7 +44,7 @@ describe("utils/contexts/theme", () => {
   });
 
   it("falls back to prefers-color-scheme when localStorage is empty", async () => {
-    const matchMedia = vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    const matchMedia = matchMediaMock(true);
     window.matchMedia = matchMedia;
     localStorage.removeItem("theme-mode");
 
@@ -47,7 +59,7 @@ describe("utils/contexts/theme", () => {
   });
 
   it("defaults to dark when prefers-color-scheme does not match", async () => {
-    const matchMedia = vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    const matchMedia = matchMediaMock(false);
     window.matchMedia = matchMedia;
     localStorage.removeItem("theme-mode");
 

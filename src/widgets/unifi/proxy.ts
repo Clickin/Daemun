@@ -36,7 +36,7 @@ async function getWidget(req, logger) {
 }
 
 async function resolveRequestContext({ cachedPrefix, widget }) {
-  const headers = {};
+  const headers: Record<string, string> = {};
 
   if (widget.key) {
     headers["X-API-KEY"] = widget.key;

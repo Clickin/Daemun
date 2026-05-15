@@ -46,14 +46,22 @@ vi.mock("node:net", () => ({
 vi.mock("follow-redirects", async () => {
   const { EventEmitter } = await import("node:events");
   const { Readable } = await import("node:stream");
+  type MockRequest = InstanceType<typeof EventEmitter> & {
+    end: ReturnType<typeof vi.fn>;
+    write: ReturnType<typeof vi.fn>;
+  };
+  type MockResponse = InstanceType<typeof Readable> & {
+    headers: Record<string, string>;
+    statusCode: number;
+  };
 
-  function Agent(opts) {
+  function Agent(this: { opts?: unknown }, opts: unknown) {
     this.opts = opts;
   }
 
   function makeRequest() {
     return (url, params, cb) => {
-      const req = new EventEmitter();
+      const req = new EventEmitter() as MockRequest;
       state.lastRequestParams = params;
       state.lastWrittenBody = null;
       req.write = vi.fn((chunk) => {
@@ -72,7 +80,7 @@ vi.mock("follow-redirects", async () => {
             this.push(state.response.body);
             this.push(null);
           },
-        });
+        }) as MockResponse;
         res.statusCode = state.response.statusCode;
         res.headers = state.response.headers;
         cb(res);

@@ -1,37 +1,49 @@
 import classNames from "classnames";
-import { DateTime, Info } from "luxon";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import {
+  addCalendarMonths,
+  calendarDayOfMonth,
+  calendarDayTimestamp,
+  calendarMonth,
+  compareCalendarDates,
+  formatCalendarMonthTitle,
+  getCalendarMonthGrid,
+  getCalendarWeekdayNames,
+  isCalendarWeekend,
+  sameCalendarDay,
+  startOfCalendarDay,
+  subtractCalendarMonths,
+  toCalendarDateKey,
+} from "./date";
 import Event, { compareDateTimezone } from "./event";
 
 const cellStyle = "relative w-10 flex items-center justify-center flex-col";
 const monthButton = "pl-6 pr-6 ml-2 mr-2 hover:bg-theme-100/20 dark:hover:bg-white/5 rounded-md cursor-pointer";
 
-export function Day({ weekNumber, weekday, events, colorVariants, showDate, setShowDate, currentDate }) {
-  const cellDate = showDate.set({ weekday, weekNumber, weekYear: showDate.year }).startOf("day");
+export function Day({ cellDate, events, colorVariants, showDate, setShowDate, currentDate }) {
   const filteredEvents = events?.filter((event) => compareDateTimezone(cellDate, event));
 
   const dayStyles = (displayDate) => {
     let style = "h-9 ";
 
-    if ([6, 7].includes(displayDate.weekday)) {
+    if (isCalendarWeekend(displayDate)) {
       // weekend style
       style += "text-red-500 ";
       // different month style
-      style += displayDate.month !== showDate.month ? "text-red-500/40 " : "";
-    } else if (displayDate.month !== showDate.month) {
+      style += calendarMonth(displayDate) !== calendarMonth(showDate) ? "text-red-500/40 " : "";
+    } else if (calendarMonth(displayDate) !== calendarMonth(showDate)) {
       // different month style
       style += "text-gray-500 ";
     }
 
     // selected same day style
-    style +=
-      displayDate.startOf("day").ts === showDate.startOf("day").ts
-        ? "text-black-500 bg-theme-100/20 dark:bg-white/10 rounded-md "
-        : "";
+    style += sameCalendarDay(displayDate, showDate)
+      ? "text-black-500 bg-theme-100/20 dark:bg-white/10 rounded-md "
+      : "";
 
-    if (displayDate.startOf("day").ts === currentDate.startOf("day").ts) {
+    if (sameCalendarDay(displayDate, currentDate)) {
       // today style
       style += "text-black-500 bg-theme-100/20 dark:bg-black/20 rounded-md ";
     } else {
@@ -43,20 +55,20 @@ export function Day({ weekNumber, weekday, events, colorVariants, showDate, setS
 
   return (
     <button
-      key={`day${weekday}${weekNumber}}`}
+      key={`day-${toCalendarDateKey(cellDate)}`}
       type="button"
       className={classNames(dayStyles(cellDate), cellStyle)}
       style={{ width: "14%" }}
       onClick={() => setShowDate(cellDate)}
     >
-      {cellDate.day}
+      {calendarDayOfMonth(cellDate)}
       <span className="flex justify-center items-center absolute w-full -mb-6">
         {filteredEvents &&
           filteredEvents
             .slice(0, 4)
             .map((event) => (
               <span
-                key={`${event.date.ts}+${event.color}-${event.title}-${event.additional}`}
+                key={`${calendarDayTimestamp(event.date)}+${event.color}-${event.title}-${event.additional}`}
                 className={classNames("inline-flex h-1 w-1 m-0.5 rounded-sm", colorVariants[event.color] ?? "gray")}
               />
             ))}
@@ -65,48 +77,23 @@ export function Day({ weekNumber, weekday, events, colorVariants, showDate, setS
   );
 }
 
-const dayInWeekId = {
-  monday: 1,
-  tuesday: 2,
-  wednesday: 3,
-  thursday: 4,
-  friday: 5,
-  saturday: 6,
-  sunday: 7,
-};
-
 export default function Monthly({ service, colorVariants, events, showDate, setShowDate, currentDate }) {
   const { widget } = service;
   const { i18n } = useTranslation();
 
-  const dayNames = Info.weekdays("short", { locale: i18n.language });
-
   const firstDayInWeekCalendar = widget?.firstDayInWeek ? widget?.firstDayInWeek?.toLowerCase() : "monday";
-  for (let i = 1; i < dayInWeekId[firstDayInWeekCalendar]; i += 1) {
-    dayNames.push(dayNames.shift());
-  }
-
-  const daysInWeek = useMemo(
-    () => [...Array(7).keys()].map((i) => i + dayInWeekId[firstDayInWeekCalendar]),
-    [firstDayInWeekCalendar],
+  const dayNames = getCalendarWeekdayNames(i18n.language, firstDayInWeekCalendar);
+  const monthGrid = useMemo(
+    () => (showDate ? getCalendarMonthGrid(showDate, firstDayInWeekCalendar) : []),
+    [showDate, firstDayInWeekCalendar],
   );
 
   if (!showDate) {
     return <div className="w-full text-center" />;
   }
 
-  const firstWeek = DateTime.local(showDate.year, showDate.month, 1).setLocale(i18n.language);
-
-  const weekIncrementChange = dayInWeekId[firstDayInWeekCalendar] > firstWeek.weekday ? -1 : 0;
-  let weekNumbers = [...Array(Math.ceil(5) + 1).keys()].map((i) => firstWeek.weekNumber + weekIncrementChange + i);
-
-  if (weekNumbers.includes(55)) {
-    // if we went too far with the weeks, it's the beginning of the year
-    weekNumbers = weekNumbers.map((weekNum) => weekNum - 52);
-  }
-
   const eventsArray = Object.keys(events).map((eventKey) => events[eventKey]);
-  eventsArray.sort((a, b) => a.date - b.date);
+  eventsArray.sort((a, b) => compareCalendarDates(a.date, b.date));
 
   return (
     <div className="w-full text-center">
@@ -114,21 +101,21 @@ export default function Monthly({ service, colorVariants, events, showDate, setS
         <span>
           <button
             type="button"
-            onClick={() => setShowDate(showDate.minus({ months: 1 }).startOf("day"))}
+            onClick={() => setShowDate(startOfCalendarDay(subtractCalendarMonths(showDate, 1)))}
             className={classNames(monthButton)}
           >
             &lt;
           </button>
         </span>
         <span>
-          <button type="button" onClick={() => setShowDate(currentDate.startOf("day"))}>
-            {showDate.setLocale(i18n.language).toFormat("MMMM y")}
+          <button type="button" onClick={() => setShowDate(startOfCalendarDay(currentDate))}>
+            {formatCalendarMonthTitle(showDate, i18n.language)}
           </button>
         </span>
         <span>
           <button
             type="button"
-            onClick={() => setShowDate(showDate.plus({ months: 1 }).startOf("day"))}
+            onClick={() => setShowDate(startOfCalendarDay(addCalendarMonths(showDate, 1)))}
             className={classNames(monthButton)}
           >
             &gt;
@@ -151,20 +138,17 @@ export default function Monthly({ service, colorVariants, events, showDate, setS
             !eventsArray.length && widget?.integrations?.length && "animate-pulse",
           )}
         >
-          {weekNumbers.map((weekNumber) =>
-            daysInWeek.map((dayInWeek) => (
-              <Day
-                key={`week${weekNumber}day${dayInWeek}}`}
-                weekNumber={weekNumber}
-                weekday={dayInWeek}
-                events={eventsArray}
-                colorVariants={colorVariants}
-                showDate={showDate}
-                setShowDate={setShowDate}
-                currentDate={currentDate}
-              />
-            )),
-          )}
+          {monthGrid.map((cellDate) => (
+            <Day
+              key={`day-${toCalendarDateKey(cellDate)}`}
+              cellDate={cellDate}
+              events={eventsArray}
+              colorVariants={colorVariants}
+              showDate={showDate}
+              setShowDate={setShowDate}
+              currentDate={currentDate}
+            />
+          ))}
         </div>
 
         <div className="flex flex-col">

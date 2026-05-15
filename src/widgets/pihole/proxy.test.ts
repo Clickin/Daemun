@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import createMockRes from "test-utils/create-mock-res";
+
 const { httpProxy, getServiceWidget, cache, logger } = vi.hoisted(() => {
   const store = new Map();
 
@@ -47,28 +49,6 @@ vi.mock("widgets/widgets", () => ({
 
 import piholeProxyHandler from "./proxy";
 
-function createRes() {
-  const res = {
-    statusCode: null,
-    body: null,
-  };
-
-  res.status = vi.fn((code) => {
-    res.statusCode = code;
-    return res;
-  });
-  res.json = vi.fn((body) => {
-    res.body = body;
-    return res;
-  });
-  res.send = vi.fn((body) => {
-    res.body = body;
-    return res;
-  });
-
-  return res;
-}
-
 describe("widgets/pihole/proxy", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,7 +60,7 @@ describe("widgets/pihole/proxy", () => {
     httpProxy.mockResolvedValue([200, "application/json", '{"ok":true}']);
 
     const req = { query: { group: "g", service: "svc", index: "0" } };
-    const res = createRes();
+    const res = createMockRes();
 
     await piholeProxyHandler(req, res);
 
@@ -101,7 +81,7 @@ describe("widgets/pihole/proxy", () => {
     ]);
 
     const req = { query: { group: "g", service: "svc", index: "0" } };
-    const res = createRes();
+    const res = createMockRes();
 
     await piholeProxyHandler(req, res);
 
@@ -122,7 +102,7 @@ describe("widgets/pihole/proxy", () => {
     httpProxy.mockResolvedValueOnce([401, "application/json", JSON.stringify({ session: null })]);
 
     const req = { query: { group: "g", service: "svc", index: "0" } };
-    const res = createRes();
+    const res = createMockRes();
 
     await piholeProxyHandler(req, res);
 
@@ -144,7 +124,7 @@ describe("widgets/pihole/proxy", () => {
       ]);
 
     const req = { query: { group: "g", service: "svc", index: "0" } };
-    const res = createRes();
+    const res = createMockRes();
 
     await piholeProxyHandler(req, res);
 

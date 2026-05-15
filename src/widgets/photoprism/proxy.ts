@@ -21,7 +21,11 @@ export default async function photoprismProxyHandler(req, res) {
   }
 
   const url = new URL(formatApiCall("{url}/api/v1/session", { ...widget }));
-  const params = {
+  const params: {
+    body: string | null;
+    headers: Record<string, string>;
+    method: string;
+  } = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: null,

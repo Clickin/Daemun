@@ -1,11 +1,16 @@
 /* oxlint-disable jsx-a11y/alt-text */
 import { useContext, useEffect, useRef } from "react";
+import type { RefObject } from "react";
 import DaemunIcon from "components/brand/daemun-icon";
 import { ColorContext } from "utils/contexts/color";
 
 import themes from "utils/styles/themes";
 
-export function Svg({ svgRef = null }) {
+interface SvgProps {
+  svgRef?: RefObject<SVGSVGElement | null> | null;
+}
+
+export function Svg({ svgRef = null }: SvgProps) {
   const { color } = useContext(ColorContext);
 
   const { iconStart, iconEnd } = themes[color];
@@ -16,9 +21,9 @@ export function Svg({ svgRef = null }) {
 }
 
 export default function Favicon() {
-  const svgRef = useRef();
-  const imgRef = useRef();
-  const canvasRef = useRef();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -40,7 +45,7 @@ export default function Favicon() {
     // set it as the source of the img element
     img.onload = () => {
       // draw the image onto the canvas
-      canvas.getContext("2d").drawImage(img, 0, 0);
+      canvas.getContext("2d")?.drawImage(img, 0, 0);
       // canvas.width = 256;
       // canvas.height = 256;
 
@@ -48,7 +53,7 @@ export default function Favicon() {
       link.type = "image/x-icon";
       link.rel = "shortcut icon";
       link.href = canvas.toDataURL("image/x-icon");
-      document.getElementsByTagName("head")[0].appendChild(link);
+      document.getElementsByTagName("head")[0]?.appendChild(link);
     };
 
     img.src = image64;

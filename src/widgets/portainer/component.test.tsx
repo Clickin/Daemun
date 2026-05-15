@@ -19,7 +19,9 @@ describe("widgets/portainer/component", () => {
   it("defaults fields for non-kubernetes and renders placeholders while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "portainer", kubernetes: false } };
+    const service = {
+      widget: { type: "portainer", kubernetes: false, fields: undefined as string[] | undefined },
+    };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["running", "stopped", "total"]);
@@ -47,7 +49,9 @@ describe("widgets/portainer/component", () => {
   it("renders kubernetes placeholders when enabled", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "portainer", kubernetes: true } };
+    const service = {
+      widget: { type: "portainer", kubernetes: true, fields: undefined as string[] | undefined },
+    };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["applications", "services", "namespaces"]);

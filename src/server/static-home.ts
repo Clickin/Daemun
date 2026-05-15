@@ -1,9 +1,10 @@
-import { existsSync } from "node:fs";
+import { existsSync, type FSWatcher } from "node:fs";
 import { mkdir, watch as watchConfigDir } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 
 import { Hono } from "hono";
+import type { Context, Next } from "hono";
 import { toSSG } from "hono/ssg";
 
 import { CONF_DIR } from "utils/config/config";
@@ -17,11 +18,34 @@ const bakedHomeHeader = "X-Daemun-Static-Home";
 const defaultBakeDir = path.resolve(process.cwd(), "dist/server/ssg");
 const watchedConfigPattern = /\.ya?ml$/i;
 
-let activeStaticHomeCache = null;
+interface StaticHomeLogger {
+  info?: (message: string) => void;
+  warn?: (message: string) => void;
+}
+
+interface StaticHomeCacheOptions {
+  dir?: string;
+  enabled?: boolean;
+  logger?: StaticHomeLogger;
+  watch?: boolean;
+}
+
+interface StaticHomeBakeOptions {
+  dir?: string;
+  version?: string;
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+type ActiveStaticHomeCache = Pick<StaticHomeCache, "refresh">;
+
+let activeStaticHomeCache: ActiveStaticHomeCache | null = null;
 
 function createStaticHomeApp(version = getAssetVersion()) {
   const app = new Hono();
-  let propsPromise = null;
+  let propsPromise: ReturnType<typeof loadHomePageProps> | null = null;
 
   app.get("/", async (c) => {
     const props = await (propsPromise ??= loadHomePageProps());
@@ -42,7 +66,7 @@ function createStaticHomeApp(version = getAssetVersion()) {
   return app;
 }
 
-function isBrowserHomeRequest(c) {
+function isBrowserHomeRequest(c: Context) {
   if (c.req.method !== "GET") return false;
   if (c.req.header("X-Inertia")) return false;
 
@@ -53,11 +77,11 @@ function isBrowserHomeRequest(c) {
   return !accept.includes("application/json");
 }
 
-export function isStaticHomeConfigFile(filename) {
+export function isStaticHomeConfigFile(filename?: string) {
   return !filename || watchedConfigPattern.test(filename);
 }
 
-export async function bakeStaticHome({ dir = defaultBakeDir, version = getAssetVersion() } = {}) {
+export async function bakeStaticHome({ dir = defaultBakeDir, version = getAssetVersion() }: StaticHomeBakeOptions = {}) {
   await fs.rm(dir, { force: true, recursive: true });
 
   const result = await toSSG(createStaticHomeApp(version), fs, {
@@ -78,12 +102,23 @@ export async function bakeStaticHome({ dir = defaultBakeDir, version = getAssetV
 }
 
 export class StaticHomeCache {
+  dir: string;
+  enabled: boolean;
+  html: string | null;
+  logger: StaticHomeLogger;
+  queuedRefreshReason: string | null;
+  refreshPromise: Promise<boolean> | null;
+  timer: ReturnType<typeof setTimeout> | null;
+  version: string;
+  watchEnabled: boolean;
+  watcher: FSWatcher | null;
+
   constructor({
     dir = defaultBakeDir,
     enabled = process.env.NODE_ENV === "production" && process.env.DAEMUN_STATIC_HOME !== "0",
     logger = console,
     watch = enabled && process.env.DAEMUN_STATIC_HOME_WATCH !== "0",
-  } = {}) {
+  }: StaticHomeCacheOptions = {}) {
     this.dir = dir;
     this.enabled = enabled;
     this.html = null;
@@ -120,7 +155,7 @@ export class StaticHomeCache {
         return true;
       })
       .catch((error) => {
-        this.logger.warn?.(`Static home bake failed (${reason}): ${error.message}`);
+        this.logger.warn?.(`Static home bake failed (${reason}): ${errorMessage(error)}`);
         return false;
       })
       .finally(() => {
@@ -135,7 +170,7 @@ export class StaticHomeCache {
     return this.refreshPromise;
   }
 
-  scheduleRefresh(reason) {
+  scheduleRefresh(reason: string) {
     if (!this.enabled) return;
     if (this.timer) {
       clearTimeout(this.timer);
@@ -167,17 +202,17 @@ export class StaticHomeCache {
           }
         });
         this.watcher.on("error", (error) => {
-          this.logger.warn?.(`Static home watcher failed: ${error.message}`);
+          this.logger.warn?.(`Static home watcher failed: ${errorMessage(error)}`);
         });
         this.watcher.unref?.();
       } catch (error) {
-        this.logger.warn?.(`Static home watcher could not start: ${error.message}`);
+        this.logger.warn?.(`Static home watcher could not start: ${errorMessage(error)}`);
       }
     });
   }
 
   middleware() {
-    return async (c, next) => {
+    return async (c: Context, next: Next) => {
       if (this.html && isBrowserHomeRequest(c)) {
         return c.html(this.html, 200, { [bakedHomeHeader]: "hit" });
       }
@@ -196,11 +231,11 @@ export class StaticHomeCache {
   }
 }
 
-export function createStaticHomeCache(options) {
+export function createStaticHomeCache(options?: StaticHomeCacheOptions) {
   return new StaticHomeCache(options);
 }
 
-export function setStaticHomeCache(cache) {
+export function setStaticHomeCache(cache: ActiveStaticHomeCache | null) {
   activeStaticHomeCache = cache;
 }
 

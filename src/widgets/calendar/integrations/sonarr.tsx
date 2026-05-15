@@ -1,8 +1,8 @@
-import { DateTime } from "luxon";
 import { useEffect } from "react";
 
 import Error from "../../../components/services/widget/error";
 import useWidgetAPI from "../../../utils/proxy/use-widget-api";
+import { parseCalendarDate } from "../date";
 
 export default function Integration({ config, params, setEvents, hideErrors = false }) {
   const { data: sonarrData, error: sonarrError } = useWidgetAPI(config, "calendar", {
@@ -25,7 +25,7 @@ export default function Integration({ config, params, setEvents, hideErrors = fa
 
       eventsToAdd[title] = {
         title: `${event.series.title ?? event.title}`,
-        date: DateTime.fromISO(event.airDateUtc),
+        date: parseCalendarDate(event.airDateUtc),
         color: config?.color ?? "teal",
         isCompleted: event.hasFile,
         additional: `S${event.seasonNumber} E${event.episodeNumber}`,

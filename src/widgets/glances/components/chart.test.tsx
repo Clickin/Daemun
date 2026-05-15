@@ -5,14 +5,20 @@ import React from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("recharts", () => ({
-  ResponsiveContainer: ({ children }) => <div data-testid="ResponsiveContainer">{children}</div>,
-  AreaChart: ({ children }) => {
+  ResponsiveContainer: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="ResponsiveContainer">{children}</div>
+  ),
+  AreaChart: ({ children }: { children?: React.ReactNode }) => {
     // Filter out raw SVG elements (defs/linearGradient/stop) so jsdom doesn't warn.
-    const kept = React.Children.toArray(children).filter((child) => typeof child?.type === "function");
+    const kept = React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type === "function",
+    );
     return <div data-testid="AreaChart">{kept}</div>;
   },
-  Area: ({ name, dataKey }) => <div data-testid="Area" data-name={name} data-key={dataKey} />,
-  Tooltip: ({ content }) => <div data-testid="Tooltip">{content}</div>,
+  Area: ({ name, dataKey }: { dataKey?: string; name?: string }) => (
+    <div data-testid="Area" data-name={name} data-key={dataKey} />
+  ),
+  Tooltip: ({ content }: { content?: React.ReactNode }) => <div data-testid="Tooltip">{content}</div>,
 }));
 
 import Chart from "./chart";

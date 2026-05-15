@@ -1,13 +1,24 @@
 // @vitest-environment jsdom
 
 import { act, render, screen } from "@testing-library/react";
+import type { ElementType, ForwardedRef, HTMLAttributes, ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@headlessui/react", async () => {
   const React = await import("react");
   const { Fragment, useEffect } = React;
 
-  function Transition({ as: As = Fragment, beforeEnter, beforeLeave, children }) {
+  function Transition({
+    as: As = Fragment,
+    beforeEnter,
+    beforeLeave,
+    children,
+  }: {
+    as?: ElementType;
+    beforeEnter?: () => void;
+    beforeLeave?: () => void;
+    children?: ReactNode;
+  }) {
     useEffect(() => {
       beforeEnter?.();
       setTimeout(() => beforeLeave?.(), 200);
@@ -17,16 +28,25 @@ vi.mock("@headlessui/react", async () => {
     return <As>{children}</As>;
   }
 
-  function Disclosure({ defaultOpen = true, children }) {
+  function Disclosure({
+    defaultOpen = true,
+    children,
+  }: {
+    defaultOpen?: boolean;
+    children?: ReactNode | ((state: { open: boolean }) => ReactNode);
+  }) {
     const content = typeof children === "function" ? children({ open: defaultOpen }) : children;
     return <div>{content}</div>;
   }
 
-  function DisclosureButton(props) {
+  function DisclosureButton(props: HTMLAttributes<HTMLButtonElement>) {
     return <button type="button" {...props} />;
   }
 
-  const DisclosurePanel = React.forwardRef(function DisclosurePanel(props, ref) {
+  const DisclosurePanel = React.forwardRef(function DisclosurePanel(
+    props: HTMLAttributes<HTMLDivElement> & { static?: boolean },
+    ref: ForwardedRef<HTMLDivElement>,
+  ) {
     const { static: _static, ...rest } = props;
     return (
       <div
@@ -54,7 +74,7 @@ vi.mock("components/bookmarks/list", () => ({
 }));
 
 vi.mock("components/errorboundry", () => ({
-  default: function ErrorBoundaryMock({ children }) {
+  default: function ErrorBoundaryMock({ children }: { children?: ReactNode }) {
     return <>{children}</>;
   },
 }));

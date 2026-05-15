@@ -7,6 +7,6 @@ import widget from "./widget";
 describe("unraid widget config", () => {
   it("exports a valid widget config", () => {
     expectWidgetConfigShape(widget);
-    expect(widget.api).toBeUndefined();
+    expect("api" in widget ? widget.api : undefined).toBeUndefined();
   });
 });

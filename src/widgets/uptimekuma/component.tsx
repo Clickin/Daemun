@@ -43,7 +43,7 @@ export default function Component({ service }) {
   const percent = uptimeList.reduce((a, b) => a + b, 0) / uptimeList.length || 0;
   const uptime = (percent * 100).toFixed(1);
   const incidentTime = statusData.incident
-    ? Math.abs(new Date(statusData.incident?.createdDate) - new Date()) / 1000 / (60 * 60)
+    ? Math.abs(new Date(statusData.incident?.createdDate).getTime() - Date.now()) / 1000 / (60 * 60)
     : null;
 
   return (

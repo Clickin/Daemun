@@ -18,13 +18,15 @@ const vite = await createViteServer({
   },
 });
 
-await vite.listen(vitePort, viteHost);
+await vite.listen(vitePort);
 
 const server = serve(
   {
-    async fetch(request, env, executionContext) {
-      const { default: app } = await vite.ssrLoadModule("/src/server/app.ts");
-      return app.fetch(request, env, executionContext);
+    async fetch(request, env) {
+      const { default: app } = (await vite.ssrLoadModule("/src/server/app.ts")) as {
+        default: { fetch(request: Request, env?: unknown): Promise<Response> | Response };
+      };
+      return app.fetch(request, env);
     },
     hostname,
     port,

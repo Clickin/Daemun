@@ -7,9 +7,26 @@ import { ColorContext } from "utils/contexts/color";
 import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
+import type { HomePageProps, ServiceGroupRecord, SettingsRecord, UnknownRecord } from "../../src/types";
+
+type IndexTestState = {
+  bookmarksData: HomePageProps["fallback"]["/api/bookmarks"];
+  hashData: false | UnknownRecord | null;
+  mutateHash: ReturnType<typeof vi.fn>;
+  quickLaunchProps: {
+    isOpen?: boolean;
+    servicesAndBookmarks?: Array<{ name?: string }>;
+  } | null;
+  servicesData: ServiceGroupRecord[];
+  throwIn: string | null;
+  validateData: unknown;
+  widgetCalls: Array<{ style?: { isRightAligned?: boolean }; widget: UnknownRecord }>;
+  widgetsData: UnknownRecord[];
+  windowFocused: boolean;
+};
 
 const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoisted(() => {
-  const state = {
+  const state: IndexTestState = {
     throwIn: null,
     validateData: [],
     hashData: null,
@@ -110,11 +127,18 @@ vi.mock("components/toggles/revalidate", () => ({
 
 async function renderIndex({
   initialSettings = { title: "Daemun", layout: {} },
-  fallback = {},
+  fallback = {} as HomePageProps["fallback"],
   theme = "dark",
   color = "slate",
   activeTab = "",
   settings = initialSettings,
+}: {
+  activeTab?: string;
+  color?: string;
+  fallback?: HomePageProps["fallback"];
+  initialSettings?: SettingsRecord;
+  settings?: SettingsRecord;
+  theme?: string;
 } = {}) {
   const { default: Wrapper } = await import("pages/index.tsx");
 
@@ -227,9 +251,8 @@ describe("pages/index Index routing + query branches", () => {
     state.hashData = { hash: "new-hash" };
     localStorage.setItem("hash", "old-hash");
 
-    const fetchSpy = vi.fn(async () => ({ ok: true }));
-
-    fetch = fetchSpy;
+    const fetchSpy: typeof fetch = vi.fn(async () => ({ ok: true }) as Response);
+    vi.stubGlobal("fetch", fetchSpy);
 
     let reloadSpy;
     try {

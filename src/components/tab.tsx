@@ -2,18 +2,18 @@ import classNames from "classnames";
 import { useContext } from "react";
 import { TabContext } from "utils/contexts/tab";
 
-function slugify(tabName) {
+function slugify(tabName: string) {
   return tabName.toString().replace(/\s+/g, "-").toLowerCase();
 }
 
-export function slugifyAndEncode(tabName) {
+export function slugifyAndEncode(tabName?: string) {
   return tabName !== undefined ? encodeURIComponent(slugify(tabName)) : "";
 }
 
-export default function Tab({ tab }) {
+export default function Tab({ tab }: { tab: string }) {
   const { activeTab, setActiveTab } = useContext(TabContext);
 
-  const matchesTab = decodeURIComponent(activeTab) === slugify(tab);
+  const matchesTab = decodeURIComponent(activeTab || "") === slugify(tab);
 
   return (
     <li

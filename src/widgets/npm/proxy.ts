@@ -26,7 +26,7 @@ async function login(loginUrl, username, password, service) {
     data = JSON.parse(Buffer.from(authResponse[2]).toString());
 
     if (status === 200) {
-      const expiration = new Date(data.expires) - Date.now();
+      const expiration = new Date(data.expires).getTime() - Date.now();
       cache.put(`${tokenCacheKey}.${service}`, data.token, expiration - 5 * 60 * 1000); // expiration -5 minutes
     }
   } catch (e) {

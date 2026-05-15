@@ -29,7 +29,7 @@ async function requestEndpoint(apiBaseUrl, service, action) {
     logger.debug(`HTTP ${status} performing SoapRequest for ${service}->${action}`, data);
     throw new Error(`Failed fetching '${action}'`);
   }
-  const response = {};
+  const response: Record<string, string> = {};
   try {
     Object.assign(response, parseSoapBody(data));
   } catch (e) {
@@ -58,7 +58,7 @@ export default async function fritzboxProxyHandler(req, res) {
   const port = serviceWidgetUrl.protocol === "https:" ? 49443 : 49000;
   const apiBaseUrl = `${serviceWidgetUrl.protocol}//${serviceWidgetUrl.hostname}:${port}`;
 
-  if (!serviceWidget.fields?.length > 0) {
+  if (!(serviceWidget.fields?.length > 0)) {
     serviceWidget.fields = fritzboxDefaultFields;
   }
   const requestStatusInfo = ["connectionStatus", "uptime"].some((field) => serviceWidget.fields.includes(field));

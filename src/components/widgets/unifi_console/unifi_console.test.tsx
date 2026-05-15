@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { screen } from "@testing-library/react";
+import type { SVGProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
@@ -11,15 +12,15 @@ vi.mock("utils/proxy/use-widget-api", () => ({
   default: useWidgetAPI,
 }));
 
-vi.mock("react-icons/bi", async (importOriginal) => {
+vi.mock("react-icons/bi", async (importOriginal: () => Promise<Record<string, unknown>>) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    BiWifi: (props) => <svg data-testid="bi-wifi" {...props} />,
-    BiNetworkChart: (props) => <svg data-testid="bi-network-chart" {...props} />,
-    BiError: (props) => <svg data-testid="bi-error" {...props} />,
-    BiCheckCircle: (props) => <svg data-testid="bi-check-circle" {...props} />,
-    BiXCircle: (props) => <svg data-testid="bi-x-circle" {...props} />,
+    BiWifi: (props: SVGProps<SVGSVGElement>) => <svg data-testid="bi-wifi" {...props} />,
+    BiNetworkChart: (props: SVGProps<SVGSVGElement>) => <svg data-testid="bi-network-chart" {...props} />,
+    BiError: (props: SVGProps<SVGSVGElement>) => <svg data-testid="bi-error" {...props} />,
+    BiCheckCircle: (props: SVGProps<SVGSVGElement>) => <svg data-testid="bi-check-circle" {...props} />,
+    BiXCircle: (props: SVGProps<SVGSVGElement>) => <svg data-testid="bi-x-circle" {...props} />,
   };
 });
 

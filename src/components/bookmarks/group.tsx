@@ -5,19 +5,31 @@ import ErrorBoundary from "components/errorboundry";
 import ResolvedIcon from "components/resolvedicon";
 import { useEffect, useRef } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import type { BookmarkGroupRecord, LayoutRecord } from "../../types";
+
+interface BookmarksGroupProps {
+  bookmarks: BookmarkGroupRecord;
+  layout?: LayoutRecord;
+  disableCollapse?: boolean;
+  groupsInitiallyCollapsed?: boolean;
+  bookmarksStyle?: string;
+  maxGroupColumns?: number | string;
+}
 
 export default function BookmarksGroup({
   bookmarks,
   layout,
-  disableCollapse,
-  groupsInitiallyCollapsed,
+  disableCollapse = false,
+  groupsInitiallyCollapsed = false,
   bookmarksStyle,
   maxGroupColumns,
-}) {
-  const panel = useRef();
+}: BookmarksGroupProps) {
+  const panel = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (layout?.initiallyCollapsed ?? groupsInitiallyCollapsed) panel.current.style.height = `0`;
+    if (layout?.initiallyCollapsed ?? groupsInitiallyCollapsed) {
+      if (panel.current) panel.current.style.height = `0`;
+    }
   }, [layout, groupsInitiallyCollapsed]);
 
   return (
@@ -26,7 +38,7 @@ export default function BookmarksGroup({
       className={classNames(
         "bookmark-group flex-1 overflow-hidden",
         layout?.style === "row" ? "basis-full" : "basis-full md:basis-1/4 lg:basis-1/5 xl:basis-1/6",
-        layout?.style !== "row" && maxGroupColumns && parseInt(maxGroupColumns, 10) > 6
+        layout?.style !== "row" && maxGroupColumns && parseInt(String(maxGroupColumns), 10) > 6
           ? `3xl:basis-1/${maxGroupColumns}`
           : "",
         layout?.header === false ? "px-1" : "p-1 pb-0",
@@ -55,19 +67,22 @@ export default function BookmarksGroup({
               </Disclosure.Button>
             )}
             <Transition
+              as="div"
               // Otherwise the transition group does display: none and cancels animation
               className="block!"
               unmount={false}
               beforeLeave={() => {
+                if (!panel.current) return;
                 panel.current.style.height = `${panel.current.scrollHeight}px`;
                 setTimeout(() => {
-                  panel.current.style.height = `0`;
+                  if (panel.current) panel.current.style.height = `0`;
                 }, 1);
               }}
               beforeEnter={() => {
+                if (!panel.current) return;
                 panel.current.style.height = `0px`;
                 setTimeout(() => {
-                  panel.current.style.height = `${panel.current.scrollHeight}px`;
+                  if (panel.current) panel.current.style.height = `${panel.current.scrollHeight}px`;
                 }, 1);
               }}
             >

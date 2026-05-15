@@ -32,12 +32,18 @@ vi.mock("widgets/widgets", () => ({
 }));
 
 vi.mock("ws", () => {
+  type FakeWebSocketHandler = (payload?: unknown) => void;
+
   class FakeWebSocket {
-    constructor(url) {
-      this.url = url;
-      this._handlers = new Map();
+    _handlers: Map<string, Set<FakeWebSocketHandler>>;
+    url: string;
+
+    constructor(url: URL | string) {
+      this.url = url.toString();
+      this._handlers = new Map<string, Set<FakeWebSocketHandler>>();
     }
-    on(event, cb) {
+
+    on(event: string, cb: FakeWebSocketHandler) {
       const set = this._handlers.get(event) ?? new Set();
       set.add(cb);
       this._handlers.set(event, set);
@@ -45,13 +51,15 @@ vi.mock("ws", () => {
         queueMicrotask(() => cb());
       }
     }
-    off(event, cb) {
+
+    off(event: string, cb: FakeWebSocketHandler) {
       const set = this._handlers.get(event);
       if (set) set.delete(cb);
     }
-    send(payload) {
+
+    send(payload: string) {
       const msg = JSON.parse(payload);
-      let result = true;
+      let result: unknown = true;
       if (msg.method === "system.info") {
         result = { ok: true };
       }
@@ -86,7 +94,7 @@ describe("widgets/truenas/proxy", () => {
     const req = { query: { group: "g", service: "svc", endpoint: "stats", index: "0" } };
     const res = createMockRes();
 
-    await truenasProxyHandler(req, res);
+    await truenasProxyHandler(req, res, undefined);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ ok: true });

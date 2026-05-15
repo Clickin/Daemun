@@ -21,11 +21,11 @@ interface WidgetChildProps {
 
 interface ContainerProps {
   children?: ReactNode;
-  error?: boolean;
-  service: ServiceRecord;
+  error?: unknown;
+  service?: ServiceRecord;
 }
 
-export default function Container({ error = false, children, service }: ContainerProps) {
+export default function Container({ error = false, children, service = {} }: ContainerProps) {
   const { settings } = useContext(SettingsContext);
 
   const highlightConfig = useMemo(
@@ -34,18 +34,18 @@ export default function Container({ error = false, children, service }: Containe
   );
 
   if (error) {
-    if (settings.hideErrors || service.widget.hide_errors) {
+    if (settings.hideErrors || service.widget?.hide_errors) {
       return null;
     }
 
-    return <Error service={service} error={error} />;
+    return <Error error={error} />;
   }
 
   const childrenArray = Children.toArray(children).filter(isValidElement) as ReactElement<WidgetChildProps>[];
 
   let visibleChildren = childrenArray;
   let fields = service?.widget?.fields;
-  if (typeof fields === "string") fields = JSON.parse(service.widget.fields);
+  if (typeof fields === "string") fields = JSON.parse(fields);
   const type = service?.widget?.type;
   if (Array.isArray(fields) && type) {
     // if the field contains a "." then it most likely contains a common loc value
@@ -55,7 +55,7 @@ export default function Container({ error = false, children, service }: Containe
     // fields: [ "resources.cpu", "widget_type.field" ]
     visibleChildren = childrenArray?.filter((child) =>
       fields.some((field) => {
-        let fullField = field;
+        let fullField = String(field);
         if (!field.includes(".")) {
           fullField = `${type}.${field}`;
         }

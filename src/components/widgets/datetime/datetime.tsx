@@ -15,7 +15,17 @@ const textSizes = {
   xs: "text-xs",
 };
 
-export default function DateTime({ options }) {
+interface DateTimeOptions extends Record<string, unknown> {
+  format?: Intl.DateTimeFormatOptions;
+  locale?: string;
+  text_size?: keyof typeof textSizes;
+}
+
+interface DateTimeProps {
+  options: DateTimeOptions;
+}
+
+export default function DateTime({ options }: DateTimeProps) {
   const { text_size: textSize, locale, format } = options;
   const { i18n } = useTranslation();
   const [date, setDate] = useState("");

@@ -12,6 +12,8 @@ import kubernetes from "utils/kubernetes/export";
 import createLogger from "utils/logger";
 import { parseVersionForUrl } from "utils/proxy/api-helpers";
 
+import type { UnknownRecord } from "../../types";
+
 const logger = createLogger("service-helpers");
 
 function parseServicesToGroups(services) {
@@ -77,8 +79,12 @@ export async function servicesFromDocker() {
   const serviceServers = await Promise.all(
     Object.keys(servers).map(async (serverName) => {
       try {
-        const isSwarm = !!servers[serverName].swarm;
-        const docker = new Docker(getDockerArguments(serverName).conn);
+        const dockerArgs = getDockerArguments(serverName);
+        if (!dockerArgs) {
+          return { server: serverName, services: [] };
+        }
+        const isSwarm = dockerArgs.swarm;
+        const docker = new Docker(dockerArgs.conn);
         const listProperties = { all: true };
         const containers = await (isSwarm
           ? docker.listServices(listProperties)
@@ -448,7 +454,7 @@ export function cleanServiceGroups(groups) {
           }
         }
 
-        const widget = {
+        const widget: UnknownRecord = {
           type,
           fields: fieldsList || null,
           hide_errors: hideErrors || false,

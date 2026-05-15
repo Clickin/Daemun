@@ -54,7 +54,7 @@ export default async function rutorrentProxyHandler(req, res) {
       const api = widgets?.[widget.type]?.api;
       const url = new URL(formatApiCall(api, { ...widget }));
 
-      const headers = {};
+      const headers: Record<string, string> = {};
       if (widget.username) {
         headers.Authorization = `Basic ${Buffer.from(`${widget.username}:${widget.password}`).toString("base64")}`;
       }

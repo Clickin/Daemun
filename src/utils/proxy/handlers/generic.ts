@@ -7,7 +7,7 @@ import widgets from "widgets/widgets";
 
 const logger = createLogger("genericProxyHandler");
 
-export default async function genericProxyHandler(req, res, map) {
+export default async function genericProxyHandler(req, res, map = undefined) {
   const { group, service, endpoint, index } = req.query;
 
   if (group && service) {
@@ -25,7 +25,7 @@ export default async function genericProxyHandler(req, res, map) {
       }
       const url = new URL(urlString);
 
-      const headers = {
+      const headers: Record<string, string> = {
         ...(widgets[widget.type].headers ?? {}),
         ...(widget.headers ?? {}),
         ...(req.extraHeaders ?? {}),
@@ -35,7 +35,7 @@ export default async function genericProxyHandler(req, res, map) {
         headers.Authorization = `Basic ${Buffer.from(`${widget.username}:${widget.password}`).toString("base64")}`;
       }
 
-      const params = {
+      const params: { body?: unknown; headers: Record<string, string>; method: string } = {
         method: widget.method ?? req.method,
         headers,
       };

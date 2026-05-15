@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import { DateTime } from "luxon";
 import { useTranslation } from "react-i18next";
 
+import { calendarDayTimestamp, compareCalendarDates, createCurrentCalendarDate, subtractCalendarDays } from "./date";
 import Event, { compareDateTimezone } from "./event";
 
 export default function Agenda({ service, colorVariants, events, showDate }) {
@@ -13,13 +13,17 @@ export default function Agenda({ service, colorVariants, events, showDate }) {
   }
 
   const eventsArray = Object.keys(events)
-    .filter(
-      (eventKey) =>
-        showDate.minus({ days: widget?.previousDays ?? 0 }).startOf("day").ts <=
-        events[eventKey].date?.startOf("day").ts,
-    )
+    .filter((eventKey) => {
+      const eventDate = events[eventKey].date;
+
+      return (
+        eventDate &&
+        calendarDayTimestamp(subtractCalendarDays(showDate, widget?.previousDays ?? 0)) <=
+          calendarDayTimestamp(eventDate)
+      );
+    })
     .map((eventKey) => events[eventKey])
-    .sort((a, b) => a.date - b.date)
+    .sort((a, b) => compareCalendarDates(a.date, b.date))
     .slice(0, widget?.maxEvents ?? 10);
 
   if (!eventsArray.length) {
@@ -31,7 +35,7 @@ export default function Agenda({ service, colorVariants, events, showDate }) {
               key="no-event"
               event={{
                 title: t("calendar.noEventsToday"),
-                date: DateTime.now(),
+                date: createCurrentCalendarDate(),
                 color: "gray",
               }}
               colorVariants={colorVariants}
@@ -42,8 +46,8 @@ export default function Agenda({ service, colorVariants, events, showDate }) {
     );
   }
 
-  const days = Array.from(new Set(eventsArray.map((e) => e.date.startOf("day").ts)));
-  const eventsByDay = days.map((d) => eventsArray.filter((e) => e.date.startOf("day").ts === d));
+  const days = Array.from(new Set(eventsArray.map((e) => calendarDayTimestamp(e.date))));
+  const eventsByDay = days.map((d) => eventsArray.filter((e) => calendarDayTimestamp(e.date) === d));
 
   return (
     <div className="pl-1 pr-1 pb-1">

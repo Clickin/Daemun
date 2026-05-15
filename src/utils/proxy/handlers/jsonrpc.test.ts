@@ -190,14 +190,16 @@ describe("utils/proxy/handlers/jsonrpc unexpected errors", () => {
     vi.resetModules();
     vi.doMock("json-rpc-2.0", () => {
       class JSONRPCErrorException extends Error {
-        constructor(message, code) {
+        code: number;
+
+        constructor(message: string, code: number) {
           super(message);
           this.code = code;
         }
       }
 
       class JSONRPCClient {
-        constructor() {}
+        constructor(_callback: unknown) {}
 
         receive() {}
 

@@ -25,7 +25,7 @@ export default function Memory({ expanded, refresh = 1500 }) {
         expandedValue="-"
         expandedLabel={t("resources.total")}
         expanded={expanded}
-        percentage="0"
+        percentage={0}
       />
     );
   }

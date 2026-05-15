@@ -189,7 +189,11 @@ export default async function unraidProxyHandler(req, res) {
     "X-API-Key": `${widget.key}`,
   };
 
-  const params = {
+  const params: {
+    body?: string;
+    headers: Record<string, string>;
+    method: string;
+  } = {
     method: "POST",
     headers,
   };
@@ -215,7 +219,7 @@ export default async function unraidProxyHandler(req, res) {
   }
 
   const result = processUnraidResponse(data);
-  if (result.error) {
+  if ("error" in result) {
     logger.error("Error processing Unraid data: %s", result.error);
     return res.status(500).json({ error: result.error });
   }

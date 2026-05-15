@@ -42,26 +42,28 @@ function writeSampleConfig(configDir) {
 title: Daemun
 description: Static-first homelab dashboard
 theme: dark
-color: slate
-headerStyle: boxed
+color: sky
+headerStyle: boxedWidgets
 statusStyle: dot
 target: _self
 hideVersion: true
+bookmarksStyle: icons
+cardBlur: xs
 quicklaunch:
   searchDescriptions: true
 layout:
   Media:
-    icon: mdi-movie-open
+    icon: mdi-play-box-multiple-outline-#38bdf8
   Infrastructure:
-    icon: mdi-server-network
+    icon: mdi-server-network-#0ea5e9
   Storage:
-    icon: mdi-harddisk
+    icon: mdi-harddisk-#22c55e
   Automation:
-    icon: mdi-home-automation
+    icon: mdi-home-automation-#f59e0b
   Observability:
-    icon: mdi-chart-line
+    icon: mdi-chart-line-#a78bfa
   Links:
-    icon: mdi-link-variant
+    icon: mdi-link-variant-#f472b6
 `,
   );
 
@@ -71,32 +73,56 @@ layout:
 - Media:
     - Jellyfin:
         href: https://jellyfin.org
+        icon: jellyfin.svg
         description: Movies and shows
     - Sonarr:
         href: https://sonarr.tv
+        icon: sonarr.svg
         description: Series automation
+    - Radarr:
+        href: https://radarr.video
+        icon: radarr.svg
+        description: Movie automation
 - Infrastructure:
     - Proxmox:
         href: https://www.proxmox.com
+        icon: proxmox.svg
         description: Virtualization
     - Grafana:
         href: https://grafana.com
-        description: Metrics
+        icon: grafana.svg
+        description: Dashboards
+    - Traefik:
+        href: https://traefik.io
+        icon: traefik.svg
+        description: Edge routing
 - Storage:
-    - NAS:
-        href: https://example.com/nas
-        description: Files and backups
-    - Sync:
-        href: https://example.com/sync
-        description: Replication
+    - TrueNAS:
+        href: https://www.truenas.com
+        icon: truenas.svg
+        description: Files and snapshots
+    - Syncthing:
+        href: https://syncthing.net
+        icon: syncthing.svg
+        description: Device sync
 - Automation:
     - Home Assistant:
         href: https://www.home-assistant.io
+        icon: home-assistant.svg
         description: Smart home
+    - Mosquitto:
+        href: https://mosquitto.org
+        icon: mosquitto.svg
+        description: MQTT broker
 - Observability:
-    - Logs:
-        href: https://example.com/logs
-        description: Events and traces
+    - Uptime Kuma:
+        href: https://uptime.kuma.pet
+        icon: uptime-kuma.svg
+        description: Service health
+    - Loki:
+        href: https://grafana.com/oss/loki/
+        icon: mdi-text-box-search-outline-#a78bfa
+        description: Logs and traces
 `,
   );
 
@@ -105,28 +131,39 @@ layout:
     `---
 - Links:
     - Daemun:
-        - abbr: DM
+        - icon: /daemun.svg
           href: https://github.com/Clickin/Daemun
-          description: Fork runtime
+          description: Runtime
+    - Docs:
+        - icon: mdi-book-open-page-variant-#38bdf8
+          href: https://clickin.github.io/Daemun/
+          description: Starlight guide
     - Upstream:
-        - abbr: HP
+        - icon: mdi-source-fork-#f472b6
           href: https://gethomepage.dev
-          description: Compatibility reference
+          description: YAML compatible
 `,
   );
 
   writeFileSync(
     path.join(configDir, "widgets.yaml"),
     `---
+- logo:
+- greeting:
+    text: Daemun
+    text_size: 2xl
 - search:
-    provider: duckduckgo
+    provider:
+      - duckduckgo
+      - google
+      - brave
     target: _self
+    showSearchSuggestions: false
 - datetime:
-    text_size: xl
-- resources:
-    cpu: true
-    memory: true
-    disk: /
+    text_size: md
+    format:
+      dateStyle: medium
+      timeStyle: short
 `,
   );
 

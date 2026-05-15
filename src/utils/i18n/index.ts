@@ -5,7 +5,7 @@ import enCommon from "../../../public/locales/en/common.json";
 
 import { daemunFormatterPlugin } from "./formatters";
 
-const localeModules = import.meta.glob("../../../public/locales/*/common.json", {
+const localeModules = import.meta.glob<string>("../../../public/locales/*/common.json", {
   query: "?raw",
   import: "default",
 });
@@ -13,7 +13,7 @@ const localeModules = import.meta.glob("../../../public/locales/*/common.json", 
 const fallbackLanguage = "en";
 const namespace = "common";
 
-function localeModulePath(language) {
+function localeModulePath(language: string) {
   return `../../../public/locales/${language}/${namespace}.json`;
 }
 

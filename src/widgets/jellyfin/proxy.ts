@@ -7,7 +7,7 @@ import widgets from "widgets/widgets";
 
 const logger = createLogger("jellyfinProxyHandler");
 
-export default async function jellyfinProxyHandler(req, res, map) {
+export default async function jellyfinProxyHandler(req, res, map = undefined) {
   const { group, service, endpoint, index } = req.query;
 
   if (!group || !service) {

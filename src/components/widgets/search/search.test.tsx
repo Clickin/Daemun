@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { fireEvent, screen, waitFor } from "@testing-library/react";
+import type { ElementType, HTMLAttributes, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
@@ -9,9 +10,16 @@ import { renderWithProviders } from "test-utils/render-with-providers";
 vi.mock("@headlessui/react", async () => {
   const React = await import("react");
   const { Fragment, createContext, useContext } = React;
-  const ListboxContext = createContext(null);
+  const ListboxContext = createContext<{ onChange?: (value: unknown) => void; value?: unknown } | null>(null);
 
-  function passthrough({ as: As = "div", children, ...props }) {
+  function passthrough({
+    as: As = "div",
+    children,
+    ...props
+  }: HTMLAttributes<HTMLElement> & {
+    as?: ElementType;
+    children?: ReactNode | ((state: { active: boolean }) => ReactNode);
+  }) {
     if (As === Fragment) return <>{typeof children === "function" ? children({ active: false }) : children}</>;
     const content = typeof children === "function" ? children({ active: false }) : children;
     return <As {...props}>{content}</As>;
@@ -19,16 +27,34 @@ vi.mock("@headlessui/react", async () => {
 
   return {
     Combobox: passthrough,
-    ComboboxInput: (props) => <input {...props} />,
+    ComboboxInput: (props: HTMLAttributes<HTMLInputElement>) => <input {...props} />,
     ComboboxOption: passthrough,
     ComboboxOptions: passthrough,
-    Listbox: ({ value, onChange, children, ...props }) => (
+    Listbox: ({
+      value,
+      onChange,
+      children,
+      ...props
+    }: HTMLAttributes<HTMLDivElement> & {
+      children?: ReactNode | ((state: Record<string, never>) => ReactNode);
+      onChange?: (value: unknown) => void;
+      value?: unknown;
+    }) => (
       <ListboxContext.Provider value={{ value, onChange }}>
         <div {...props}>{typeof children === "function" ? children({}) : children}</div>
       </ListboxContext.Provider>
     ),
-    ListboxButton: (props) => <button type="button" {...props} />,
-    ListboxOption: ({ as: _as, value, children, ...props }) => {
+    ListboxButton: (props: HTMLAttributes<HTMLButtonElement>) => <button type="button" {...props} />,
+    ListboxOption: ({
+      as: _as,
+      value,
+      children,
+      ...props
+    }: HTMLAttributes<HTMLDivElement> & {
+      as?: ElementType;
+      children?: ReactNode | ((state: { active: boolean }) => ReactNode);
+      value?: { name?: string };
+    }) => {
       const ctx = useContext(ListboxContext);
       const content = typeof children === "function" ? children({ active: false }) : children;
       return (
@@ -44,7 +70,7 @@ vi.mock("@headlessui/react", async () => {
       );
     },
     ListboxOptions: passthrough,
-    Transition: ({ children }) => <>{children}</>,
+    Transition: ({ children }: { children?: ReactNode }) => <>{children}</>,
   };
 });
 
@@ -168,12 +194,11 @@ describe("components/widgets/search", () => {
   it("fetches search suggestions and triggers a search when a suggestion is selected", async () => {
     const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
 
-    const originalFetch = globalThis.fetch;
     const fetchSpy = vi.fn(async () => ({
       json: async () => ["hel", ["hello", "help", "helm", "helium", "held"]],
-    }));
+    })) as unknown as typeof fetch;
 
-    fetch = fetchSpy;
+    vi.stubGlobal("fetch", fetchSpy);
 
     renderWithProviders(<Search options={{ provider: ["google"], showSearchSuggestions: true, target: "_self" }} />, {
       settings: {},
@@ -199,6 +224,6 @@ describe("components/widgets/search", () => {
 
     openSpy.mockRestore();
 
-    fetch = originalFetch;
+    vi.unstubAllGlobals();
   });
 });

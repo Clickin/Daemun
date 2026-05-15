@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 
 import { fireEvent, render, screen } from "@testing-library/react";
-import { DateTime } from "luxon";
 import { describe, expect, it } from "vitest";
 
+import { parseCalendarDate } from "./date";
 import Event, { compareDateTimezone } from "./event";
 
 describe("widgets/calendar/event", () => {
   it("renders an anchor when a url is provided and toggles additional text on hover", () => {
-    const date = DateTime.fromISO("2099-01-01T13:00:00.000Z").setZone("utc");
+    const date = parseCalendarDate("2099-01-01T13:00:00.000Z", "UTC");
 
     render(
       <Event
@@ -49,7 +49,7 @@ describe("widgets/calendar/event", () => {
   });
 
   it("keeps additional text visible after repeated mouse enter events", () => {
-    const date = DateTime.fromISO("2099-01-01T13:00:00.000Z").setZone("utc");
+    const date = parseCalendarDate("2099-01-01T13:00:00.000Z", "UTC");
 
     render(
       <Event
@@ -73,7 +73,7 @@ describe("widgets/calendar/event", () => {
   });
 
   it("keeps title visible after repeated mouse leave events", () => {
-    const date = DateTime.fromISO("2099-01-01T13:00:00.000Z").setZone("utc");
+    const date = parseCalendarDate("2099-01-01T13:00:00.000Z", "UTC");
 
     render(
       <Event
@@ -99,8 +99,8 @@ describe("widgets/calendar/event", () => {
   });
 
   it("compareDateTimezone matches dates by day", () => {
-    const day = DateTime.fromISO("2099-01-01T00:00:00.000Z").setZone("utc");
-    expect(compareDateTimezone(day, { date: DateTime.fromISO("2099-01-01T23:59:00.000Z").setZone("utc") })).toBe(true);
-    expect(compareDateTimezone(day, { date: DateTime.fromISO("2099-01-02T00:00:00.000Z").setZone("utc") })).toBe(false);
+    const day = parseCalendarDate("2099-01-01T00:00:00.000Z", "UTC");
+    expect(compareDateTimezone(day, { date: parseCalendarDate("2099-01-01T23:59:00.000Z", "UTC") })).toBe(true);
+    expect(compareDateTimezone(day, { date: parseCalendarDate("2099-01-02T00:00:00.000Z", "UTC") })).toBe(false);
   });
 });

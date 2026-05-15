@@ -6,14 +6,44 @@ import { addCookieToJar, setCookieHeader } from "utils/proxy/cookie-jar";
 import { httpProxy } from "utils/proxy/http";
 import widgets from "widgets/widgets";
 
-function isSuccessfulLoginResponse(data) {
+import type { UnknownRecord } from "../../../types";
+
+interface UnifiWidget extends UnknownRecord {
+  key?: string;
+  password?: string;
+  prefix?: string;
+  type?: string;
+  username?: string;
+}
+
+interface UnifiContext {
+  req?: unknown;
+  responseHeaders?: unknown;
+  widget: UnifiWidget;
+}
+
+interface LoginEndpointContext extends UnifiContext {
+  prefix?: string;
+}
+
+function isSuccessfulLoginResponse(data: Buffer) {
   const json = JSON.parse(data.toString());
   return json?.meta?.rc === "ok" || json?.login_time || json?.update_time;
 }
 
-async function login({ widget, api, endpoint, csrfToken }) {
+async function login({
+  widget,
+  api,
+  endpoint,
+  csrfToken,
+}: {
+  api: string;
+  csrfToken?: string;
+  endpoint: string;
+  widget: UnifiWidget;
+}) {
   const loginUrl = new URL(formatApiCall(api.replace("{prefix}", ""), { endpoint, ...widget }));
-  const headers = { "Content-Type": "application/json" };
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
 
   if (csrfToken) {
     headers["X-CSRF-TOKEN"] = csrfToken;
@@ -30,8 +60,8 @@ export default function createUnifiProxyHandler({
   proxyName,
   resolveWidget,
   resolveRequestContext,
-  getLoginEndpoint = () => "auth/login",
-  shouldAttemptLogin = ({ widget }) => !widget.key,
+  getLoginEndpoint = (_context: LoginEndpointContext) => "auth/login",
+  shouldAttemptLogin = ({ widget }: UnifiContext) => !widget.key,
 }) {
   const prefixCacheKey = `${proxyName}__prefix`;
   const logger = createLogger(proxyName);

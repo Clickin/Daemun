@@ -24,7 +24,7 @@ export default function Cpu({ expanded, refresh = 1500 }) {
         label={t("resources.cpu")}
         expandedValue="-"
         expandedLabel={t("resources.load")}
-        percentage="0"
+        percentage={0}
         expanded={expanded}
       />
     );

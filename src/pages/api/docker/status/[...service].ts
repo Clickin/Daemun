@@ -16,7 +16,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const dockerArgs = getDockerArguments(containerServer);
+    const dockerArgs = containerServer ? getDockerArguments(containerServer) : { conn: getDockerArguments(), swarm: false };
+    if (!dockerArgs) {
+      return res.status(404).send({
+        status: "not found",
+      });
+    }
     const docker = new Docker(dockerArgs.conn);
     const containers = await docker.listContainers({
       all: true,

@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { buildHighlightConfig, evaluateHighlight, getHighlightClass } from "./highlights";
+import type { HighlightConfig } from "./highlights";
+
+function requireConfig(config: HighlightConfig | null): HighlightConfig {
+  expect(config).not.toBeNull();
+  if (!config) throw new Error("Expected highlight config");
+  return config;
+}
 
 describe("utils/highlights", () => {
   it("returns null when there are no levels and no fields to evaluate", () => {
@@ -25,13 +32,13 @@ describe("utils/highlights", () => {
       "resources",
     );
 
-    expect(cfg).not.toBeNull();
-    expect(cfg.levels.warn).toBe("widget-warn");
-    expect(cfg.levels.custom).toBe("widget-custom");
+    const config = requireConfig(cfg);
+    expect(config.levels.warn).toBe("widget-warn");
+    expect(config.levels.custom).toBe("widget-custom");
 
     // Field keys get normalized + namespaced.
-    expect(cfg.fields.cpu).toBeTruthy();
-    expect(cfg.fields["resources.cpu"]).toBeTruthy();
+    expect(config.fields.cpu).toBeTruthy();
+    expect(config.fields["resources.cpu"]).toBeTruthy();
   });
 
   it("normalizes field keys by trimming and skipping blank/null entries", () => {
@@ -46,9 +53,10 @@ describe("utils/highlights", () => {
       "resources",
     );
 
-    expect(cfg.fields.cpu).toBeTruthy();
-    expect(cfg.fields["resources.cpu"]).toBeTruthy();
-    expect(cfg.fields.empty).toBeUndefined();
+    const config = requireConfig(cfg);
+    expect(config.fields.cpu).toBeTruthy();
+    expect(config.fields["resources.cpu"]).toBeTruthy();
+    expect(config.fields.empty).toBeUndefined();
   });
 
   it("evaluateHighlight returns matching numeric rule with valueOnly metadata", () => {

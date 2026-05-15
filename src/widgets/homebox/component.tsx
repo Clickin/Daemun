@@ -16,7 +16,7 @@ export default function Component({ service }) {
   }
 
   // Default fields
-  if (!widget.fields?.length > 0) {
+  if (!(widget.fields?.length > 0)) {
     widget.fields = homeboxDefaultFields;
   }
   const MAX_ALLOWED_FIELDS = 4;

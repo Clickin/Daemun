@@ -46,7 +46,7 @@ const { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi } = vi.hois
   }));
 
   const dockerCfg = {
-    default: vi.fn((serverName) => ({ conn: { serverName } })),
+    default: vi.fn((serverName) => ({ conn: { serverName }, swarm: Boolean(state.dockerYaml?.[serverName]?.swarm) })),
   };
 
   const kubeCfg = {

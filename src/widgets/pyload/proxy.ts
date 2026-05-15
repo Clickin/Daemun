@@ -21,7 +21,11 @@ function parsePyloadResponse(url, data) {
 }
 
 async function fetchFromPyloadAPI(url, sessionId, params, service) {
-  const options = {
+  const options: {
+    body?: string;
+    headers: Record<string, string>;
+    method: string;
+  } = {
     body: params
       ? Object.keys(params)
           .map((prop) => `${prop}=${encodeURIComponent(params[prop])}`)
@@ -49,7 +53,11 @@ async function fetchFromPyloadAPIWithCredentials(url, params, username, password
   const parsedUrl = new URL(url);
   const isGetRequest = !params || Object.keys(params).length === 0;
 
-  const options = {
+  const options: {
+    body?: string;
+    headers?: Record<string, string>;
+    method: string;
+  } = {
     method: isGetRequest ? "GET" : "POST",
   };
 
@@ -96,7 +104,7 @@ async function login(loginUrl, service, username, password = "") {
   return sessionId;
 }
 
-export default async function pyloadProxyHandler(req, res, map = {}) {
+export default async function pyloadProxyHandler(req, res, map: { ngEndpoint?: string } = {}) {
   const { group, service, endpoint, index } = req.query;
   const { ngEndpoint } = map;
 

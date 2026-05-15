@@ -1,7 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { useApiQuery } from "utils/query/api-query";
 
-export default function Ping({ groupName, serviceName, style }) {
+interface PingProps {
+  groupName: string;
+  serviceName?: string;
+  style?: string;
+}
+
+export default function Ping({ groupName, serviceName = "", style }: PingProps) {
   const { t } = useTranslation();
   const { data, error } = useApiQuery(`/api/ping?${new URLSearchParams({ groupName, serviceName }).toString()}`, {
     refreshInterval: 30000,

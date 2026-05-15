@@ -7,24 +7,30 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@headlessui/react", async () => {
   const React = await import("react");
   const { Fragment } = React;
+  type ElementType = React.ElementType;
+  type Node = React.ReactNode;
+  type Props = React.HTMLAttributes<HTMLElement> & {
+    as?: ElementType;
+    children?: Node | ((state: { open: boolean }) => Node);
+  };
 
-  function Transition({ as: As = Fragment, children }) {
+  function Transition({ as: As = Fragment, children }: Props) {
     if (As === Fragment) return <>{children}</>;
     return <As>{children}</As>;
   }
 
-  function Menu({ as: As = "div", children, ...props }) {
+  function Menu({ as: As = "div", children, ...props }: Props) {
     const content = typeof children === "function" ? children({ open: true }) : children;
     return <As {...props}>{content}</As>;
   }
 
-  function MenuButton(props) {
+  function MenuButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
     return <button type="button" {...props} />;
   }
-  function MenuItems(props) {
+  function MenuItems(props: React.HTMLAttributes<HTMLDivElement>) {
     return <div {...props} />;
   }
-  function MenuItem({ children }) {
+  function MenuItem({ children }: { children?: Node }) {
     return <>{children}</>;
   }
 

@@ -14,7 +14,7 @@ describe("components/widgets/queue/queueEntry", () => {
     expect(screen.getByText("Download")).toBeInTheDocument();
     expect(screen.getByText("1GB - Downloading - 1m")).toBeInTheDocument();
 
-    const bar = container.querySelector("div[style]");
+    const bar = container.querySelector("div[style]") as HTMLElement;
     expect(bar.style.width).toBe("42%");
   });
 });

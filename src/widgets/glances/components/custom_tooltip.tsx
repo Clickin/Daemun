@@ -1,4 +1,15 @@
-export default function Tooltip({ active, payload, formatter }) {
+interface TooltipPayload {
+  name?: string;
+  value: unknown;
+}
+
+interface TooltipProps {
+  active?: boolean;
+  formatter: (value: unknown) => string;
+  payload?: TooltipPayload[];
+}
+
+export default function Tooltip({ active, payload, formatter }: TooltipProps) {
   if (active && payload && payload.length) {
     return (
       <div className="bg-theme-800/80 rounded-md text-theme-200 px-2 py-0">

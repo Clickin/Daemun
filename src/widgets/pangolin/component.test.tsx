@@ -19,7 +19,7 @@ describe("widgets/pangolin/component", () => {
   it("defaults fields to 4 entries and renders placeholders while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "pangolin" } };
+    const service = { widget: { type: "pangolin", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["sites", "resources", "targets", "traffic"]);

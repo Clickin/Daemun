@@ -42,7 +42,7 @@ describe("widgets/minecraft/proxy", () => {
 
     await minecraftProxyHandler(req, res);
 
-    expect(mc.lookup).toHaveBeenCalledWith({ host: "example.com", port: "25565" });
+    expect(mc.lookup).toHaveBeenCalledWith({ host: "example.com", port: 25565 });
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
       version: "1.20",

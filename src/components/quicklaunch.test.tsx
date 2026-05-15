@@ -202,7 +202,7 @@ describe("components/quicklaunch", () => {
     // Icon/abbr container renders when icon is present.
     expect(screen.getByTestId("resolved-icon")).toBeInTheDocument();
 
-    const button0 = document.querySelector('button[data-index="0"]');
+    const button0 = document.querySelector('button[data-index="0"]') as HTMLButtonElement;
     const button1 = document.querySelector('button[data-index="1"]');
     expect(button0.className).toContain("bg-theme-300/50");
 
@@ -232,7 +232,7 @@ describe("components/quicklaunch", () => {
 
     fireEvent.change(input, { target: { value: "al" } });
     await waitFor(() => expect(document.querySelector('button[data-index="0"]')).toBeTruthy());
-    const button0 = document.querySelector('button[data-index="0"]');
+    const button0 = document.querySelector('button[data-index="0"]') as HTMLButtonElement;
 
     button0.focus();
     fireEvent.keyDown(button0, { key: "Escape" });
@@ -273,12 +273,11 @@ describe("components/quicklaunch", () => {
   });
 
   it("fetches search suggestions and ArrowRight autocompletes the selected suggestion", async () => {
-    const originalFetch = globalThis.fetch;
     const fetchSpy = vi.fn(async () => ({
       json: async () => ["test", ["test 1", "test 2", "test 3", "test 4", "test 5"]],
-    }));
+    })) as unknown as typeof fetch;
 
-    fetch = fetchSpy;
+    vi.stubGlobal("fetch", fetchSpy);
 
     renderWithProviders(<Wrapper />, {
       settings: {
@@ -315,7 +314,7 @@ describe("components/quicklaunch", () => {
 
     expect(input).toHaveValue("test 1");
 
-    fetch = originalFetch;
+    vi.unstubAllGlobals();
   });
 
   it("uses the stored provider when the search widget provides a provider list", async () => {

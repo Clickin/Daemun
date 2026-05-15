@@ -138,7 +138,7 @@ export default async function suwayomiProxyHandler(req, res) {
 
   const body = makeBody(widget.fields, widget.category);
 
-  const headers = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 

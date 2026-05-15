@@ -1,10 +1,17 @@
 import ICAL from "ical.js";
-import { DateTime } from "luxon";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import Error from "../../../components/services/widget/error";
 import useWidgetAPI from "../../../utils/proxy/use-widget-api";
+import {
+  createCalendarDateFromJsDate,
+  createCurrentCalendarDate,
+  isBeforeCalendarDate,
+  isValidCalendarDate,
+  parseCalendarDate,
+  toCalendarJsDate,
+} from "../date";
 
 function simpleHash(str) {
   let hash = 0;
@@ -72,15 +79,15 @@ export default function Integration({ config, params, setEvents, hideErrors, tim
       }
     }
 
-    const startDate = DateTime.fromISO(params.start);
-    const endDate = DateTime.fromISO(params.end);
+    const startDate = parseCalendarDate(params.start);
+    const endDate = parseCalendarDate(params.end);
 
-    if (icalError || events.length === 0 || !startDate.isValid || !endDate.isValid) {
+    if (icalError || events.length === 0 || !isValidCalendarDate(startDate) || !isValidCalendarDate(endDate)) {
       return;
     }
 
-    const rangeStart = ICAL.Time.fromJSDate(startDate.toJSDate());
-    const rangeEnd = ICAL.Time.fromJSDate(endDate.toJSDate());
+    const rangeStart = ICAL.Time.fromJSDate(toCalendarJsDate(startDate));
+    const rangeEnd = ICAL.Time.fromJSDate(toCalendarJsDate(endDate));
 
     const getOcurrencesFromRange = (event) => {
       if (!event.rrule) {
@@ -130,12 +137,12 @@ export default function Integration({ config, params, setEvents, hideErrors, tim
             return event.status === "COMPLETED";
           }
 
-          return DateTime.fromJSDate(date) < DateTime.now();
+          return isBeforeCalendarDate(createCalendarDateFromJsDate(date), createCurrentCalendarDate());
         };
 
         eventsToAdd[hash] = {
           title,
-          date: DateTime.fromJSDate(date),
+          date: createCalendarDateFromJsDate(date),
           color: config?.color ?? "zinc",
           isCompleted: getIsCompleted(),
           additional: event.location,

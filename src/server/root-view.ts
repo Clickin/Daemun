@@ -11,15 +11,25 @@ import {
 import themes from "utils/styles/themes";
 
 import { serializePage } from "./inertia.ts";
+import type { InertiaPage } from "./inertia.ts";
+import type { SettingsRecord } from "../types";
 
-function escapeText(value) {
+interface RootViewOptions {
+  appHtml?: string;
+}
+
+function isRootViewOptions(value: unknown): value is RootViewOptions {
+  return Boolean(value) && typeof value === "object" && "appHtml" in value;
+}
+
+function escapeText(value: unknown) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
 }
 
-function escapeAttribute(value) {
+function escapeAttribute(value: unknown) {
   return escapeText(value).replaceAll('"', "&quot;");
 }
 
@@ -61,7 +71,7 @@ function assetTags() {
   return [...styles, `<script type="module" src="/${escapeAttribute(entry.file)}"></script>`];
 }
 
-function defaultIconTags(settings) {
+function defaultIconTags(settings: SettingsRecord) {
   if (settings.favicon) {
     const favicon = escapeAttribute(settings.favicon);
     return [
@@ -80,7 +90,7 @@ function defaultIconTags(settings) {
   ];
 }
 
-function headTags(settings) {
+function headTags(settings: SettingsRecord) {
   const title = settings.title || "Daemun";
   const description =
     settings.description ||
@@ -107,21 +117,21 @@ function headTags(settings) {
   ].filter(Boolean);
 }
 
-function bakedInitialQueryDataScript(fallback) {
+function bakedInitialQueryDataScript(fallback: unknown) {
   const compactQueryData = compactInitialQueryData(fallback);
   if (Object.keys(compactQueryData).length === 0) return "";
 
   return `<script id="${BAKED_QUERY_DATA_ELEMENT_ID}" type="application/json">${serializePage(compactQueryData)}</script>`;
 }
 
-function bakedInitialPagePropsScript(pageProps) {
+function bakedInitialPagePropsScript(pageProps: unknown) {
   const compactPageProps = compactInitialPageProps(pageProps);
   if (Object.keys(compactPageProps).length === 0) return "";
 
   return `<script id="${BAKED_PAGE_PROPS_ELEMENT_ID}" type="application/json">${serializePage(compactPageProps)}</script>`;
 }
 
-function clientPageForHtml(page) {
+function clientPageForHtml(page: InertiaPage) {
   const fallback = page.props?.fallback;
   const props = { ...page.props };
 
@@ -143,14 +153,14 @@ function clientPageForHtml(page) {
   return { ...page, props };
 }
 
-export function rootView(page, options = {}) {
-  const settings = page.props?.initialSettings || {};
+export function rootView(page: InertiaPage, context: unknown = {}) {
+  const settings = (page.props?.initialSettings || {}) as SettingsRecord;
   const theme = settings.theme || "dark";
   const color = settings.color || "slate";
   const initialPagePropsScript = bakedInitialPagePropsScript(page.props);
   const initialQueryDataScript = bakedInitialQueryDataScript(page.props?.fallback);
   const clientPage = clientPageForHtml(page);
-  const appHtml = options.appHtml || "";
+  const appHtml = isRootViewOptions(context) ? (context.appHtml ?? "") : "";
 
   return `<!DOCTYPE html>
 <html class="${escapeAttribute(`${theme === "dark" ? "dark scheme-dark" : "scheme-light"} theme-${color}`)}">

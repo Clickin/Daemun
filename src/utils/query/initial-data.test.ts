@@ -10,6 +10,14 @@ import {
 } from "./initial-data";
 
 describe("initial query data helpers", () => {
+  function documentWithJson(value: unknown): Document {
+    return {
+      getElementById: () => ({
+        textContent: JSON.stringify(value),
+      }),
+    } as unknown as Document;
+  }
+
   it("compacts and expands baked dashboard query data", () => {
     const initialQueryData = {
       "/api/services": [{ name: "Service One" }],
@@ -39,14 +47,10 @@ describe("initial query data helpers", () => {
   });
 
   it("reads baked initial query data from the document", () => {
-    const documentRef = {
-      getElementById: () => ({
-        textContent: JSON.stringify({
-          s: [{ name: "Service One" }],
-          h: "abc123",
-        }),
-      }),
-    };
+    const documentRef = documentWithJson({
+      s: [{ name: "Service One" }],
+      h: "abc123",
+    });
 
     expect(readBakedInitialQueryData(documentRef)).toEqual({
       "/api/services": [{ name: "Service One" }],
@@ -72,14 +76,10 @@ describe("initial query data helpers", () => {
   });
 
   it("reads baked initial page props from the document", () => {
-    const documentRef = {
-      getElementById: () => ({
-        textContent: JSON.stringify({
-          i: { theme: "dark", title: "Lab" },
-          l: "en",
-        }),
-      }),
-    };
+    const documentRef = documentWithJson({
+      i: { theme: "dark", title: "Lab" },
+      l: "en",
+    });
 
     expect(readBakedInitialPageProps(documentRef)).toEqual({
       initialSettings: { theme: "dark", title: "Lab" },

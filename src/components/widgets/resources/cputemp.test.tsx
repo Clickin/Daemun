@@ -4,8 +4,10 @@ import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
-  useApiQueryMock: vi.fn(),
-  Resource: vi.fn(() => <div data-testid="resource" />),
+  useApiQueryMock: vi.fn((..._args: unknown[]) => undefined),
+  Resource: vi.fn((props: Record<string, unknown>) => (
+    <div data-testid="resource" data-prop-count={Object.keys(props).length} />
+  )),
   Error: vi.fn(() => <div data-testid="error" />),
 }));
 
@@ -24,7 +26,7 @@ describe("components/widgets/resources/cputemp", () => {
     useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
     render(<CpuTemp expanded units="metric" />);
 
-    const props = Resource.mock.calls[0][0];
+    const props = Resource.mock.calls[0]![0];
     expect(props.value).toBe("-");
   });
 
@@ -36,7 +38,7 @@ describe("components/widgets/resources/cputemp", () => {
 
     render(<CpuTemp expanded={false} units="imperial" tempmin={0} tempmax={-1} />);
 
-    const props = Resource.mock.calls[0][0];
+    const props = Resource.mock.calls[0]![0];
     // common.number mock returns string of value
     expect(props.value).toBe("50");
     expect(props.expandedValue).toBe("68");
@@ -44,7 +46,7 @@ describe("components/widgets/resources/cputemp", () => {
   });
 
   it("renders Error when query errors", () => {
-    useApiQueryMock.mockReturnValue({ data: undefined, error: new Error("nope") });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: new globalThis.Error("nope") });
 
     render(<CpuTemp expanded units="metric" />);
 

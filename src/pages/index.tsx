@@ -20,6 +20,7 @@ import useWindowFocus from "utils/hooks/window-focus";
 import { loadLanguage } from "utils/i18n";
 import { normalizeLanguage } from "utils/i18n/language";
 import { useApiQuery } from "utils/query/api-query";
+import type { BookmarkGroupRecord, HomePageProps, ServiceGroupRecord } from "../types";
 
 const ThemeToggle = dynamic(() => import("components/toggles/theme"), {
   ssr: false,
@@ -35,7 +36,7 @@ const Version = dynamic(() => import("components/version"), {
 
 const rightAlignedWidgets = ["weatherapi", "openweathermap", "weather", "openmeteo", "search", "datetime"];
 
-function Index({ initialSettings, fallback }) {
+function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "initialSettings">) {
   const windowFocused = useWindowFocus();
   const [stale, setStale] = useState(false);
   const { data: errorsData } = useApiQuery("/api/validate", {
@@ -141,10 +142,10 @@ const headerStyles = {
   boxedWidgets: "m-5 mb-0 sm:m-9 sm:mb-0 sm:mt-1",
 };
 
-function getAllServices(services) {
-  function getServices(group) {
+function getAllServices(services: ServiceGroupRecord[]) {
+  function getServices(group: ServiceGroupRecord) {
     let nestedServices = [...group.services];
-    if (group.groups.length > 0) {
+    if (group.groups && group.groups.length > 0) {
       nestedServices = [...nestedServices, ...group.groups.map(getServices).flat()];
     }
     return nestedServices;
@@ -153,7 +154,7 @@ function getAllServices(services) {
   return [...services.map(getServices).flat()];
 }
 
-function Home({ fallback, initialSettings }) {
+function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "initialSettings">) {
   const { i18n } = useTranslation();
   const { theme, setTheme } = useContext(ThemeContext);
   const { color, setColor } = useContext(ColorContext);
@@ -164,15 +165,15 @@ function Home({ fallback, initialSettings }) {
     setSettings(initialSettings);
   }, [initialSettings, setSettings]);
 
-  const { data: services = [] } = useApiQuery("/api/services", {
+  const { data: services = [] } = useApiQuery<ServiceGroupRecord[]>("/api/services", {
     immutable: true,
     initialData: fallback?.["/api/services"] ?? [],
   });
-  const { data: bookmarks = [] } = useApiQuery("/api/bookmarks", {
+  const { data: bookmarks = [] } = useApiQuery<BookmarkGroupRecord[]>("/api/bookmarks", {
     immutable: true,
     initialData: fallback?.["/api/bookmarks"] ?? [],
   });
-  const { data: widgets = [] } = useApiQuery("/api/widgets", {
+  const { data: widgets = [] } = useApiQuery<Record<string, unknown>[]>("/api/widgets", {
     immutable: true,
     initialData: fallback?.["/api/widgets"] ?? [],
   });
@@ -210,8 +211,8 @@ function Home({ fallback, initialSettings }) {
   const headerStyle = settings?.headerStyle || "underlined";
 
   useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.target.tagName === "BODY" || e.target.id === "inner_wrapper") {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLElement && (e.target.tagName === "BODY" || e.target.id === "inner_wrapper")) {
         if (
           (e.key.length === 1 &&
             e.key.match(/(\w|\s|[à-ü]|[À-Ü]|[\w\u0430-\u044f])/gi) &&
@@ -239,7 +240,7 @@ function Home({ fallback, initialSettings }) {
     () => [
       ...new Set(
         Object.keys(settings.layout ?? {})
-          .map((groupName) => settings.layout[groupName]?.tab?.toString())
+          .map((groupName) => settings.layout?.[groupName]?.tab?.toString())
           .filter((group) => group),
       ),
     ],
@@ -250,13 +251,15 @@ function Home({ fallback, initialSettings }) {
     if (!activeTab) {
       const currentHash = typeof window !== "undefined" ? (window.location.hash || "").substring(1) : "";
       const initialTab = currentHash || "/";
-      setActiveTab(initialTab === "/" ? slugifyAndEncode(tabs["0"]) : initialTab);
+      setActiveTab(initialTab === "/" ? slugifyAndEncode(tabs[0]) : initialTab);
     }
   });
 
   const servicesAndBookmarksGroups = useMemo(() => {
-    const tabGroupFilter = (g) => g && [activeTab, ""].includes(slugifyAndEncode(settings.layout?.[g.name]?.tab));
-    const undefinedGroupFilter = (g) => settings.layout?.[g.name] === undefined;
+    const tabGroupFilter = (g: BookmarkGroupRecord | ServiceGroupRecord | undefined) =>
+      g && [activeTab, ""].includes(slugifyAndEncode(settings.layout?.[g.name]?.tab));
+    const undefinedGroupFilter = (g: BookmarkGroupRecord | ServiceGroupRecord) =>
+      settings.layout?.[g.name] === undefined;
 
     const layoutGroups = Object.keys(settings.layout ?? {})
       .map((groupName) => services?.find((g) => g.name === groupName) ?? bookmarks?.find((b) => b.name === groupName))
@@ -385,7 +388,7 @@ function Home({ fallback, initialSettings }) {
           id="information-widgets"
           className={classNames(
             "flex flex-row flex-wrap justify-between z-20",
-            headerStyles[headerStyle],
+            headerStyles[headerStyle as keyof typeof headerStyles],
             settings.cardBlur !== undefined &&
               headerStyle === "boxed" &&
               `backdrop-blur${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
@@ -444,14 +447,14 @@ function Home({ fallback, initialSettings }) {
   );
 }
 
-export default function Wrapper({ initialSettings, fallback }) {
+export default function Wrapper({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "initialSettings">) {
   const { theme } = useContext(ThemeContext);
   const { color } = useContext(ColorContext);
   let backgroundImage = "";
   let opacity = initialSettings?.backgroundOpacity ?? 0;
-  let backgroundBlur = false;
-  let backgroundSaturate = false;
-  let backgroundBrightness = false;
+  let backgroundBlur: boolean | string = false;
+  let backgroundSaturate: string | false = false;
+  let backgroundBrightness: string | false = false;
   if (initialSettings?.background) {
     const bg = initialSettings.background;
     if (typeof bg === "object") {
@@ -459,9 +462,9 @@ export default function Wrapper({ initialSettings, fallback }) {
       if (bg.opacity !== undefined) {
         opacity = 1 - bg.opacity / 100;
       }
-      backgroundBlur = bg.blur !== undefined;
-      backgroundSaturate = bg.saturate !== undefined;
-      backgroundBrightness = bg.brightness !== undefined;
+      backgroundBlur = bg.blur === true ? true : bg.blur !== undefined ? String(bg.blur) : "";
+      backgroundSaturate = bg.saturate !== undefined ? String(bg.saturate) : "";
+      backgroundBrightness = bg.brightness !== undefined ? String(bg.brightness) : "";
     } else {
       backgroundImage = bg;
     }
@@ -506,13 +509,13 @@ export default function Wrapper({ initialSettings, fallback }) {
       <div id="page_wrapper" className="relative h-full">
         <div
           id="inner_wrapper"
-          tabIndex="-1"
+          tabIndex={-1}
           className={classNames(
             "w-full h-full overflow-auto",
             backgroundBlur &&
-              `backdrop-blur${initialSettings.background.blur?.length ? `-${initialSettings.background.blur}` : ""}`,
-            backgroundSaturate && `backdrop-saturate-${initialSettings.background.saturate}`,
-            backgroundBrightness && `backdrop-brightness-${initialSettings.background.brightness}`,
+              `backdrop-blur${typeof backgroundBlur === "string" && backgroundBlur.length ? `-${backgroundBlur}` : ""}`,
+            backgroundSaturate && `backdrop-saturate-${backgroundSaturate}`,
+            backgroundBrightness && `backdrop-brightness-${backgroundBrightness}`,
           )}
         >
           <Index initialSettings={initialSettings} fallback={fallback} />

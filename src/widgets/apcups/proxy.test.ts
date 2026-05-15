@@ -22,15 +22,19 @@ vi.mock("utils/logger", () => ({
 }));
 
 vi.mock("node:net", () => {
+  type Handler = (payload?: Buffer) => void;
+
   class FakeSocket {
+    _handlers: Map<string, Set<Handler>>;
+
     constructor() {
       this._handlers = new Map();
     }
     setTimeout() {}
-    connect() {
+    connect(_options?: unknown) {
       queueMicrotask(() => this._emit("connect"));
     }
-    on(event, cb) {
+    on(event: string, cb: Handler) {
       const set = this._handlers.get(event) ?? new Set();
       set.add(cb);
       this._handlers.set(event, set);
@@ -48,7 +52,7 @@ vi.mock("node:net", () => {
     }
     end() {}
     destroy() {}
-    _emit(event, payload) {
+    _emit(event: string, payload?: Buffer) {
       const set = this._handlers.get(event);
       if (!set) return;
       set.forEach((cb) => cb(payload));

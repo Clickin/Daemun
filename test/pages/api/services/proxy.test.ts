@@ -64,6 +64,26 @@ vi.mock("widgets/widgets", () => ({
 
 import servicesProxy from "pages/api/services/proxy";
 
+type TestMapping = {
+  endpoint: string;
+  headers?: Record<string, string>;
+  method?: string;
+  optionalParams?: string[];
+  params?: string[];
+  proxyHandler?: unknown;
+  segments?: string[];
+};
+
+type TestWidgetRegistry = Record<
+  string,
+  {
+    allowedEndpoints?: RegExp;
+    api?: string;
+    mappings?: Record<string, TestMapping>;
+    proxyHandler?: unknown;
+  }
+>;
+
 function createMockRes() {
   const res = {
     statusCode: undefined,
@@ -178,9 +198,11 @@ describe("pages/api/services/proxy", () => {
     getServiceWidget.mockResolvedValue({ type: "linkwarden" });
 
     // Inject a mapping with a method requirement through the mocked registry.
-    const widgets = (await import("widgets/widgets")).default;
-    const originalMethod = widgets.linkwarden.mappings.collections.method;
-    widgets.linkwarden.mappings.collections.method = "POST";
+    const widgets = (await import("widgets/widgets")).default as unknown as TestWidgetRegistry;
+    const mapping = widgets.linkwarden.mappings?.collections;
+    if (!mapping) throw new Error("missing test mapping");
+    const originalMethod = mapping.method;
+    mapping.method = "POST";
 
     const req = { method: "GET", query: { group: "g", service: "s", index: "0", endpoint: "collections" } };
     const res = createMockRes();
@@ -190,7 +212,7 @@ describe("pages/api/services/proxy", () => {
     expect(res.statusCode).toBe(403);
     expect(res.body).toEqual({ error: "Unsupported method" });
 
-    widgets.linkwarden.mappings.collections.method = originalMethod;
+    mapping.method = originalMethod;
   });
 
   it("replaces endpoint segments and rejects unsupported segment keys/values", async () => {
@@ -297,7 +319,7 @@ describe("pages/api/services/proxy", () => {
     getServiceWidget.mockResolvedValue({ type: "mapbroken" });
     handlerFn.handler.mockImplementation(async (req, res) => res.status(200).json({ endpoint: req.query.endpoint }));
 
-    const widgets = (await import("widgets/widgets")).default;
+    const widgets = (await import("widgets/widgets")).default as unknown as TestWidgetRegistry;
     widgets.mapbroken = {
       api: "{url}/{endpoint}",
       mappings: {
@@ -318,7 +340,7 @@ describe("pages/api/services/proxy", () => {
   it("returns 403 when a widget defines a non-function proxyHandler", async () => {
     getServiceWidget.mockResolvedValue({ type: "brokenhandler" });
 
-    const widgets = (await import("widgets/widgets")).default;
+    const widgets = (await import("widgets/widgets")).default as unknown as TestWidgetRegistry;
     widgets.brokenhandler = {
       api: "{url}/{endpoint}",
       proxyHandler: "nope",

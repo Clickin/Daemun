@@ -5,7 +5,25 @@ import yaml from "js-yaml";
 
 import checkAndCopyConfig, { CONF_DIR, substituteEnvironmentVars } from "utils/config/config";
 
-export async function widgetsFromConfig() {
+import type { UnknownRecord } from "../../types";
+
+export interface WidgetOptions extends UnknownRecord {
+  apiKey?: unknown;
+  index: number;
+  key?: unknown;
+  password?: unknown;
+  suggestionUrl?: string;
+  url?: string;
+  username?: unknown;
+  version?: unknown;
+}
+
+interface WidgetConfig {
+  options: WidgetOptions;
+  type: string;
+}
+
+export async function widgetsFromConfig(): Promise<WidgetConfig[]> {
   checkAndCopyConfig("widgets.yaml");
 
   const widgetsYaml = path.join(CONF_DIR, "widgets.yaml");
@@ -16,17 +34,17 @@ export async function widgetsFromConfig() {
   if (!widgets) return [];
 
   // map easy to write YAML objects into easy to consume JS arrays
-  const widgetsArray = widgets.map((group, index) => ({
+  const widgetsArray: WidgetConfig[] = (widgets as UnknownRecord[]).map((group, index) => ({
     type: Object.keys(group)[0],
     options: {
       index,
-      ...group[Object.keys(group)[0]],
-    },
+      ...(group[Object.keys(group)[0]] as UnknownRecord),
+    } as WidgetOptions,
   }));
   return widgetsArray;
 }
 
-export async function cleanWidgetGroups(widgets) {
+export async function cleanWidgetGroups(widgets: WidgetConfig[]): Promise<WidgetConfig[]> {
   return widgets.map((widget, index) => {
     const sanitizedOptions = widget.options;
     const optionKeys = Object.keys(sanitizedOptions);
@@ -53,10 +71,12 @@ export async function cleanWidgetGroups(widgets) {
   });
 }
 
-export async function getPrivateWidgetOptions(type, widgetIndex) {
+export async function getPrivateWidgetOptions(type: string, widgetIndex: string | number): Promise<WidgetOptions | undefined>;
+export async function getPrivateWidgetOptions(): Promise<WidgetConfig[]>;
+export async function getPrivateWidgetOptions(type?: string, widgetIndex?: string | number) {
   const widgets = await widgetsFromConfig();
 
-  const privateOptions =
+  const privateOptions: WidgetConfig[] =
     widgets.map((widget) => {
       const { index, url, username, password, key, apiKey } = widget.options;
 
@@ -71,9 +91,9 @@ export async function getPrivateWidgetOptions(type, widgetIndex) {
           apiKey,
         },
       };
-    }) || {};
+    }) || [];
 
   return type !== undefined && widgetIndex !== undefined
-    ? privateOptions.find((o) => o.type === type && o.options.index === parseInt(widgetIndex, 10))?.options
+    ? privateOptions.find((o) => o.type === type && o.options.index === parseInt(String(widgetIndex), 10))?.options
     : privateOptions;
 }

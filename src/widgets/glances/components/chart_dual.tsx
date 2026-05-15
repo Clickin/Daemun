@@ -3,7 +3,16 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import CustomTooltip from "./custom_tooltip";
 
-class ChartDual extends PureComponent {
+interface ChartDualProps {
+  dataPoints: Record<string, unknown>[];
+  formatter: (value: unknown) => string;
+  label: string[];
+  max?: unknown;
+  stack?: string[];
+  stackOffset?: "expand" | "none" | "silhouette" | "wiggle";
+}
+
+class ChartDual extends PureComponent<ChartDualProps> {
   render() {
     const { dataPoints, formatter, stack, label, stackOffset } = this.props;
 
@@ -47,7 +56,7 @@ class ChartDual extends PureComponent {
                 allowEscapeViewBox={{ x: false, y: false }}
                 formatter={formatter}
                 content={<CustomTooltip formatter={formatter} />}
-                classNames="rounded-md text-xs p-0.5"
+                wrapperClassName="rounded-md text-xs p-0.5"
                 contentStyle={{
                   backgroundColor: "rgb(var(--color-800))",
                   color: "rgb(var(--color-100))",

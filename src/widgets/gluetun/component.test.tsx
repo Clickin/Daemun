@@ -19,7 +19,7 @@ describe("widgets/gluetun/component", () => {
   it("defaults fields and filters to 3 blocks while loading (no port_forwarded)", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "gluetun", url: "http://x" } };
+    const service = { widget: { type: "gluetun", url: "http://x", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["public_ip", "region", "country"]);

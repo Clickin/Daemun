@@ -74,11 +74,13 @@ export default async function handler(req, res) {
   }
 
   if (type === "network") {
-    let networkData = await si.networkStats("*");
+    const allNetworkData = await si.networkStats("*");
+    type NetworkStats = (typeof allNetworkData)[number];
+    let networkData: NetworkStats | null = null;
     let interfaceDefault;
-    logger.debug("networkData:", JSON.stringify(networkData));
+    logger.debug("networkData:", JSON.stringify(allNetworkData));
     if (interfaceName && interfaceName !== "default") {
-      networkData = networkData.filter((network) => network.iface === interfaceName).at(0);
+      networkData = allNetworkData.filter((network) => network.iface === interfaceName).at(0) ?? null;
       if (!networkData) {
         // Fallback for e.g. docker where networkStats("*") may not return stats for host interfaces
         const directNetworkData = await si.networkStats(interfaceName);
@@ -97,7 +99,7 @@ export default async function handler(req, res) {
       }
     } else {
       interfaceDefault = await si.networkInterfaceDefault();
-      networkData = networkData.filter((network) => network.iface === interfaceDefault).at(0);
+      networkData = allNetworkData.filter((network) => network.iface === interfaceDefault).at(0) ?? null;
       if (!networkData) {
         return res.status(404).json({
           error: "Default interface not found",

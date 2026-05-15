@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
+import type { Context, MiddlewareHandler, Next } from "hono";
 
 import bookmarks from "../pages/api/bookmarks.ts";
 import configFile from "../pages/api/config/[path].ts";
@@ -40,7 +41,7 @@ import { rootView } from "./root-view.ts";
 import { browserConfigXml, robotsTxt, siteWebmanifest } from "./static-pages.ts";
 
 function apiHostValidation() {
-  return async (c, next) => {
+  return async (c: Context, next: Next) => {
     const host = c.req.header("host");
     const port = process.env.PORT || 3000;
     let allowedHosts = [`localhost:${port}`, `127.0.0.1:${port}`, `[::1]:${port}`];
@@ -61,9 +62,13 @@ function apiHostValidation() {
   };
 }
 
-const catchAllService = (c) => ({ service: splitCatchAll(c.req.param("*")) });
+const catchAllService = (c: Context) => ({ service: splitCatchAll(c.req.param("*")) });
 
-export function createApp({ staticHome } = {}) {
+interface CreateAppOptions {
+  staticHome?: { middleware(): MiddlewareHandler };
+}
+
+export function createApp({ staticHome }: CreateAppOptions = {}) {
   const app = new Hono();
   const publicRoot = path.resolve(process.cwd(), "public");
   const clientRoot = path.resolve(process.cwd(), "dist/client");
@@ -119,7 +124,9 @@ export function createApp({ staticHome } = {}) {
     app.use("*", staticHome.middleware());
   }
 
-  app.get("/", async (c) => c.render("Home", await loadHomePageProps()));
+  app.get("/", async (c) =>
+    (c.render as (component: string, props: unknown) => Response | Promise<Response>)("Home", await loadHomePageProps()),
+  );
 
   if (existsSync(clientRoot)) {
     app.use("/assets/*", serveStatic({ root: clientRoot }));

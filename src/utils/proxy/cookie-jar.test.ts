@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+interface CookieParams {
+  cookieHeader?: string;
+  headers: Record<string, string>;
+}
+
 describe("utils/proxy/cookie-jar", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -11,7 +16,7 @@ describe("utils/proxy/cookie-jar", () => {
     const url = new URL("http://example.test/path");
     addCookieToJar(url, { "set-cookie": ["a=b; Path=/"] });
 
-    const params = { headers: {} };
+    const params: CookieParams = { headers: {} };
     setCookieHeader(url, params);
 
     expect(params.headers.Cookie).toContain("a=b");
@@ -23,7 +28,7 @@ describe("utils/proxy/cookie-jar", () => {
     const url = new URL("http://example2.test/path");
     addCookieToJar(url, { "set-cookie": ["sid=1; Path=/"] });
 
-    const params = { headers: {}, cookieHeader: "X-Auth-Token" };
+    const params: CookieParams = { headers: {}, cookieHeader: "X-Auth-Token" };
     setCookieHeader(url, params);
 
     expect(params.headers["X-Auth-Token"]).toContain("sid=1");
@@ -37,7 +42,7 @@ describe("utils/proxy/cookie-jar", () => {
     headers.set("set-cookie", "c=d; Path=/");
     addCookieToJar(url, headers);
 
-    const params = { headers: {} };
+    const params: CookieParams = { headers: {} };
     setCookieHeader(url, params);
 
     expect(params.headers.Cookie).toContain("c=d");

@@ -15,7 +15,7 @@ async function retrieveFromGlancesAPI(privateWidgetOptions, endpoint) {
   }
 
   const apiUrl = `${url}/api/${privateWidgetOptions.version}/${endpoint}`;
-  const headers = {
+  const headers: Record<string, string> = {
     "Accept-Encoding": "application/json",
   };
   if (privateWidgetOptions.username && privateWidgetOptions.password) {
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     const cpuData = await retrieveFromGlancesAPI(privateWidgetOptions, "cpu");
     const loadData = await retrieveFromGlancesAPI(privateWidgetOptions, "load");
     const memoryData = await retrieveFromGlancesAPI(privateWidgetOptions, "mem");
-    const data = {
+    const data: Record<string, unknown> = {
       cpu: cpuData,
       load: loadData,
       mem: memoryData,
@@ -73,6 +73,6 @@ export default async function handler(req, res) {
 
     return res.status(200).send(data);
   } catch (e) {
-    return res.status(400).json({ error: e.message });
+    return res.status(400).json({ error: e instanceof Error ? e.message : String(e) });
   }
 }

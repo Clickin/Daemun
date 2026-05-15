@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 
 import { render, screen } from "@testing-library/react";
-import { DateTime } from "luxon";
 import { describe, expect, it, vi } from "vitest";
+
+import { createCalendarDate, createCurrentCalendarDate, startOfCalendarDay } from "./date";
 
 const { EventStub, compareDateTimezoneStub } = vi.hoisted(() => ({
   EventStub: vi.fn(({ event, showDate, showTime }) => (
@@ -10,9 +11,7 @@ const { EventStub, compareDateTimezoneStub } = vi.hoisted(() => ({
       {event.title}
     </div>
   )),
-  compareDateTimezoneStub: vi.fn(
-    (date, event) => date.startOf("day").toISODate() === event.date.startOf("day").toISODate(),
-  ),
+  compareDateTimezoneStub: vi.fn((date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD")),
 }));
 
 vi.mock("./event", () => ({
@@ -29,20 +28,20 @@ describe("widgets/calendar/agenda", () => {
   });
 
   it("renders a no-events placeholder when there are no events in range", () => {
-    render(<Agenda service={{ widget: {} }} colorVariants={{}} events={{}} showDate={DateTime.now()} />);
+    render(<Agenda service={{ widget: {} }} colorVariants={{}} events={{}} showDate={createCurrentCalendarDate()} />);
     expect(screen.getByText("calendar.noEventsToday")).toBeInTheDocument();
     expect(EventStub).toHaveBeenCalled();
   });
 
   it("filters by previousDays, sorts, and enforces maxEvents", () => {
-    const showDate = DateTime.local(2099, 1, 2).startOf("day");
+    const showDate = startOfCalendarDay(createCalendarDate(2099, 1, 2));
     const service = { widget: { previousDays: 0, maxEvents: 2, showTime: true } };
 
     const events = {
-      old: { title: "Old", date: DateTime.local(2099, 1, 1, 0, 0), color: "gray" },
-      a: { title: "A", date: DateTime.local(2099, 1, 2, 10, 0), color: "gray" },
-      b: { title: "B", date: DateTime.local(2099, 1, 3, 10, 0), color: "gray" },
-      c: { title: "C", date: DateTime.local(2099, 1, 4, 10, 0), color: "gray" },
+      old: { title: "Old", date: createCalendarDate(2099, 1, 1, 0, 0), color: "gray" },
+      a: { title: "A", date: createCalendarDate(2099, 1, 2, 10, 0), color: "gray" },
+      b: { title: "B", date: createCalendarDate(2099, 1, 3, 10, 0), color: "gray" },
+      c: { title: "C", date: createCalendarDate(2099, 1, 4, 10, 0), color: "gray" },
     };
 
     render(<Agenda service={service} colorVariants={{}} events={events} showDate={showDate} />);

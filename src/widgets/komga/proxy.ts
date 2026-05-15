@@ -19,8 +19,8 @@ export default async function komgaProxyHandler(req, res) {
 
     if (widget) {
       try {
-        const data = {};
-        const headers = {
+        const data: Record<string, unknown> = {};
+        const headers: Record<string, string> = {
           accept: "application/json",
           "Content-Type": "application/json",
         };

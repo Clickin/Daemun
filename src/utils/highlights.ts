@@ -4,10 +4,22 @@ const DEFAULT_LEVEL_CLASSES = {
   danger: "bg-rose-700/45 text-rose-200 dark:bg-rose-950/70 dark:text-rose-400",
 };
 
-const normalizeFieldKeys = (fields, widgetType) => {
+type HighlightLevelClasses = Record<string, string | null | undefined>;
+type HighlightFields = Record<string, unknown>;
+
+export interface HighlightConfig {
+  fields: HighlightFields;
+  levels: HighlightLevelClasses;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object";
+}
+
+const normalizeFieldKeys = (fields: unknown, widgetType?: string): HighlightFields => {
   if (!fields || typeof fields !== "object") return {};
 
-  return Object.entries(fields).reduce((acc, [key, value]) => {
+  return Object.entries(fields).reduce<HighlightFields>((acc, [key, value]) => {
     if (value === null || value === undefined) return acc;
     if (typeof key !== "string") return acc;
     const trimmedKey = key.trim();
@@ -26,14 +38,20 @@ const normalizeFieldKeys = (fields, widgetType) => {
   }, {});
 };
 
-export const buildHighlightConfig = (globalConfig, widgetConfig, widgetType) => {
+export const buildHighlightConfig = (
+  globalConfig?: unknown,
+  widgetConfig?: unknown,
+  widgetType?: string,
+): HighlightConfig | null => {
+  const globalRecord = isRecord(globalConfig) ? globalConfig : {};
+  const widgetRecord = isRecord(widgetConfig) ? widgetConfig : {};
   const levels = {
     ...DEFAULT_LEVEL_CLASSES,
-    ...(globalConfig?.levels || {}),
-    ...(widgetConfig?.levels || {}),
+    ...((isRecord(globalRecord.levels) ? globalRecord.levels : {}) as HighlightLevelClasses),
+    ...((isRecord(widgetRecord.levels) ? widgetRecord.levels : {}) as HighlightLevelClasses),
   };
 
-  const { levels: _levels, ...fields } = widgetConfig || {};
+  const { levels: _levels, ...fields } = widgetRecord;
   const normalizedFields = normalizeFieldKeys(fields, widgetType);
 
   const hasLevels = Object.values(levels).some(Boolean);

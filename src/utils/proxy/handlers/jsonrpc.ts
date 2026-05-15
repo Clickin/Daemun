@@ -6,10 +6,38 @@ import { formatApiCall } from "utils/proxy/api-helpers";
 import { httpProxy } from "utils/proxy/http";
 import widgets from "widgets/widgets";
 
+import type { UnknownRecord } from "../../../types";
+
 const logger = createLogger("jsonrpcProxyHandler");
 
-export async function sendJsonRpcRequest(url, method, params, widget) {
-  const headers = {
+interface JsonRpcWidget extends UnknownRecord {
+  key?: string;
+  password?: string;
+  type?: string;
+  username?: string;
+}
+
+interface JsonRpcMapping {
+  endpoint?: string;
+  params?: unknown;
+}
+
+interface JsonRpcWidgetDefinition {
+  api?: string;
+  mappings?: Record<string, JsonRpcMapping>;
+}
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return Boolean(value) && typeof value === "object";
+}
+
+export async function sendJsonRpcRequest(
+  url: string,
+  method: string,
+  params: unknown,
+  widget: JsonRpcWidget = {},
+): Promise<[number, string, string]> {
+  const headers: Record<string, string> = {
     "content-type": "application/json",
     accept: "application/json",
   };
@@ -46,7 +74,7 @@ export async function sendJsonRpcRequest(url, method, params, widget) {
       return client.receive(json);
     }
 
-    return Promise.reject(data?.error ? data : new Error(data.toString()));
+    return Promise.reject(isRecord(data) && data.error ? data : new Error(data.toString()));
   });
 
   try {
@@ -59,18 +87,28 @@ export async function sendJsonRpcRequest(url, method, params, widget) {
     }
 
     logger.warn("Error calling JSONPRC endpoint: %s.  %s", url, e);
-    return [500, "application/json", JSON.stringify({ result: null, error: { code: 2, message: e.toString() } })];
+    return [
+      500,
+      "application/json",
+      JSON.stringify({ result: null, error: { code: 2, message: e instanceof Error ? e.toString() : String(e) } }),
+    ];
   }
 }
 
 export default async function jsonrpcProxyHandler(req, res) {
   const { group, service, endpoint: method, index } = req.query;
+  const methodName = Array.isArray(method) ? method[0] : method;
 
-  if (group && service) {
-    const widget = await getServiceWidget(group, service, index);
-    const api = widgets?.[widget.type]?.api;
+  if (group && service && methodName) {
+    const widget = (await getServiceWidget(group, service, index)) as JsonRpcWidget | null;
+    if (!widget?.type) {
+      return res.status(400).json({ error: "Invalid proxy service type" });
+    }
 
-    const [, mapping] = Object.entries(widgets?.[widget.type]?.mappings).find(([, value]) => value.endpoint === method);
+    const definition = widgets?.[widget.type] as JsonRpcWidgetDefinition | undefined;
+    const api = definition?.api;
+
+    const mapping = Object.values(definition?.mappings ?? {}).find((value) => value.endpoint === methodName);
     const params = mapping?.params ?? null;
 
     if (!api) {
@@ -80,7 +118,7 @@ export default async function jsonrpcProxyHandler(req, res) {
     if (widget) {
       const url = formatApiCall(api, { ...widget });
 
-      const [status, , data] = await sendJsonRpcRequest(url, method, params, widget);
+      const [status, , data] = await sendJsonRpcRequest(url, methodName, params, widget);
       return res.status(status).end(data);
     }
   }

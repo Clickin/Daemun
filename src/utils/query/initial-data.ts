@@ -10,9 +10,10 @@ const compactQueryPathByKey = {
   v: "/api/validate",
   h: "/api/hash",
 };
+type CompactQueryKey = keyof typeof compactQueryPathByKey;
 
-const compactQueryKeyByPath = new Map<string, keyof typeof compactQueryPathByKey>(
-  Object.entries(compactQueryPathByKey).map(([key, path]) => [path, key]),
+const compactQueryKeyByPath = new Map<string, CompactQueryKey>(
+  Object.entries(compactQueryPathByKey).map(([key, path]) => [path, key as CompactQueryKey]),
 );
 
 function hasOwn(object: object, key: PropertyKey): boolean {

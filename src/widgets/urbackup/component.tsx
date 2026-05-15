@@ -47,7 +47,7 @@ function determineStatuses(urbackupData) {
     }
   });
 
-  let totalUsage = false;
+  let totalUsage: number | false = false;
 
   // calculate total disk space if provided
   if (urbackupData.diskUsage) {
@@ -84,17 +84,17 @@ export default function Component({ service }) {
     );
   }
 
-  const statusData = determineStatuses(urbackupData, widget);
+  const statusData = determineStatuses(urbackupData);
 
   return (
     <Container service={service}>
-      <Block label="urbackup.ok" value={t("common.number", { value: parseInt(statusData.ok, 10) })} />
-      <Block label="urbackup.errored" value={t("common.number", { value: parseInt(statusData.errored, 10) })} />
-      <Block label="urbackup.noRecent" value={t("common.number", { value: parseInt(statusData.noRecent, 10) })} />
+      <Block label="urbackup.ok" value={t("common.number", { value: statusData.ok })} />
+      <Block label="urbackup.errored" value={t("common.number", { value: statusData.errored })} />
+      <Block label="urbackup.noRecent" value={t("common.number", { value: statusData.noRecent })} />
       {showDiskUsage && (
         <Block
           label="urbackup.totalUsed"
-          value={t("common.bbytes", { value: parseFloat(statusData.totalUsage, 10) })}
+          value={t("common.bbytes", { value: statusData.totalUsage || 0 })}
         />
       )}
     </Container>

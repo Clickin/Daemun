@@ -16,7 +16,7 @@ export default async function calendarProxyHandler(req, res) {
         return res.status(403).json({ error: "No integration URL specified" });
       }
 
-      const options = {};
+      const options: { headers?: Record<string, string> } = {};
       if (integration.url?.includes("outlook")) {
         // Outlook requires a user agent header
         options.headers = {

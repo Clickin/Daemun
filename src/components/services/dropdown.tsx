@@ -3,12 +3,25 @@ import classNames from "classnames";
 import { Fragment } from "react";
 import { BiCog } from "react-icons/bi";
 
-export default function Dropdown({ options, value, setValue }) {
+interface DropdownOption {
+  label: string;
+  value: string;
+}
+
+interface DropdownProps {
+  options: DropdownOption[];
+  value: string;
+  setValue: (value: string) => void;
+}
+
+export default function Dropdown({ options, value, setValue }: DropdownProps) {
+  const selectedOption = options.find((option) => option.value === value) ?? options[0];
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="text-xs inline-flex w-full items-center rounded-sm bg-theme-200/50 dark:bg-theme-900/20 px-3 py-1.5">
-          {options.find((option) => option.value === value).label}
+          {selectedOption?.label}
           <BiCog className="-mr-1 ml-2 h-4 w-4" aria-hidden="true" />
         </Menu.Button>
       </div>

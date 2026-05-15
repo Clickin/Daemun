@@ -25,7 +25,7 @@ describe("widgets/wgeasy/component", () => {
   it("sets default fields and renders placeholders while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "wgeasy" } };
+    const service = { widget: { type: "wgeasy", fields: undefined as string[] | undefined } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toEqual(["connected", "enabled", "total"]);

@@ -2,9 +2,15 @@ import classNames from "classnames";
 import ResolvedIcon from "components/resolvedicon";
 import { useContext } from "react";
 import { SettingsContext } from "utils/contexts/settings";
+import type { BookmarkRecord } from "../../types";
 
-export default function Item({ bookmark, iconOnly = false }) {
-  const description = bookmark.description ?? new URL(bookmark.href).hostname;
+interface BookmarkItemProps {
+  bookmark: BookmarkRecord;
+  iconOnly?: boolean;
+}
+
+export default function Item({ bookmark, iconOnly = false }: BookmarkItemProps) {
+  const description = bookmark.description ?? (bookmark.href ? new URL(bookmark.href).hostname : "");
   const { settings } = useContext(SettingsContext);
 
   return (

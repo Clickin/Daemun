@@ -1,7 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { useApiQuery } from "utils/query/api-query";
+import type { ServiceRecord } from "../../types";
 
-export default function ProxmoxStatus({ service, style }) {
+interface ProxmoxStatusProps {
+  service: ServiceRecord;
+  style?: string;
+}
+
+export default function ProxmoxStatus({ service, style }: ProxmoxStatusProps) {
   const { t } = useTranslation();
 
   const vmType = service.proxmoxType || "qemu";

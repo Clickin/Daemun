@@ -27,7 +27,7 @@ export const validateResponseSchema = z.union([
     .passthrough(),
 ]);
 
-export function schemaForApiPath(path) {
+export function schemaForApiPath(path: string) {
   const pathname = new URL(path, "http://daemun.local").pathname;
 
   if (pathname === "/api/bookmarks" || pathname === "/api/services" || pathname === "/api/widgets") {

@@ -13,6 +13,10 @@ import createLogger from "utils/logger";
 const logger = createLogger("httpProxy");
 const { http, https } = followRedirects;
 
+interface NodeError extends Error {
+  code?: string;
+}
+
 function addCookieHandler(url, params) {
   setCookieHeader(url, params);
 
@@ -166,7 +170,7 @@ function daemunDNSLookupFn() {
       }
 
       // ENOTFOUND or EAI_NONAME will try fallback, otherwise return error here
-      if (!FALLBACK_CODES.has(lookupErr.code)) {
+      if (!FALLBACK_CODES.has((lookupErr as NodeError).code ?? "")) {
         callback(lookupErr);
         return;
       }
@@ -175,7 +179,7 @@ function daemunDNSLookupFn() {
         // Finalize the resolution and call the callback
         if (!addresses || addresses.length === 0) {
           const err = new Error(`No addresses found for hostname: ${hostname}`);
-          err.code = "ENOTFOUND";
+          (err as NodeError).code = "ENOTFOUND";
           callback(err);
           return;
         }
@@ -201,8 +205,8 @@ function daemunDNSLookupFn() {
         logger.debug(
           "DNS fallback failed for %s: lookup error=%s, resolve error=%s",
           hostname,
-          lookupErr.code,
-          resolveErr?.code,
+          (lookupErr as NodeError).code,
+          (resolveErr as NodeError | undefined)?.code,
         );
         callback(resolveErr || lookupErr);
       };
