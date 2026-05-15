@@ -8,7 +8,7 @@ import Raw from "./raw";
 
 describe("components/widgets/widget/container_button", () => {
   it("invokes callback on click", () => {
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     render(
       <ContainerButton options={{}} callback={cb}>
         <Raw>

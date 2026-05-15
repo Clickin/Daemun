@@ -4,7 +4,7 @@ import createMockRes from "test-utils/create-mock-res";
 
 const { getKubeConfig, coreApi, metricsApi, MetricsCtor, logger } = vi.hoisted(() => {
   const metricsApi = {
-    getPodMetrics: vi.fn(),
+    getPodMetrics: vi.fn<VitestMockProcedure>(),
   };
 
   function MetricsCtor() {
@@ -12,11 +12,11 @@ const { getKubeConfig, coreApi, metricsApi, MetricsCtor, logger } = vi.hoisted((
   }
 
   return {
-    getKubeConfig: vi.fn(),
-    coreApi: { listNamespacedPod: vi.fn() },
+    getKubeConfig: vi.fn<VitestMockProcedure>(),
+    coreApi: { listNamespacedPod: vi.fn<VitestMockProcedure>() },
     metricsApi,
     MetricsCtor,
-    logger: { error: vi.fn() },
+    logger: { error: vi.fn<VitestMockProcedure>() },
   };
 });
 

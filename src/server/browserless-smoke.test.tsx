@@ -6,7 +6,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { httpProxy } = vi.hoisted(() => ({
-  httpProxy: vi.fn(async () => [200, "application/json", { color: "slate", theme: "dark" }]),
+  httpProxy: vi.fn<VitestMockProcedure>(async () => [200, "application/json", { color: "slate", theme: "dark" }]),
 }));
 
 vi.mock("utils/proxy/http", () => ({
@@ -14,7 +14,7 @@ vi.mock("utils/proxy/http", () => ({
 }));
 
 vi.mock("utils/i18n", () => ({
-  loadLanguage: vi.fn(async (language) => language),
+  loadLanguage: vi.fn<VitestMockProcedure>(async (language) => language),
 }));
 
 const fixtureConfigDir = path.resolve(process.cwd(), "src/test-utils/fixtures/smoke-config");

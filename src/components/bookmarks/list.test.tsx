@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { Item } = vi.hoisted(() => ({
-  Item: vi.fn(({ bookmark, iconOnly }) => (
+  Item: vi.fn<VitestMockProcedure>(({ bookmark, iconOnly }) => (
     <li data-testid="bookmark-item" data-name={bookmark.name} data-icononly={String(iconOnly)} />
   )),
 }));

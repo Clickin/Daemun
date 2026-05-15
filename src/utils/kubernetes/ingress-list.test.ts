@@ -6,21 +6,21 @@ const { state, getKubernetes, getKubeConfig, logger } = vi.hoisted(() => {
     items: [],
     throw: null,
     networking: {
-      listIngressForAllNamespaces: vi.fn(async () => {
+      listIngressForAllNamespaces: vi.fn<VitestMockProcedure>(async () => {
         if (state.throw) throw state.throw;
         return { items: state.items };
       }),
     },
     kc: {
-      makeApiClient: vi.fn(() => state.networking),
+      makeApiClient: vi.fn<VitestMockProcedure>(() => state.networking),
     },
   };
 
   return {
     state,
-    getKubernetes: vi.fn(() => ({ ingress: state.ingressEnabled })),
-    getKubeConfig: vi.fn(() => state.kc),
-    logger: { error: vi.fn(), debug: vi.fn() },
+    getKubernetes: vi.fn<VitestMockProcedure>(() => ({ ingress: state.ingressEnabled })),
+    getKubeConfig: vi.fn<VitestMockProcedure>(() => state.kc),
+    logger: { error: vi.fn<VitestMockProcedure>(), debug: vi.fn<VitestMockProcedure>() },
   };
 });
 

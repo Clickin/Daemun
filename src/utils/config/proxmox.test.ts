@@ -2,16 +2,16 @@ import { describe, expect, it, vi } from "vitest";
 
 const { fs, yaml, config, checkAndCopyConfig } = vi.hoisted(() => ({
   fs: {
-    readFileSync: vi.fn(() => "proxmox-yaml"),
+    readFileSync: vi.fn<VitestMockProcedure>(() => "proxmox-yaml"),
   },
   yaml: {
-    load: vi.fn(),
+    load: vi.fn<VitestMockProcedure>(),
   },
   config: {
     CONF_DIR: "/conf",
-    substituteEnvironmentVars: vi.fn((s) => s),
+    substituteEnvironmentVars: vi.fn<VitestMockProcedure>((s) => s),
   },
-  checkAndCopyConfig: vi.fn(),
+  checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("fs", () => ({

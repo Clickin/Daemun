@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "test-utils/render-with-providers";
 import { expectBlockValue } from "test-utils/widget-assertions";
 
-const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
 
 vi.mock("utils/proxy/use-widget-api", () => ({
   default: useWidgetAPI,

@@ -4,7 +4,7 @@ import { render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const { useWidgetAPI } = vi.hoisted(() => ({
-  useWidgetAPI: vi.fn(),
+  useWidgetAPI: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
@@ -35,7 +35,7 @@ describe("widgets/calendar/integrations/ical", () => {
       error: undefined,
     });
 
-    const setEvents = vi.fn();
+    const setEvents = vi.fn<VitestMockProcedure>();
     render(
       <Integration
         config={{ name: "Work", type: "ical", color: "blue", params: { showName: true } }}

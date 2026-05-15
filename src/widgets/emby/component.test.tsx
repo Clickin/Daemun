@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "test-utils/render-with-providers";
 
 const { useWidgetAPI } = vi.hoisted(() => ({
-  useWidgetAPI: vi.fn(),
+  useWidgetAPI: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
@@ -37,7 +37,7 @@ describe("widgets/emby/component", () => {
   });
 
   it("renders loading skeleton when sessions/count are missing", () => {
-    useWidgetAPI.mockReturnValue({ data: undefined, error: undefined, mutate: vi.fn() });
+    useWidgetAPI.mockReturnValue({ data: undefined, error: undefined, mutate: vi.fn<VitestMockProcedure>() });
 
     const { container } = renderWithProviders(
       <Component service={{ widget: { type: "emby", enableBlocks: true, enableNowPlaying: true } }} />,
@@ -54,7 +54,7 @@ describe("widgets/emby/component", () => {
 
   it("renders single-session view with expanded two rows and stream title with user + episode number", () => {
     useWidgetAPI
-      .mockReturnValueOnce({ data: [baseSession()], error: undefined, mutate: vi.fn() }) // Sessions
+      .mockReturnValueOnce({ data: [baseSession()], error: undefined, mutate: vi.fn<VitestMockProcedure>() }) // Sessions
       .mockReturnValueOnce({
         data: { MovieCount: 1, SeriesCount: 2, EpisodeCount: 3, SongCount: 4 },
         error: undefined,
@@ -86,7 +86,7 @@ describe("widgets/emby/component", () => {
       .mockReturnValueOnce({
         data: [{ Id: "s2", PlayState: { PositionTicks: 0 }, UserName: "Bob" }],
         error: undefined,
-        mutate: vi.fn(),
+        mutate: vi.fn<VitestMockProcedure>(),
       })
       .mockReturnValueOnce({
         data: { MovieCount: 0, SeriesCount: 0, EpisodeCount: 0, SongCount: 0 },

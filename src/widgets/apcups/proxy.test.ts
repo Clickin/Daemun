@@ -10,8 +10,8 @@ function encodeLine(line) {
 }
 
 const { getServiceWidget, logger } = vi.hoisted(() => ({
-  getServiceWidget: vi.fn(),
-  logger: { debug: vi.fn(), error: vi.fn() },
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
+  logger: { debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("utils/config/service-helpers", () => ({

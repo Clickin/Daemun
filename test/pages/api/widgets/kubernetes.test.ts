@@ -3,21 +3,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { kc, coreApi, metricsApi, getKubeConfig, parseCpu, parseMemory, logger } = vi.hoisted(() => {
-  const coreApi = { listNode: vi.fn() };
-  const metricsApi = { getNodeMetrics: vi.fn() };
+  const coreApi = { listNode: vi.fn<VitestMockProcedure>() };
+  const metricsApi = { getNodeMetrics: vi.fn<VitestMockProcedure>() };
 
   const kc = {
-    makeApiClient: vi.fn(() => coreApi),
+    makeApiClient: vi.fn<VitestMockProcedure>(() => coreApi),
   };
 
   return {
     kc,
     coreApi,
     metricsApi,
-    getKubeConfig: vi.fn(),
-    parseCpu: vi.fn(),
-    parseMemory: vi.fn(),
-    logger: { error: vi.fn(), debug: vi.fn() },
+    getKubeConfig: vi.fn<VitestMockProcedure>(),
+    parseCpu: vi.fn<VitestMockProcedure>(),
+    parseMemory: vi.fn<VitestMockProcedure>(),
+    logger: { error: vi.fn<VitestMockProcedure>(), debug: vi.fn<VitestMockProcedure>() },
   };
 });
 

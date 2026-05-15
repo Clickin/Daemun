@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { bookmarksResponse } = vi.hoisted(() => ({
-  bookmarksResponse: vi.fn(),
+  bookmarksResponse: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/config/api-response", () => ({

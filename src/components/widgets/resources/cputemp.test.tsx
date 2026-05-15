@@ -4,11 +4,11 @@ import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { useApiQueryMock, Resource, Error } = vi.hoisted(() => ({
-  useApiQueryMock: vi.fn((..._args: unknown[]) => undefined),
-  Resource: vi.fn((props: Record<string, unknown>) => (
+  useApiQueryMock: vi.fn<VitestMockProcedure>((..._args: unknown[]) => undefined),
+  Resource: vi.fn<VitestMockProcedure>((props: Record<string, unknown>) => (
     <div data-testid="resource" data-prop-count={Object.keys(props).length} />
   )),
-  Error: vi.fn(() => <div data-testid="error" />),
+  Error: vi.fn<VitestMockProcedure>(() => <div data-testid="error" />),
 }));
 
 vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));

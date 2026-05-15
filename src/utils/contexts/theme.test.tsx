@@ -12,15 +12,15 @@ function Reader() {
 }
 
 function matchMediaMock(matches: boolean): typeof window.matchMedia {
-  return vi.fn((query: string) => ({
-    addEventListener: vi.fn(),
-    addListener: vi.fn(),
-    dispatchEvent: vi.fn(() => false),
+  return vi.fn<VitestMockProcedure>((query: string) => ({
+    addEventListener: vi.fn<VitestMockProcedure>(),
+    addListener: vi.fn<VitestMockProcedure>(),
+    dispatchEvent: vi.fn<VitestMockProcedure>(() => false),
     matches,
     media: query,
     onchange: null,
-    removeEventListener: vi.fn(),
-    removeListener: vi.fn(),
+    removeEventListener: vi.fn<VitestMockProcedure>(),
+    removeListener: vi.fn<VitestMockProcedure>(),
   }));
 }
 

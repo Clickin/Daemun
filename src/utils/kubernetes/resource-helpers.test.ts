@@ -5,25 +5,25 @@ const { state, substituteEnvironmentVars, getKubeConfig, logger } = vi.hoisted((
     gatewayProtocol: "https",
   };
 
-  const substituteEnvironmentVars = vi.fn((raw) =>
+  const substituteEnvironmentVars = vi.fn<VitestMockProcedure>((raw) =>
     raw.replaceAll("${DESC}", process.env.DESC ?? "").replaceAll("${ICON}", process.env.ICON ?? ""),
   );
 
   const crd = {
-    getNamespacedCustomObject: vi.fn(async () => ({
+    getNamespacedCustomObject: vi.fn<VitestMockProcedure>(async () => ({
       spec: { listeners: [{ name: "web", protocol: state.gatewayProtocol.toUpperCase() }] },
     })),
   };
 
   const kc = {
-    makeApiClient: vi.fn(() => crd),
+    makeApiClient: vi.fn<VitestMockProcedure>(() => crd),
   };
 
   return {
     state,
     substituteEnvironmentVars,
-    getKubeConfig: vi.fn(() => kc),
-    logger: { error: vi.fn(), debug: vi.fn() },
+    getKubeConfig: vi.fn<VitestMockProcedure>(() => kc),
+    logger: { error: vi.fn<VitestMockProcedure>(), debug: vi.fn<VitestMockProcedure>() },
   };
 });
 

@@ -4,17 +4,17 @@ import createMockRes from "test-utils/create-mock-res";
 
 const { si, logger } = vi.hoisted(() => ({
   si: {
-    currentLoad: vi.fn(),
-    fsSize: vi.fn(),
-    mem: vi.fn(),
-    cpuTemperature: vi.fn(),
-    time: vi.fn(),
-    networkStats: vi.fn(),
-    networkInterfaceDefault: vi.fn(),
+    currentLoad: vi.fn<VitestMockProcedure>(),
+    fsSize: vi.fn<VitestMockProcedure>(),
+    mem: vi.fn<VitestMockProcedure>(),
+    cpuTemperature: vi.fn<VitestMockProcedure>(),
+    time: vi.fn<VitestMockProcedure>(),
+    networkStats: vi.fn<VitestMockProcedure>(),
+    networkInterfaceDefault: vi.fn<VitestMockProcedure>(),
   },
   logger: {
-    debug: vi.fn(),
-    warn: vi.fn(),
+    debug: vi.fn<VitestMockProcedure>(),
+    warn: vi.fn<VitestMockProcedure>(),
   },
 }));
 

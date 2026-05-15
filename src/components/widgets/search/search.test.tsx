@@ -188,7 +188,7 @@ describe("components/widgets/search", () => {
   it("fetches search suggestions and triggers a search when a suggestion is selected", async () => {
     const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
 
-    const fetchSpy = vi.fn(async () => ({
+    const fetchSpy = vi.fn<VitestMockProcedure>(async () => ({
       json: async () => ["hel", ["hello", "help", "helm", "helium", "held"]],
     })) as unknown as typeof fetch;
 

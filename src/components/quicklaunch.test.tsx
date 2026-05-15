@@ -10,11 +10,11 @@ const { state, useApiQueryMock, getStoredProvider } = vi.hoisted(() => ({
   state: {
     widgets: {},
   },
-  useApiQueryMock: vi.fn((key) => {
+  useApiQueryMock: vi.fn<VitestMockProcedure>((key) => {
     if (key === "/api/widgets") return { data: state.widgets, error: undefined };
     return { data: undefined, error: undefined };
   }),
-  getStoredProvider: vi.fn(() => null),
+  getStoredProvider: vi.fn<VitestMockProcedure>(() => null),
 }));
 
 vi.mock("utils/query/api-query", () => ({
@@ -273,7 +273,7 @@ describe("components/quicklaunch", () => {
   });
 
   it("fetches search suggestions and ArrowRight autocompletes the selected suggestion", async () => {
-    const fetchSpy = vi.fn(async () => ({
+    const fetchSpy = vi.fn<VitestMockProcedure>(async () => ({
       json: async () => ["test", ["test 1", "test 2", "test 3", "test 4", "test 5"]],
     })) as unknown as typeof fetch;
 

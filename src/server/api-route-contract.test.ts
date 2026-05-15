@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { cachedRequest, getServiceWidget, proxyHandler } = vi.hoisted(() => ({
-  cachedRequest: vi.fn(async () => ({ forecast: true })),
-  getServiceWidget: vi.fn(async () => ({ type: "routeproxy" })),
-  proxyHandler: vi.fn(async (req, res) =>
+  cachedRequest: vi.fn<VitestMockProcedure>(async () => ({ forecast: true })),
+  getServiceWidget: vi.fn<VitestMockProcedure>(async () => ({ type: "routeproxy" })),
+  proxyHandler: vi.fn<VitestMockProcedure>(async (req, res) =>
     res.status(202).json({
       body: req.body,
       group: req.query.group,
@@ -15,7 +15,7 @@ const { cachedRequest, getServiceWidget, proxyHandler } = vi.hoisted(() => ({
 }));
 
 vi.mock("./home-props", () => ({
-  loadHomePageProps: vi.fn(async () => ({
+  loadHomePageProps: vi.fn<VitestMockProcedure>(async () => ({
     fallback: {},
     initialSettings: {},
     locale: "en",

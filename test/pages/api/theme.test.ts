@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { checkAndCopyConfig, getSettings } = vi.hoisted(() => ({
-  checkAndCopyConfig: vi.fn(),
-  getSettings: vi.fn(),
+  checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
+  getSettings: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/config/config", () => ({

@@ -2,27 +2,27 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { fs, yaml, config, checkAndCopyConfig, kube, apiExt } = vi.hoisted(() => {
   const apiExt = {
-    readCustomResourceDefinitionStatus: vi.fn(),
+    readCustomResourceDefinitionStatus: vi.fn<VitestMockProcedure>(),
   };
 
   const kube = {
-    loadFromCluster: vi.fn(),
-    loadFromDefault: vi.fn(),
-    makeApiClient: vi.fn(() => apiExt),
+    loadFromCluster: vi.fn<VitestMockProcedure>(),
+    loadFromDefault: vi.fn<VitestMockProcedure>(),
+    makeApiClient: vi.fn<VitestMockProcedure>(() => apiExt),
   };
 
   return {
     fs: {
-      readFileSync: vi.fn(() => "kube-yaml"),
+      readFileSync: vi.fn<VitestMockProcedure>(() => "kube-yaml"),
     },
     yaml: {
-      load: vi.fn(),
+      load: vi.fn<VitestMockProcedure>(),
     },
     config: {
       CONF_DIR: "/conf",
-      substituteEnvironmentVars: vi.fn((s) => s),
+      substituteEnvironmentVars: vi.fn<VitestMockProcedure>((s) => s),
     },
-    checkAndCopyConfig: vi.fn(),
+    checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
     kube,
     apiExt,
   };
@@ -90,7 +90,7 @@ describe("utils/config/kubernetes", () => {
 
   it("checkCRD returns true when the CRD exists", async () => {
     apiExt.readCustomResourceDefinitionStatus.mockResolvedValueOnce({ ok: true });
-    const logger = { error: vi.fn() };
+    const logger = { error: vi.fn<VitestMockProcedure>() };
 
     await expect(checkCRD("x.example", kube, logger)).resolves.toBe(true);
   });
@@ -100,7 +100,7 @@ describe("utils/config/kubernetes", () => {
       statusCode: 403,
       body: { message: "nope" },
     });
-    const logger = { error: vi.fn() };
+    const logger = { error: vi.fn<VitestMockProcedure>() };
 
     await expect(checkCRD("x.example", kube, logger)).resolves.toBe(false);
     expect(logger.error).toHaveBeenCalled();

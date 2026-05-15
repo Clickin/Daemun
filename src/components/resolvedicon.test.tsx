@@ -15,7 +15,7 @@ import ResolvedIcon from "./resolvedicon";
 function renderWithContexts(ui, { settings = {}, theme = "dark" } = {}) {
   return render(
     <SettingsContext.Provider value={{ settings, setSettings: () => {} }}>
-      <ThemeContext.Provider value={{ theme, setTheme: vi.fn() }}>{ui}</ThemeContext.Provider>
+      <ThemeContext.Provider value={{ theme, setTheme: vi.fn<VitestMockProcedure>() }}>{ui}</ThemeContext.Provider>
     </SettingsContext.Provider>,
   );
 }

@@ -3,22 +3,22 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { state, getSettings, servicesResponse, bookmarksResponse, widgetsResponse, checkAndCopyConfig, logger } =
   vi.hoisted(() => {
   const state = { throwIn: null };
-  const logger = { error: vi.fn() };
+  const logger = { error: vi.fn<VitestMockProcedure>() };
 
   return {
-    bookmarksResponse: vi.fn(async () => {
+    bookmarksResponse: vi.fn<VitestMockProcedure>(async () => {
       if (state.throwIn === "bookmarks") throw new Error("bookmarks failed");
       return [{ name: "bm" }];
     }),
-    checkAndCopyConfig: vi.fn(() => true),
-    getSettings: vi.fn(() => ({ language: "en", providers: {}, title: "Daemun" })),
+    checkAndCopyConfig: vi.fn<VitestMockProcedure>(() => true),
+    getSettings: vi.fn<VitestMockProcedure>(() => ({ language: "en", providers: {}, title: "Daemun" })),
     logger,
-    servicesResponse: vi.fn(async () => {
+    servicesResponse: vi.fn<VitestMockProcedure>(async () => {
       if (state.throwIn === "services") throw new Error("services failed");
       return [{ name: "svc" }];
     }),
     state,
-    widgetsResponse: vi.fn(async () => {
+    widgetsResponse: vi.fn<VitestMockProcedure>(async () => {
       if (state.throwIn === "widgets") throw new Error("widgets failed");
       return [{ type: "search" }];
     }),

@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { mc, getServiceWidget, logger } = vi.hoisted(() => ({
-  mc: { lookup: vi.fn() },
-  getServiceWidget: vi.fn(),
-  logger: { error: vi.fn() },
+  mc: { lookup: vi.fn<VitestMockProcedure>() },
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
+  logger: { error: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("minecraftstatuspinger", () => ({

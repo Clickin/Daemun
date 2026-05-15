@@ -3,7 +3,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn<VitestMockProcedure>() }));
 
 vi.mock("utils/query/api-query", () => ({
   useApiQuery: useApiQueryMock,

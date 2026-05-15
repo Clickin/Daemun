@@ -8,9 +8,9 @@ const { providers, getSettings, widgetsFromConfig, cachedRequest } = vi.hoisted(
     google: { name: "Google", url: "https://google?q=", suggestionUrl: "https://google/suggest?q=" },
     empty: { name: "NoSuggest", url: "x", suggestionUrl: null },
   },
-  getSettings: vi.fn(),
-  widgetsFromConfig: vi.fn(),
-  cachedRequest: vi.fn(),
+  getSettings: vi.fn<VitestMockProcedure>(),
+  widgetsFromConfig: vi.fn<VitestMockProcedure>(),
+  cachedRequest: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/search/providers", () => ({

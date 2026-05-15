@@ -2,27 +2,27 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { fs, yaml, config, widgetHelpers, serviceHelpers } = vi.hoisted(() => ({
   fs: {
-    readFile: vi.fn(),
+    readFile: vi.fn<VitestMockProcedure>(),
   },
   yaml: {
-    load: vi.fn(),
+    load: vi.fn<VitestMockProcedure>(),
   },
   config: {
     CONF_DIR: "/conf",
-    getSettings: vi.fn(),
-    substituteEnvironmentVars: vi.fn((s) => s),
-    default: vi.fn(),
+    getSettings: vi.fn<VitestMockProcedure>(),
+    substituteEnvironmentVars: vi.fn<VitestMockProcedure>((s) => s),
+    default: vi.fn<VitestMockProcedure>(),
   },
   widgetHelpers: {
-    widgetsFromConfig: vi.fn(),
-    cleanWidgetGroups: vi.fn(),
+    widgetsFromConfig: vi.fn<VitestMockProcedure>(),
+    cleanWidgetGroups: vi.fn<VitestMockProcedure>(),
   },
   serviceHelpers: {
-    servicesFromDocker: vi.fn(),
-    servicesFromKubernetes: vi.fn(),
-    servicesFromConfig: vi.fn(),
-    cleanServiceGroups: vi.fn((g) => g),
-    findGroupByName: vi.fn(),
+    servicesFromDocker: vi.fn<VitestMockProcedure>(),
+    servicesFromKubernetes: vi.fn<VitestMockProcedure>(),
+    servicesFromConfig: vi.fn<VitestMockProcedure>(),
+    cleanServiceGroups: vi.fn<VitestMockProcedure>((g) => g),
+    findGroupByName: vi.fn<VitestMockProcedure>(),
   },
 }));
 

@@ -20,7 +20,7 @@ describe("widgets/stash/component", () => {
   });
 
   it("renders placeholders initially, then renders stats after fetch", async () => {
-    const fetchMock: typeof fetch = vi.fn(async () => ({
+    const fetchMock: typeof fetch = vi.fn<VitestMockProcedure>(async () => ({
       json: async () => ({
         scene_count: 1,
         scenes_played: 2,

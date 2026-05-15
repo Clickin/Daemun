@@ -32,7 +32,7 @@ describe("api-query", () => {
   });
 
   it("fetches through the Hono RPC client and validates JSON with zod", async () => {
-    const fetchMock = vi.fn(async (input) => {
+    const fetchMock = vi.fn<VitestMockProcedure>(async (input) => {
       expect(String(input)).toBe("http://example.test/api/widgets?type=search");
       return new Response(JSON.stringify({ value: "ok" }), {
         headers: { "content-type": "application/json" },

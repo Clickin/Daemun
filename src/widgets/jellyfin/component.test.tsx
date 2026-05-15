@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
 
 import Component from "./component";
@@ -17,7 +17,7 @@ describe("widgets/jellyfin/component", () => {
 
   it("renders CountBlocks placeholders while loading when enableBlocks is true", () => {
     useWidgetAPI
-      .mockReturnValueOnce({ data: undefined, error: undefined, mutate: vi.fn() }) // sessions
+      .mockReturnValueOnce({ data: undefined, error: undefined, mutate: vi.fn<VitestMockProcedure>() }) // sessions
       .mockReturnValueOnce({ data: undefined, error: undefined }); // count
 
     renderWithProviders(
@@ -38,7 +38,7 @@ describe("widgets/jellyfin/component", () => {
 
   it("renders the no-active message when there are no playing sessions", () => {
     useWidgetAPI
-      .mockReturnValueOnce({ data: [], error: undefined, mutate: vi.fn() }) // sessions
+      .mockReturnValueOnce({ data: [], error: undefined, mutate: vi.fn<VitestMockProcedure>() }) // sessions
       .mockReturnValueOnce({
         data: { MovieCount: 1, SeriesCount: 2, EpisodeCount: 3, SongCount: 4 },
         error: undefined,
@@ -73,7 +73,7 @@ describe("widgets/jellyfin/component", () => {
           },
         ],
         error: undefined,
-        mutate: vi.fn(),
+        mutate: vi.fn<VitestMockProcedure>(),
       })
       .mockReturnValueOnce({
         data: { MovieCount: 0, SeriesCount: 0, EpisodeCount: 0, SongCount: 0 },

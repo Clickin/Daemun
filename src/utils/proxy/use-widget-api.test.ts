@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn<VitestMockProcedure>() }));
 
 vi.mock("utils/query/api-query", () => ({
   useApiQuery: useApiQueryMock,
@@ -30,7 +30,7 @@ describe("utils/proxy/use-widget-api", () => {
 
   it("returns data.error as the top-level error", () => {
     const dataError = { message: "nope" };
-    useApiQueryMock.mockReturnValue({ data: { error: dataError }, error: undefined, mutate: vi.fn() });
+    useApiQueryMock.mockReturnValue({ data: { error: dataError }, error: undefined, mutate: vi.fn<VitestMockProcedure>() });
 
     const widget = { service_group: "g", service_name: "s", index: 0 };
     const result = useWidgetAPI(widget, "status", {});
@@ -39,7 +39,7 @@ describe("utils/proxy/use-widget-api", () => {
   });
 
   it("disables the request when endpoint is an empty string", () => {
-    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined, mutate: vi.fn() });
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined, mutate: vi.fn<VitestMockProcedure>() });
 
     const widget = { service_group: "g", service_name: "s", index: 0 };
     useWidgetAPI(widget, "");

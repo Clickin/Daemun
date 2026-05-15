@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const { Resource } = vi.hoisted(() => ({
-  Resource: vi.fn(({ children }) => <div data-testid="lh-resource">{children}</div>),
+  Resource: vi.fn<VitestMockProcedure>(({ children }) => <div data-testid="lh-resource">{children}</div>),
 }));
 
 vi.mock("../widget/resource", () => ({

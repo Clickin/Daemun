@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { fs, yaml } = vi.hoisted(() => ({
   fs: {
-    copyFileSync: vi.fn(),
-    existsSync: vi.fn(),
-    mkdirSync: vi.fn(),
-    readFileSync: vi.fn(),
+    copyFileSync: vi.fn<VitestMockProcedure>(),
+    existsSync: vi.fn<VitestMockProcedure>(),
+    mkdirSync: vi.fn<VitestMockProcedure>(),
+    readFileSync: vi.fn<VitestMockProcedure>(),
   },
   yaml: {
-    load: vi.fn(),
+    load: vi.fn<VitestMockProcedure>(),
   },
 }));
 

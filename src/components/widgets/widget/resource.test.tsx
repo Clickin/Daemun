@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const { UsageBar } = vi.hoisted(() => ({
-  UsageBar: vi.fn(({ percent }) => <div data-testid="usagebar" data-percent={String(percent)} />),
+  UsageBar: vi.fn<VitestMockProcedure>(({ percent }) => <div data-testid="usagebar" data-percent={String(percent)} />),
 }));
 
 vi.mock("../resources/usage-bar", () => ({

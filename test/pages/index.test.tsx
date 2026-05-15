@@ -30,7 +30,7 @@ const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoiste
     throwIn: null,
     validateData: [],
     hashData: null,
-    mutateHash: vi.fn(),
+    mutateHash: vi.fn<VitestMockProcedure>(),
     servicesData: [],
     bookmarksData: [],
     widgetsData: [],
@@ -39,10 +39,10 @@ const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoiste
     windowFocused: false,
   };
 
-  const i18n = { language: "en", changeLanguage: vi.fn() };
-  const loadLanguage = vi.fn(async (language) => language);
+  const i18n = { language: "en", changeLanguage: vi.fn<VitestMockProcedure>() };
+  const loadLanguage = vi.fn<VitestMockProcedure>(async (language) => language);
 
-  const useApiQueryMock = vi.fn((key) => {
+  const useApiQueryMock = vi.fn<VitestMockProcedure>((key) => {
     if (key === "/api/validate") return { data: state.validateData };
     if (key === "/api/hash") return { data: state.hashData, mutate: state.mutateHash };
     if (key === "/api/services") return { data: state.servicesData };
@@ -51,7 +51,7 @@ const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoiste
     return { data: undefined };
   });
 
-  const useWindowFocus = vi.fn(() => state.windowFocused);
+  const useWindowFocus = vi.fn<VitestMockProcedure>(() => state.windowFocused);
 
   return {
     state,
@@ -142,10 +142,10 @@ async function renderIndex({
 } = {}) {
   const { default: Wrapper } = await import("pages/index.tsx");
 
-  const setTheme = vi.fn();
-  const setColor = vi.fn();
-  const setSettings = vi.fn();
-  const setActiveTab = vi.fn();
+  const setTheme = vi.fn<VitestMockProcedure>();
+  const setColor = vi.fn<VitestMockProcedure>();
+  const setSettings = vi.fn<VitestMockProcedure>();
+  const setActiveTab = vi.fn<VitestMockProcedure>();
 
   const renderResult = render(
     <ThemeContext.Provider value={{ theme, setTheme }}>
@@ -251,7 +251,7 @@ describe("pages/index Index routing + query branches", () => {
     state.hashData = { hash: "new-hash" };
     localStorage.setItem("hash", "old-hash");
 
-    const fetchSpy: typeof fetch = vi.fn(async () => ({ ok: true }) as Response);
+    const fetchSpy: typeof fetch = vi.fn<VitestMockProcedure>(async () => ({ ok: true }) as Response);
     vi.stubGlobal("fetch", fetchSpy);
 
     let reloadSpy;
@@ -259,7 +259,7 @@ describe("pages/index Index routing + query branches", () => {
       reloadSpy = vi.spyOn(window.location, "reload").mockImplementation(() => {});
     } catch {
       // jsdom can make window.location non-configurable in some contexts.
-      Object.defineProperty(window, "location", { value: { reload: vi.fn() }, writable: true });
+      Object.defineProperty(window, "location", { value: { reload: vi.fn<VitestMockProcedure>() }, writable: true });
       reloadSpy = vi.spyOn(window.location, "reload").mockImplementation(() => {});
     }
 

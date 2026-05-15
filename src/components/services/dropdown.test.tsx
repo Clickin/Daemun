@@ -45,7 +45,7 @@ import Dropdown from "./dropdown";
 
 describe("components/services/dropdown", () => {
   it("renders the selected label and updates value when an option is clicked", () => {
-    const setValue = vi.fn();
+    const setValue = vi.fn<VitestMockProcedure>();
     const options = [
       { value: "a", label: "Alpha" },
       { value: "b", label: "Beta" },

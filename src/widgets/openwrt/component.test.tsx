@@ -4,8 +4,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const { Interface, System } = vi.hoisted(() => ({
-  Interface: vi.fn(() => <div data-testid="openwrt.interface" />),
-  System: vi.fn(() => <div data-testid="openwrt.system" />),
+  Interface: vi.fn<VitestMockProcedure>(() => <div data-testid="openwrt.interface" />),
+  System: vi.fn<VitestMockProcedure>(() => <div data-testid="openwrt.system" />),
 }));
 
 vi.mock("./methods/interface", () => ({ default: Interface }));

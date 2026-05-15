@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { widgetsResponse } = vi.hoisted(() => ({
-  widgetsResponse: vi.fn(),
+  widgetsResponse: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/config/api-response", () => ({

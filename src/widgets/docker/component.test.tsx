@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn<VitestMockProcedure>() }));
 
 vi.mock("utils/query/api-query", () => ({
   useApiQuery: useApiQueryMock,

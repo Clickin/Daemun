@@ -3,15 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { httpProxy, getServiceWidget, cookieJar, logger } = vi.hoisted(() => ({
-  httpProxy: vi.fn(),
-  getServiceWidget: vi.fn(),
+  httpProxy: vi.fn<VitestMockProcedure>(),
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
   cookieJar: {
-    addCookieToJar: vi.fn(),
-    setCookieHeader: vi.fn(),
+    addCookieToJar: vi.fn<VitestMockProcedure>(),
+    setCookieHeader: vi.fn<VitestMockProcedure>(),
   },
   logger: {
-    debug: vi.fn(),
-    error: vi.fn(),
+    debug: vi.fn<VitestMockProcedure>(),
+    error: vi.fn<VitestMockProcedure>(),
   },
 }));
 

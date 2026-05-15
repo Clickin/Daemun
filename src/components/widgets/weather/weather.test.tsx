@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn<VitestMockProcedure>() }));
 vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 vi.mock("react-icons/md", () => ({
@@ -42,8 +42,8 @@ describe("components/widgets/weather", () => {
   });
 
   it("auto-requests geolocation when permissions are granted", async () => {
-    const getCurrentPosition = vi.fn((success) => success({ coords: { latitude: 30, longitude: 40 } }));
-    const query = vi.fn().mockResolvedValue({ state: "granted" });
+    const getCurrentPosition = vi.fn<VitestMockProcedure>((success) => success({ coords: { latitude: 30, longitude: 40 } }));
+    const query = vi.fn<VitestMockProcedure>().mockResolvedValue({ state: "granted" });
     vi.stubGlobal("navigator", {
       permissions: { query },
       geolocation: { getCurrentPosition },
@@ -60,9 +60,9 @@ describe("components/widgets/weather", () => {
   });
 
   it("requests browser geolocation on click and then renders the updating state", async () => {
-    const getCurrentPosition = vi.fn((success) => success({ coords: { latitude: 10, longitude: 20 } }));
+    const getCurrentPosition = vi.fn<VitestMockProcedure>((success) => success({ coords: { latitude: 10, longitude: 20 } }));
     vi.stubGlobal("navigator", {
-      permissions: { query: vi.fn().mockResolvedValue({ state: "prompt" }) },
+      permissions: { query: vi.fn<VitestMockProcedure>().mockResolvedValue({ state: "prompt" }) },
       geolocation: { getCurrentPosition },
     });
 
@@ -79,9 +79,9 @@ describe("components/widgets/weather", () => {
   });
 
   it("clears the requesting state when the browser denies geolocation", async () => {
-    const getCurrentPosition = vi.fn((_success, failure) => setTimeout(() => failure(), 10));
+    const getCurrentPosition = vi.fn<VitestMockProcedure>((_success, failure) => setTimeout(() => failure(), 10));
     vi.stubGlobal("navigator", {
-      permissions: { query: vi.fn().mockResolvedValue({ state: "prompt" }) },
+      permissions: { query: vi.fn<VitestMockProcedure>().mockResolvedValue({ state: "prompt" }) },
       geolocation: { getCurrentPosition },
     });
 

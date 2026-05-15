@@ -44,7 +44,7 @@ import ColorToggle from "./color";
 describe("components/toggles/color", () => {
   it("renders nothing when no active color is set", () => {
     const { container } = render(
-      <ColorContext.Provider value={{ color: null, setColor: vi.fn() }}>
+      <ColorContext.Provider value={{ color: null, setColor: vi.fn<VitestMockProcedure>() }}>
         <ColorToggle />
       </ColorContext.Provider>,
     );
@@ -52,7 +52,7 @@ describe("components/toggles/color", () => {
   });
 
   it("invokes setColor when a color button is clicked", () => {
-    const setColor = vi.fn();
+    const setColor = vi.fn<VitestMockProcedure>();
     render(
       <ColorContext.Provider value={{ color: "slate", setColor }}>
         <ColorToggle />
@@ -67,7 +67,7 @@ describe("components/toggles/color", () => {
 
   it("renders palette swatches with each swatch's own theme variables", () => {
     render(
-      <ColorContext.Provider value={{ color: "slate", setColor: vi.fn() }}>
+      <ColorContext.Provider value={{ color: "slate", setColor: vi.fn<VitestMockProcedure>() }}>
         <ColorToggle />
       </ColorContext.Provider>,
     );

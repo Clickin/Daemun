@@ -14,24 +14,24 @@ const { state, cache, logger, dns, net, cookieJar } = vi.hoisted(() => ({
     lastWrittenBody: null,
   },
   cache: {
-    get: vi.fn(),
-    put: vi.fn(),
+    get: vi.fn<VitestMockProcedure>(),
+    put: vi.fn<VitestMockProcedure>(),
   },
   logger: {
-    debug: vi.fn(),
-    error: vi.fn(),
+    debug: vi.fn<VitestMockProcedure>(),
+    error: vi.fn<VitestMockProcedure>(),
   },
   dns: {
-    lookup: vi.fn(),
-    resolve4: vi.fn(),
-    resolve6: vi.fn(),
+    lookup: vi.fn<VitestMockProcedure>(),
+    resolve4: vi.fn<VitestMockProcedure>(),
+    resolve6: vi.fn<VitestMockProcedure>(),
   },
   net: {
-    isIP: vi.fn(),
+    isIP: vi.fn<VitestMockProcedure>(),
   },
   cookieJar: {
-    addCookieToJar: vi.fn(),
-    setCookieHeader: vi.fn(),
+    addCookieToJar: vi.fn<VitestMockProcedure>(),
+    setCookieHeader: vi.fn<VitestMockProcedure>(),
   },
 }));
 
@@ -64,10 +64,10 @@ vi.mock("follow-redirects", async () => {
       const req = new EventEmitter() as MockRequest;
       state.lastRequestParams = params;
       state.lastWrittenBody = null;
-      req.write = vi.fn((chunk) => {
+      req.write = vi.fn<VitestMockProcedure>((chunk) => {
         state.lastWrittenBody = chunk;
       });
-      req.end = vi.fn(() => {
+      req.end = vi.fn<VitestMockProcedure>(() => {
         state.lastAgent = params?.agent ?? null;
         state.lastAgentOptions = params?.agent?.opts ?? null;
         if (state.error) {
@@ -182,7 +182,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
   it("short-circuits when hostname is already an IP (all=false)", async () => {
     const lookup = await getLookupFn();
     net.isIP.mockReturnValueOnce(4);
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
 
     lookup("1.2.3.4", cb);
 
@@ -193,7 +193,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
   it("short-circuits when hostname is already an IP (all=true)", async () => {
     const lookup = await getLookupFn();
     net.isIP.mockReturnValueOnce(6);
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
 
     lookup("::1", { all: true }, cb);
 
@@ -203,7 +203,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("uses dns.lookup when it succeeds (2-argument form)", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
 
     dns.lookup.mockImplementationOnce((hostname, options, lookupCb) => lookupCb(null, "10.0.0.1", 4));
     lookup("example.com", cb);
@@ -216,7 +216,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("does not fall back for non-ENOTFOUND/EAI_NONAME lookup errors", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     const err = Object.assign(new Error("temporary"), { code: "EAI_AGAIN" });
     dns.lookup.mockImplementationOnce((hostname, options, lookupCb) => lookupCb(err));
 
@@ -229,7 +229,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("falls back to resolve4 when lookup fails with ENOTFOUND and family=4", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     const lookupErr = Object.assign(new Error("not found"), { code: "ENOTFOUND" });
 
     dns.lookup.mockImplementationOnce((hostname, options, lookupCb) => lookupCb(lookupErr));
@@ -245,7 +245,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("falls back to resolve6 when lookup fails with ENOTFOUND and family=6", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     const lookupErr = Object.assign(new Error("not found"), { code: "ENOTFOUND" });
 
     dns.lookup.mockImplementationOnce((hostname, options, lookupCb) => lookupCb(lookupErr));
@@ -261,7 +261,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("tries resolve4 then resolve6 when lookup fails and no family is specified", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     const lookupErr = Object.assign(new Error("not found"), { code: "ENOTFOUND" });
 
     dns.lookup.mockImplementationOnce((hostname, options, lookupCb) => lookupCb(lookupErr));
@@ -279,7 +279,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("returns ENOTFOUND when fallback resolver returns no addresses", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     const lookupErr = Object.assign(new Error("not found"), { code: "ENOTFOUND" });
 
     dns.lookup.mockImplementationOnce((hostname, options, lookupCb) => lookupCb(lookupErr));
@@ -295,7 +295,7 @@ describe("utils/proxy/http daemunDNSLookupFn", () => {
 
   it("returns resolve error when fallback resolver fails", async () => {
     const lookup = await getLookupFn();
-    const cb = vi.fn();
+    const cb = vi.fn<VitestMockProcedure>();
     const lookupErr = Object.assign(new Error("not found"), { code: "ENOTFOUND" });
     const resolveErr = Object.assign(new Error("resolver down"), { code: "EAI_FAIL" });
 

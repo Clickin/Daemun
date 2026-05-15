@@ -20,7 +20,7 @@ describe("widgets/uptimerobot/component", () => {
   });
 
   it("renders placeholders initially and then renders multi-monitor counts", async () => {
-    const fetchMock: typeof fetch = vi.fn(async () => ({
+    const fetchMock: typeof fetch = vi.fn<VitestMockProcedure>(async () => ({
       json: async () => ({
         pagination: { total: 3 },
         monitors: [{ status: 2 }, { status: 9 }, { status: 2 }],

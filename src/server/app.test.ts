@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { loadHomePageProps } = vi.hoisted(() => ({
-  loadHomePageProps: vi.fn(async () => ({
+  loadHomePageProps: vi.fn<VitestMockProcedure>(async () => ({
     fallback: {
       "/api/bookmarks": [],
       "/api/hash": false,

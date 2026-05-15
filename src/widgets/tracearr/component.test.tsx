@@ -17,7 +17,7 @@ vi.mock("react-icons/md", () => ({
   MdSmartDisplay: (props) => <svg data-testid="MdSmartDisplay" {...props} />,
 }));
 
-const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
 
 import Component from "./component";

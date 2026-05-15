@@ -3,14 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { httpProxy, getServiceWidget, tools, logger } = vi.hoisted(() => ({
-  httpProxy: vi.fn(),
-  getServiceWidget: vi.fn(),
+  httpProxy: vi.fn<VitestMockProcedure>(),
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
   tools: {
-    uniqueRid: vi.fn(() => 123),
-    sha256: vi.fn(() => "secret"),
-    validateRid: vi.fn(() => true),
-    createEncryptionToken: vi.fn(() => "enc-token"),
-    decrypt: vi.fn((cipherText) => {
+    uniqueRid: vi.fn<VitestMockProcedure>(() => 123),
+    sha256: vi.fn<VitestMockProcedure>(() => "secret"),
+    validateRid: vi.fn<VitestMockProcedure>(() => true),
+    createEncryptionToken: vi.fn<VitestMockProcedure>(() => "enc-token"),
+    decrypt: vi.fn<VitestMockProcedure>((cipherText) => {
       if (cipherText === "connect") {
         return JSON.stringify({ rid: 123, sessiontoken: "sess" });
       }
@@ -27,9 +27,9 @@ const { httpProxy, getServiceWidget, tools, logger } = vi.hoisted(() => ({
       }
       return JSON.stringify({});
     }),
-    encrypt: vi.fn(() => "encrypted-body"),
+    encrypt: vi.fn<VitestMockProcedure>(() => "encrypted-body"),
   },
-  logger: { debug: vi.fn(), error: vi.fn() },
+  logger: { debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("./tools", () => tools);

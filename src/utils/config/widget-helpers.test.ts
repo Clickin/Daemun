@@ -2,15 +2,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { fs, yaml, config } = vi.hoisted(() => ({
   fs: {
-    readFile: vi.fn(),
+    readFile: vi.fn<VitestMockProcedure>(),
   },
   yaml: {
-    load: vi.fn(),
+    load: vi.fn<VitestMockProcedure>(),
   },
   config: {
     CONF_DIR: "/conf",
-    substituteEnvironmentVars: vi.fn((s) => s),
-    default: vi.fn(),
+    substituteEnvironmentVars: vi.fn<VitestMockProcedure>((s) => s),
+    default: vi.fn<VitestMockProcedure>(),
   },
 }));
 

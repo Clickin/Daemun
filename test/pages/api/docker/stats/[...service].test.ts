@@ -15,8 +15,8 @@ const { state, DockerCtor, getDockerArguments, logger } = vi.hoisted(() => {
   return {
     state,
     DockerCtor,
-    getDockerArguments: vi.fn(() => state.dockerArgs),
-    logger: { error: vi.fn() },
+    getDockerArguments: vi.fn<VitestMockProcedure>(() => state.dockerArgs),
+    logger: { error: vi.fn<VitestMockProcedure>() },
   };
 });
 
@@ -39,9 +39,9 @@ describe("pages/api/docker/stats/[...service]", () => {
     vi.clearAllMocks();
     state.dockerArgs = { conn: { socketPath: "/var/run/docker.sock" }, swarm: false };
     state.docker = {
-      listContainers: vi.fn(),
-      getContainer: vi.fn(),
-      listTasks: vi.fn(),
+      listContainers: vi.fn<VitestMockProcedure>(),
+      getContainer: vi.fn<VitestMockProcedure>(),
+      listTasks: vi.fn<VitestMockProcedure>(),
     };
   });
 
@@ -71,7 +71,7 @@ describe("pages/api/docker/stats/[...service]", () => {
     state.docker.listContainers.mockResolvedValue([{ Names: ["/myapp"], Id: "cid1" }]);
     const containerStats = { cpu_stats: { cpu_usage: { total_usage: 1 } } };
     state.docker.getContainer.mockReturnValue({
-      stats: vi.fn().mockResolvedValue(containerStats),
+      stats: vi.fn<VitestMockProcedure>().mockResolvedValue(containerStats),
     });
 
     const req = { query: { service: ["myapp", "local"] } };
@@ -91,7 +91,7 @@ describe("pages/api/docker/stats/[...service]", () => {
       { Status: { ContainerStatus: { ContainerID: "remote1" } } },
     ]);
     state.docker.getContainer.mockReturnValue({
-      stats: vi.fn().mockRejectedValue(new Error("nope")),
+      stats: vi.fn<VitestMockProcedure>().mockRejectedValue(new Error("nope")),
     });
 
     const req = { query: { service: ["svc", "local"] } };
@@ -110,7 +110,7 @@ describe("pages/api/docker/stats/[...service]", () => {
 
     const containerStats = { cpu_stats: { cpu_usage: { total_usage: 2 } } };
     state.docker.getContainer.mockReturnValue({
-      stats: vi.fn().mockResolvedValue(containerStats),
+      stats: vi.fn<VitestMockProcedure>().mockResolvedValue(containerStats),
     });
 
     const req = { query: { service: ["svc", "local"] } };

@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const { dynamic } = vi.hoisted(() => {
-  const dynamic = vi.fn((loader, opts) => {
+  const dynamic = vi.fn<VitestMockProcedure>((loader, opts) => {
     const loaderStr = loader.toString();
     const ssr = opts?.ssr === false ? "false" : "true";
 

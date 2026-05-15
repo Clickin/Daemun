@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { httpProxy, getServiceWidget, validateWidgetData, logger } = vi.hoisted(() => ({
-  httpProxy: vi.fn(),
-  getServiceWidget: vi.fn(),
-  validateWidgetData: vi.fn(() => true),
-  logger: { debug: vi.fn(), error: vi.fn() },
+  httpProxy: vi.fn<VitestMockProcedure>(),
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
+  validateWidgetData: vi.fn<VitestMockProcedure>(() => true),
+  logger: { debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("utils/logger", () => ({

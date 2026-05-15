@@ -4,14 +4,14 @@ import createMockRes from "test-utils/create-mock-res";
 
 const { fs, config, logger } = vi.hoisted(() => ({
   fs: {
-    existsSync: vi.fn(),
-    readFileSync: vi.fn(),
+    existsSync: vi.fn<VitestMockProcedure>(),
+    readFileSync: vi.fn<VitestMockProcedure>(),
   },
   config: {
     CONF_DIR: "/conf",
   },
   logger: {
-    error: vi.fn(),
+    error: vi.fn<VitestMockProcedure>(),
   },
 }));
 

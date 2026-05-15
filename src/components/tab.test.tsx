@@ -14,7 +14,7 @@ describe("components/tab", () => {
   });
 
   it("marks the matching tab as selected and updates hash on click", () => {
-    const setActiveTab = vi.fn();
+    const setActiveTab = vi.fn<VitestMockProcedure>();
 
     render(
       <TabContext.Provider value={{ activeTab: "my-tab", setActiveTab }}>

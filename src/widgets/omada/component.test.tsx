@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "test-utils/render-with-providers";
 
 const { useWidgetAPI } = vi.hoisted(() => ({
-  useWidgetAPI: vi.fn(),
+  useWidgetAPI: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("../../utils/proxy/use-widget-api", () => ({

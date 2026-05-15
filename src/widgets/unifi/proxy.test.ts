@@ -5,20 +5,20 @@ import createMockRes from "test-utils/create-mock-res";
 const { httpProxy, getServiceWidget, getPrivateWidgetOptions, cache, cookieJar, logger } = vi.hoisted(() => {
   const store = new Map();
   return {
-    httpProxy: vi.fn(),
-    getServiceWidget: vi.fn(),
-    getPrivateWidgetOptions: vi.fn(),
+    httpProxy: vi.fn<VitestMockProcedure>(),
+    getServiceWidget: vi.fn<VitestMockProcedure>(),
+    getPrivateWidgetOptions: vi.fn<VitestMockProcedure>(),
     cache: {
-      get: vi.fn((k) => (store.has(k) ? store.get(k) : null)),
-      put: vi.fn((k, v) => store.set(k, v)),
-      del: vi.fn((k) => store.delete(k)),
+      get: vi.fn<VitestMockProcedure>((k) => (store.has(k) ? store.get(k) : null)),
+      put: vi.fn<VitestMockProcedure>((k, v) => store.set(k, v)),
+      del: vi.fn<VitestMockProcedure>((k) => store.delete(k)),
       _reset: () => store.clear(),
     },
     cookieJar: {
-      addCookieToJar: vi.fn(),
-      setCookieHeader: vi.fn(),
+      addCookieToJar: vi.fn<VitestMockProcedure>(),
+      setCookieHeader: vi.fn<VitestMockProcedure>(),
     },
-    logger: { debug: vi.fn(), error: vi.fn() },
+    logger: { debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>() },
   };
 });
 

@@ -10,15 +10,15 @@ const { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi } = vi.hois
     kubeConfig: null,
     kubeServices: [],
     logger: {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: vi.fn<VitestMockProcedure>(),
+      info: vi.fn<VitestMockProcedure>(),
+      warn: vi.fn<VitestMockProcedure>(),
+      error: vi.fn<VitestMockProcedure>(),
     },
   };
 
   const fs = {
-    readFile: vi.fn(async (filePath) => {
+    readFile: vi.fn<VitestMockProcedure>(async (filePath) => {
       if (String(filePath).match(/[\\/]services\.yaml$/)) return "services";
       if (String(filePath).match(/[\\/]docker\.yaml$/)) return "docker";
       return "";
@@ -26,7 +26,7 @@ const { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi } = vi.hois
   };
 
   const yaml = {
-    load: vi.fn((contents) => {
+    load: vi.fn<VitestMockProcedure>((contents) => {
       if (contents === "services") return state.servicesYaml;
       if (contents === "docker") return state.dockerYaml;
       return null;
@@ -35,30 +35,30 @@ const { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi } = vi.hois
 
   const config = {
     CONF_DIR: "/conf",
-    getSettings: vi.fn(() => ({ instanceName: undefined })),
-    substituteEnvironmentVars: vi.fn((s) => s),
-    default: vi.fn(),
+    getSettings: vi.fn<VitestMockProcedure>(() => ({ instanceName: undefined })),
+    substituteEnvironmentVars: vi.fn<VitestMockProcedure>((s) => s),
+    default: vi.fn<VitestMockProcedure>(),
   };
 
-  const Docker = vi.fn((conn) => ({
-    listContainers: vi.fn(async () => state.dockerContainersByServer[conn?.serverName] ?? state.dockerContainers),
-    listServices: vi.fn(async () => state.dockerServicesByServer[conn?.serverName] ?? state.dockerContainers),
+  const Docker = vi.fn<VitestMockProcedure>((conn) => ({
+    listContainers: vi.fn<VitestMockProcedure>(async () => state.dockerContainersByServer[conn?.serverName] ?? state.dockerContainers),
+    listServices: vi.fn<VitestMockProcedure>(async () => state.dockerServicesByServer[conn?.serverName] ?? state.dockerContainers),
   }));
 
   const dockerCfg = {
-    default: vi.fn((serverName) => ({ conn: { serverName }, swarm: Boolean(state.dockerYaml?.[serverName]?.swarm) })),
+    default: vi.fn<VitestMockProcedure>((serverName) => ({ conn: { serverName }, swarm: Boolean(state.dockerYaml?.[serverName]?.swarm) })),
   };
 
   const kubeCfg = {
-    getKubeConfig: vi.fn(() => state.kubeConfig),
+    getKubeConfig: vi.fn<VitestMockProcedure>(() => state.kubeConfig),
   };
 
   const kubeApi = {
-    listIngress: vi.fn(async () => []),
-    listTraefikIngress: vi.fn(async () => []),
-    listHttpRoute: vi.fn(async () => []),
-    isDiscoverable: vi.fn(() => true),
-    constructedServiceFromResource: vi.fn(async () => state.kubeServices.shift()),
+    listIngress: vi.fn<VitestMockProcedure>(async () => []),
+    listTraefikIngress: vi.fn<VitestMockProcedure>(async () => []),
+    listHttpRoute: vi.fn<VitestMockProcedure>(async () => []),
+    isDiscoverable: vi.fn<VitestMockProcedure>(() => true),
+    constructedServiceFromResource: vi.fn<VitestMockProcedure>(async () => state.kubeServices.shift()),
   };
 
   return { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi };
@@ -81,7 +81,7 @@ vi.mock("utils/kubernetes/export", () => ({ default: kubeApi }));
 
 vi.mock("utils/logger", () => ({
   // Keep a stable logger instance so tests don't depend on module re-imports.
-  default: vi.fn(() => state.logger),
+  default: vi.fn<VitestMockProcedure>(() => state.logger),
 }));
 
 describe("utils/config/service-helpers", () => {

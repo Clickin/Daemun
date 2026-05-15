@@ -9,21 +9,21 @@ const { state, getKubernetes, getKubeConfig, logger } = vi.hoisted(() => {
       b: [{ metadata: { name: "r2" } }],
     },
     crd: {
-      listNamespacedCustomObject: vi.fn(async ({ namespace }) => ({ items: state.routesByNs[namespace] ?? [] })),
+      listNamespacedCustomObject: vi.fn<VitestMockProcedure>(async ({ namespace }) => ({ items: state.routesByNs[namespace] ?? [] })),
     },
     core: {
-      listNamespace: vi.fn(async () => ({ items: state.namespaces.map((n) => ({ metadata: { name: n } })) })),
+      listNamespace: vi.fn<VitestMockProcedure>(async () => ({ items: state.namespaces.map((n) => ({ metadata: { name: n } })) })),
     },
     kc: {
-      makeApiClient: vi.fn((Api) => (Api.name === "CoreV1Api" ? state.core : state.crd)),
+      makeApiClient: vi.fn<VitestMockProcedure>((Api) => (Api.name === "CoreV1Api" ? state.core : state.crd)),
     },
   };
 
   return {
     state,
-    getKubernetes: vi.fn(() => ({ gateway: state.enabled })),
-    getKubeConfig: vi.fn(() => state.kc),
-    logger: { error: vi.fn(), debug: vi.fn() },
+    getKubernetes: vi.fn<VitestMockProcedure>(() => ({ gateway: state.enabled })),
+    getKubeConfig: vi.fn<VitestMockProcedure>(() => state.kc),
+    logger: { error: vi.fn<VitestMockProcedure>(), debug: vi.fn<VitestMockProcedure>() },
   };
 });
 

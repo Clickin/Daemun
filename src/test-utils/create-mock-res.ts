@@ -20,27 +20,27 @@ export default function createMockRes() {
     headers: {},
   } as MockResponse;
 
-  res.status = vi.fn((code) => {
+  res.status = vi.fn<VitestMockProcedure>((code) => {
     res.statusCode = code;
     return res;
   });
 
-  res.json = vi.fn((body) => {
+  res.json = vi.fn<VitestMockProcedure>((body) => {
     res.body = body;
     return res;
   });
 
-  res.send = vi.fn((body) => {
+  res.send = vi.fn<VitestMockProcedure>((body) => {
     res.body = body;
     return res;
   });
 
-  res.end = vi.fn((body) => {
+  res.end = vi.fn<VitestMockProcedure>((body) => {
     res.body = body;
     return res;
   });
 
-  res.setHeader = vi.fn((key, value) => {
+  res.setHeader = vi.fn<VitestMockProcedure>((key, value) => {
     res.headers[key] = value;
     return res;
   });

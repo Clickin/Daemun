@@ -8,8 +8,8 @@ function sha256(input) {
 }
 
 const { readFileSync, checkAndCopyConfig, CONF_DIR } = vi.hoisted(() => ({
-  readFileSync: vi.fn(),
-  checkAndCopyConfig: vi.fn(),
+  readFileSync: vi.fn<VitestMockProcedure>(),
+  checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
   CONF_DIR: "/conf",
 }));
 

@@ -4,17 +4,17 @@ const { state, getServiceWidget, calendarProxy } = vi.hoisted(() => ({
   state: {
     genericResult: { ok: true },
   },
-  getServiceWidget: vi.fn(),
-  calendarProxy: vi.fn(),
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
+  calendarProxy: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/logger", () => ({
-  default: () => ({ debug: vi.fn(), error: vi.fn() }),
+  default: () => ({ debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>() }),
 }));
 
 vi.mock("utils/config/service-helpers", () => ({ default: getServiceWidget }));
 
-const handlerFn = vi.hoisted(() => ({ handler: vi.fn() }));
+const handlerFn = vi.hoisted(() => ({ handler: vi.fn<VitestMockProcedure>() }));
 vi.mock("utils/proxy/handlers/generic", () => ({ default: handlerFn.handler }));
 
 // Calendar proxy is only used for an exception; keep it stubbed.
@@ -101,7 +101,7 @@ function createMockRes() {
       return res;
     },
     end: () => res,
-    setHeader: vi.fn(),
+    setHeader: vi.fn<VitestMockProcedure>(),
   };
   return res;
 }

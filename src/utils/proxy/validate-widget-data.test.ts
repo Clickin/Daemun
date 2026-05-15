@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { loggerError } = vi.hoisted(() => ({
-  loggerError: vi.fn(),
+  loggerError: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/logger", () => ({

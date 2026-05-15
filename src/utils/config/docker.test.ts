@@ -2,19 +2,19 @@ import { describe, expect, it, vi } from "vitest";
 
 const { fs, yaml, config, checkAndCopyConfig } = vi.hoisted(() => ({
   fs: {
-    readFileSync: vi.fn((filePath, encoding) => {
+    readFileSync: vi.fn<VitestMockProcedure>((filePath, encoding) => {
       if (String(filePath).endsWith("/docker.yaml") && encoding === "utf8") return "docker-yaml";
       return Buffer.from(String(filePath));
     }),
   },
   yaml: {
-    load: vi.fn(),
+    load: vi.fn<VitestMockProcedure>(),
   },
   config: {
     CONF_DIR: "/conf",
-    substituteEnvironmentVars: vi.fn((s) => s),
+    substituteEnvironmentVars: vi.fn<VitestMockProcedure>((s) => s),
   },
-  checkAndCopyConfig: vi.fn(),
+  checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("fs", () => ({

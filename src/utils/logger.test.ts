@@ -13,15 +13,15 @@ const { state, winston, checkAndCopyConfig, getSettings } = vi.hoisted(() => {
     this.opts = opts;
   }
 
-  const createLogger = vi.fn((args) => {
+  const createLogger = vi.fn<VitestMockProcedure>((args) => {
     state.lastCreateLoggerArgs = args;
 
     const base = {
-      child: vi.fn(() => base),
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      child: vi.fn<VitestMockProcedure>(() => base),
+      debug: vi.fn<VitestMockProcedure>(),
+      info: vi.fn<VitestMockProcedure>(),
+      warn: vi.fn<VitestMockProcedure>(),
+      error: vi.fn<VitestMockProcedure>(),
     };
     state.created.push(base);
     return base;
@@ -42,7 +42,7 @@ const { state, winston, checkAndCopyConfig, getSettings } = vi.hoisted(() => {
   return {
     state,
     winston,
-    checkAndCopyConfig: vi.fn(),
+    checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
     getSettings: vi.fn<() => { logpath?: string }>(() => ({ logpath: "/tmp" })),
   };
 });

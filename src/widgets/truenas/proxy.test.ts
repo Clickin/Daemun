@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { getServiceWidget, validateWidgetData, logger } = vi.hoisted(() => ({
-  getServiceWidget: vi.fn(),
-  validateWidgetData: vi.fn(() => true),
-  logger: { debug: vi.fn(), error: vi.fn(), warn: vi.fn() },
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
+  validateWidgetData: vi.fn<VitestMockProcedure>(() => true),
+  logger: { debug: vi.fn<VitestMockProcedure>(), error: vi.fn<VitestMockProcedure>(), warn: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("utils/logger", () => ({
@@ -18,7 +18,7 @@ vi.mock("utils/proxy/validate-widget-data", () => ({
   default: validateWidgetData,
 }));
 vi.mock("utils/proxy/handlers/credentialed", () => ({
-  default: vi.fn(),
+  default: vi.fn<VitestMockProcedure>(),
 }));
 vi.mock("widgets/widgets", () => ({
   default: {

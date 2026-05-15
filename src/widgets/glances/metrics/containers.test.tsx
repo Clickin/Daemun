@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
 
 // Avoid pulling Next/Image + ThemeContext requirements into these unit tests.

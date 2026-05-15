@@ -7,7 +7,7 @@ import { setStaticHomeCache } from "../../../src/server/static-home";
 
 describe("pages/api/revalidate", () => {
   it("returns the legacy success shape after triggering the static home refresh", async () => {
-    const refresh = vi.fn(async () => true);
+    const refresh = vi.fn<VitestMockProcedure>(async () => true);
     setStaticHomeCache({ refresh });
     const req = {};
     const res = createMockRes();

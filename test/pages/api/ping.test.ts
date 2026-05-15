@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { getServiceItem, ping, logger } = vi.hoisted(() => ({
-  getServiceItem: vi.fn(),
-  ping: { probe: vi.fn() },
-  logger: { debug: vi.fn() },
+  getServiceItem: vi.fn<VitestMockProcedure>(),
+  ping: { probe: vi.fn<VitestMockProcedure>() },
+  logger: { debug: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("utils/config/service-helpers", () => ({

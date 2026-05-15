@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { sendJsonRpcRequest, getServiceWidget, logger } = vi.hoisted(() => ({
-  sendJsonRpcRequest: vi.fn(),
-  getServiceWidget: vi.fn(),
+  sendJsonRpcRequest: vi.fn<VitestMockProcedure>(),
+  getServiceWidget: vi.fn<VitestMockProcedure>(),
   logger: {
-    debug: vi.fn(),
+    debug: vi.fn<VitestMockProcedure>(),
   },
 }));
 

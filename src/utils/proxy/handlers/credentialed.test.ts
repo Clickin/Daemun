@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { httpProxy } = vi.hoisted(() => ({ httpProxy: vi.fn() }));
-const { validateWidgetData } = vi.hoisted(() => ({ validateWidgetData: vi.fn(() => true) }));
-const { getServiceWidget } = vi.hoisted(() => ({ getServiceWidget: vi.fn() }));
+const { httpProxy } = vi.hoisted(() => ({ httpProxy: vi.fn<VitestMockProcedure>() }));
+const { validateWidgetData } = vi.hoisted(() => ({ validateWidgetData: vi.fn<VitestMockProcedure>(() => true) }));
+const { getServiceWidget } = vi.hoisted(() => ({ getServiceWidget: vi.fn<VitestMockProcedure>() }));
 const { getSettings } = vi.hoisted(() => ({
-  getSettings: vi.fn(() => ({ providers: { finnhub: "finnhub-token" } })),
+  getSettings: vi.fn<VitestMockProcedure>(() => ({ providers: { finnhub: "finnhub-token" } })),
 }));
 
 vi.mock("utils/logger", () => ({
   default: () => ({
-    debug: vi.fn(),
-    error: vi.fn(),
+    debug: vi.fn<VitestMockProcedure>(),
+    error: vi.fn<VitestMockProcedure>(),
   }),
 }));
 

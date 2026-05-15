@@ -7,7 +7,7 @@ import { Hono } from "hono";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { loadHomePageProps } = vi.hoisted(() => ({
-  loadHomePageProps: vi.fn(async () => ({
+  loadHomePageProps: vi.fn<VitestMockProcedure>(async () => ({
     fallback: {
       "/api/bookmarks": [
         {
@@ -38,8 +38,8 @@ vi.mock("./home-props", () => ({
 }));
 
 vi.mock("utils/i18n", () => ({
-  default: { changeLanguage: vi.fn(), language: "en" },
-  loadLanguage: vi.fn(async (language) => language),
+  default: { changeLanguage: vi.fn<VitestMockProcedure>(), language: "en" },
+  loadLanguage: vi.fn<VitestMockProcedure>(async (language) => language),
 }));
 
 describe("static home SSG cache", () => {
@@ -79,7 +79,7 @@ describe("static home SSG cache", () => {
     const cache = new StaticHomeCache({
       dir: tempDir,
       enabled: true,
-      logger: { info: vi.fn(), warn: vi.fn() },
+      logger: { info: vi.fn<VitestMockProcedure>(), warn: vi.fn<VitestMockProcedure>() },
       watch: false,
     });
     await cache.refresh("test");

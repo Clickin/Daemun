@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 
 const { listIngress, listTraefikIngress, listHttpRoute, isDiscoverable, constructedServiceFromResource } = vi.hoisted(
   () => ({
-    listIngress: vi.fn(),
-    listTraefikIngress: vi.fn(),
-    listHttpRoute: vi.fn(),
-    isDiscoverable: vi.fn(),
-    constructedServiceFromResource: vi.fn(),
+    listIngress: vi.fn<VitestMockProcedure>(),
+    listTraefikIngress: vi.fn<VitestMockProcedure>(),
+    listHttpRoute: vi.fn<VitestMockProcedure>(),
+    isDiscoverable: vi.fn<VitestMockProcedure>(),
+    constructedServiceFromResource: vi.fn<VitestMockProcedure>(),
   }),
 );
 

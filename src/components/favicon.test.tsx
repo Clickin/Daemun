@@ -13,7 +13,7 @@ describe("components/favicon", () => {
   });
 
   it("appends a shortcut icon link after rendering the SVG to canvas", async () => {
-    const drawImage = vi.fn();
+    const drawImage = vi.fn<VitestMockProcedure>();
     const getContextSpy = vi
       .spyOn(HTMLCanvasElement.prototype, "getContext")
       .mockReturnValue({ drawImage } as unknown as CanvasRenderingContext2D);
@@ -22,7 +22,7 @@ describe("components/favicon", () => {
       .mockReturnValue("data:image/x-icon;base64,AAA");
 
     const { container } = render(
-      <ColorContext.Provider value={{ color: "slate", setColor: vi.fn() }}>
+      <ColorContext.Provider value={{ color: "slate", setColor: vi.fn<VitestMockProcedure>() }}>
         <Favicon />
       </ColorContext.Provider>,
     );
@@ -58,7 +58,7 @@ describe("components/favicon", () => {
     const { default: FaviconWithMissingRefs } = await import("./favicon");
 
     const { container } = render(
-      <TestColorContext.Provider value={{ color: "slate", setColor: vi.fn() }}>
+      <TestColorContext.Provider value={{ color: "slate", setColor: vi.fn<VitestMockProcedure>() }}>
         <FaviconWithMissingRefs />
       </TestColorContext.Provider>,
     );

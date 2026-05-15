@@ -10,7 +10,7 @@ import ThemeToggle from "./theme";
 describe("components/toggles/theme", () => {
   it("renders nothing when theme is missing", () => {
     const { container } = render(
-      <ThemeContext.Provider value={{ theme: null, setTheme: vi.fn() }}>
+      <ThemeContext.Provider value={{ theme: null, setTheme: vi.fn<VitestMockProcedure>() }}>
         <ThemeToggle />
       </ThemeContext.Provider>,
     );
@@ -18,7 +18,7 @@ describe("components/toggles/theme", () => {
   });
 
   it("toggles from dark to light when clicked", () => {
-    const setTheme = vi.fn();
+    const setTheme = vi.fn<VitestMockProcedure>();
     render(
       <ThemeContext.Provider value={{ theme: "dark", setTheme }}>
         <ThemeToggle />
@@ -32,7 +32,7 @@ describe("components/toggles/theme", () => {
   });
 
   it("toggles from light to dark when clicked", () => {
-    const setTheme = vi.fn();
+    const setTheme = vi.fn<VitestMockProcedure>();
     render(
       <ThemeContext.Provider value={{ theme: "light", setTheme }}>
         <ThemeToggle />

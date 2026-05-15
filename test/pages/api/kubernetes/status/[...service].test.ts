@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { getKubeConfig, coreApi, logger } = vi.hoisted(() => ({
-  getKubeConfig: vi.fn(),
-  coreApi: { listNamespacedPod: vi.fn() },
-  logger: { error: vi.fn() },
+  getKubeConfig: vi.fn<VitestMockProcedure>(),
+  coreApi: { listNamespacedPod: vi.fn<VitestMockProcedure>() },
+  logger: { error: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("utils/logger", () => ({

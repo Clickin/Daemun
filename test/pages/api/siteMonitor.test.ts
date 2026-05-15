@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { getServiceItem, httpProxy, perf, logger } = vi.hoisted(() => ({
-  getServiceItem: vi.fn(),
-  httpProxy: vi.fn(),
-  perf: { now: vi.fn() },
-  logger: { debug: vi.fn() },
+  getServiceItem: vi.fn<VitestMockProcedure>(),
+  httpProxy: vi.fn<VitestMockProcedure>(),
+  perf: { now: vi.fn<VitestMockProcedure>() },
+  logger: { debug: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("perf_hooks", () => ({

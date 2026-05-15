@@ -6,12 +6,12 @@ import { describe, expect, it, vi } from "vitest";
 import { createCalendarDate, createCurrentCalendarDate, startOfCalendarDay } from "./date";
 
 const { EventStub, compareDateTimezoneStub } = vi.hoisted(() => ({
-  EventStub: vi.fn(({ event, showDate, showTime }) => (
+  EventStub: vi.fn<VitestMockProcedure>(({ event, showDate, showTime }) => (
     <div data-testid="event" data-showdate={showDate ? "1" : "0"} data-showtime={showTime ? "1" : "0"}>
       {event.title}
     </div>
   )),
-  compareDateTimezoneStub: vi.fn((date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD")),
+  compareDateTimezoneStub: vi.fn<VitestMockProcedure>((date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD")),
 }));
 
 vi.mock("./event", () => ({

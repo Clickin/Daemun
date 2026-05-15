@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { cachedRequest } = vi.hoisted(() => ({
-  cachedRequest: vi.fn(),
+  cachedRequest: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/proxy/http", () => ({

@@ -7,7 +7,7 @@ import Revalidate from "./revalidate";
 
 describe("components/toggles/revalidate", () => {
   it("calls /api/revalidate and reloads when ok", async () => {
-    const reload = vi.fn();
+    const reload = vi.fn<VitestMockProcedure>();
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 200 }));
     vi.stubGlobal("location", { reload });
 

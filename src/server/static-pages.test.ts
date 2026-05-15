@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import themes from "utils/styles/themes";
 
 const { checkAndCopyConfig, getSettings } = vi.hoisted(() => ({
-  checkAndCopyConfig: vi.fn(),
-  getSettings: vi.fn(),
+  checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
+  getSettings: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("utils/config/config", () => ({

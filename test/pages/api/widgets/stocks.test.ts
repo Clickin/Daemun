@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import createMockRes from "test-utils/create-mock-res";
 
 const { getSettings, cachedRequest, logger } = vi.hoisted(() => ({
-  getSettings: vi.fn(),
-  cachedRequest: vi.fn(),
-  logger: { debug: vi.fn() },
+  getSettings: vi.fn<VitestMockProcedure>(),
+  cachedRequest: vi.fn<VitestMockProcedure>(),
+  logger: { debug: vi.fn<VitestMockProcedure>() },
 }));
 
 vi.mock("utils/config/config", () => ({

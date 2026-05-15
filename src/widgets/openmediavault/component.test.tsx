@@ -4,9 +4,9 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const { ServicesGetStatus, SmartGetList, DownloaderGetDownloadList } = vi.hoisted(() => ({
-  ServicesGetStatus: vi.fn(() => <div data-testid="services.getStatus" />),
-  SmartGetList: vi.fn(() => <div data-testid="smart.getListBg" />),
-  DownloaderGetDownloadList: vi.fn(() => <div data-testid="downloader.getDownloadList" />),
+  ServicesGetStatus: vi.fn<VitestMockProcedure>(() => <div data-testid="services.getStatus" />),
+  SmartGetList: vi.fn<VitestMockProcedure>(() => <div data-testid="smart.getListBg" />),
+  DownloaderGetDownloadList: vi.fn<VitestMockProcedure>(() => <div data-testid="downloader.getDownloadList" />),
 }));
 
 vi.mock("./methods/services_get_status", () => ({ default: ServicesGetStatus }));

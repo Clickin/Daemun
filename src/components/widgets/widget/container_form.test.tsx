@@ -7,7 +7,7 @@ import ContainerForm from "./container_form";
 
 describe("components/widgets/widget/container_form", () => {
   it("calls callback on submit", () => {
-    const cb = vi.fn((e) => e.preventDefault());
+    const cb = vi.fn<VitestMockProcedure>((e) => e.preventDefault());
 
     const { container } = render(
       <ContainerForm options={{}} callback={cb}>

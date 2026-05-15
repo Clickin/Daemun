@@ -5,14 +5,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { cache, cv, useApiQueryMock } = vi.hoisted(() => ({
   cache: {
-    get: vi.fn(),
-    put: vi.fn(),
+    get: vi.fn<VitestMockProcedure>(),
+    put: vi.fn<VitestMockProcedure>(),
   },
   cv: {
-    validate: vi.fn(),
-    compareVersions: vi.fn(),
+    validate: vi.fn<VitestMockProcedure>(),
+    compareVersions: vi.fn<VitestMockProcedure>(),
   },
-  useApiQueryMock: vi.fn(),
+  useApiQueryMock: vi.fn<VitestMockProcedure>(),
 }));
 
 vi.mock("memory-cache", () => ({

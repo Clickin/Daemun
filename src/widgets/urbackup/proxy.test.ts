@@ -5,11 +5,11 @@ import createMockRes from "test-utils/create-mock-res";
 const { UrbackupServer, state, getServiceWidget } = vi.hoisted(() => {
   const state = { instances: [] };
 
-  const UrbackupServer = vi.fn((opts) => {
+  const UrbackupServer = vi.fn<VitestMockProcedure>((opts) => {
     const instance = {
       opts,
-      getStatus: vi.fn(),
-      getUsage: vi.fn(),
+      getStatus: vi.fn<VitestMockProcedure>(),
+      getUsage: vi.fn<VitestMockProcedure>(),
     };
     state.instances.push(instance);
     return instance;
@@ -18,7 +18,7 @@ const { UrbackupServer, state, getServiceWidget } = vi.hoisted(() => {
   return {
     UrbackupServer,
     state,
-    getServiceWidget: vi.fn(),
+    getServiceWidget: vi.fn<VitestMockProcedure>(),
   };
 });
 
@@ -49,8 +49,8 @@ describe("widgets/urbackup/proxy", () => {
     UrbackupServer.mockImplementationOnce((opts) => {
       const instance = {
         opts,
-        getStatus: vi.fn().mockResolvedValue([{ id: 1 }]),
-        getUsage: vi.fn(),
+        getStatus: vi.fn<VitestMockProcedure>().mockResolvedValue([{ id: 1 }]),
+        getUsage: vi.fn<VitestMockProcedure>(),
       };
       state.instances.push(instance);
       return instance;
@@ -79,8 +79,8 @@ describe("widgets/urbackup/proxy", () => {
     UrbackupServer.mockImplementationOnce((opts) => {
       const instance = {
         opts,
-        getStatus: vi.fn().mockResolvedValue([{ id: 1 }]),
-        getUsage: vi.fn().mockResolvedValue({ totalUsed: 123 }),
+        getStatus: vi.fn<VitestMockProcedure>().mockResolvedValue([{ id: 1 }]),
+        getUsage: vi.fn<VitestMockProcedure>().mockResolvedValue({ totalUsed: 123 }),
       };
       state.instances.push(instance);
       return instance;
@@ -102,8 +102,8 @@ describe("widgets/urbackup/proxy", () => {
     UrbackupServer.mockImplementationOnce((opts) => {
       const instance = {
         opts,
-        getStatus: vi.fn().mockRejectedValue(new Error("nope")),
-        getUsage: vi.fn(),
+        getStatus: vi.fn<VitestMockProcedure>().mockRejectedValue(new Error("nope")),
+        getUsage: vi.fn<VitestMockProcedure>(),
       };
       state.instances.push(instance);
       return instance;

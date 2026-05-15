@@ -14,8 +14,8 @@ import {
 } from "./date";
 
 const { EventStub, compareDateTimezoneStub } = vi.hoisted(() => ({
-  EventStub: vi.fn(({ event }) => <div data-testid="event">{event.title}</div>),
-  compareDateTimezoneStub: vi.fn((date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD")),
+  EventStub: vi.fn<VitestMockProcedure>(({ event }) => <div data-testid="event">{event.title}</div>),
+  compareDateTimezoneStub: vi.fn<VitestMockProcedure>((date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD")),
 }));
 
 vi.mock("./event", () => ({
@@ -41,7 +41,7 @@ describe("widgets/calendar/monthly", () => {
   });
 
   it("navigates months and renders day events", () => {
-    const setShowDate = vi.fn();
+    const setShowDate = vi.fn<VitestMockProcedure>();
     const showDate = startOfCalendarDay(createCalendarDate(2099, 2, 15));
     const currentDate = startOfCalendarDay(createCalendarDate(2099, 2, 4));
     const service = { widget: { maxEvents: 10, showTime: false } };

@@ -6,17 +6,17 @@ const { httpProxy, getServiceWidget, cache, logger } = vi.hoisted(() => {
   const store = new Map();
 
   return {
-    httpProxy: vi.fn(),
-    getServiceWidget: vi.fn(),
+    httpProxy: vi.fn<VitestMockProcedure>(),
+    getServiceWidget: vi.fn<VitestMockProcedure>(),
     cache: {
-      get: vi.fn((k) => store.get(k)),
-      put: vi.fn((k, v) => store.set(k, v)),
-      del: vi.fn((k) => store.delete(k)),
+      get: vi.fn<VitestMockProcedure>((k) => store.get(k)),
+      put: vi.fn<VitestMockProcedure>((k, v) => store.set(k, v)),
+      del: vi.fn<VitestMockProcedure>((k) => store.delete(k)),
       _reset: () => store.clear(),
     },
     logger: {
-      error: vi.fn(),
-      info: vi.fn(),
+      error: vi.fn<VitestMockProcedure>(),
+      info: vi.fn<VitestMockProcedure>(),
     },
   };
 });

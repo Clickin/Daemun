@@ -6,23 +6,23 @@ const { state, getKubernetes, getKubeConfig, checkCRD, logger } = vi.hoisted(() 
     containoItems: [],
     ioItems: [],
     crd: {
-      listClusterCustomObject: vi.fn(async ({ group }) => {
+      listClusterCustomObject: vi.fn<VitestMockProcedure>(async ({ group }) => {
         if (group === "traefik.containo.us") return { items: state.containoItems };
         if (group === "traefik.io") return { items: state.ioItems };
         return { items: [] };
       }),
     },
     kc: {
-      makeApiClient: vi.fn(() => state.crd),
+      makeApiClient: vi.fn<VitestMockProcedure>(() => state.crd),
     },
   };
 
   return {
     state,
-    getKubernetes: vi.fn(() => ({ traefik: state.enabled })),
-    getKubeConfig: vi.fn(() => state.kc),
-    checkCRD: vi.fn(async () => true),
-    logger: { error: vi.fn(), debug: vi.fn() },
+    getKubernetes: vi.fn<VitestMockProcedure>(() => ({ traefik: state.enabled })),
+    getKubeConfig: vi.fn<VitestMockProcedure>(() => state.kc),
+    checkCRD: vi.fn<VitestMockProcedure>(async () => true),
+    logger: { error: vi.fn<VitestMockProcedure>(), debug: vi.fn<VitestMockProcedure>() },
   };
 });
 

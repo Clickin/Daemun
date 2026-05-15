@@ -17,8 +17,8 @@ const { state, DockerCtor, getDockerArguments, logger } = vi.hoisted(() => {
   return {
     state,
     DockerCtor,
-    getDockerArguments: vi.fn(() => state.dockerArgs),
-    logger: { error: vi.fn() },
+    getDockerArguments: vi.fn<VitestMockProcedure>(() => state.dockerArgs),
+    logger: { error: vi.fn<VitestMockProcedure>() },
   };
 });
 
@@ -42,10 +42,10 @@ describe("pages/api/docker/status/[...service]", () => {
     state.dockerCtorArgs.length = 0;
     state.dockerArgs = { conn: { socketPath: "/var/run/docker.sock" }, swarm: false };
     state.docker = {
-      listContainers: vi.fn(),
-      getContainer: vi.fn(),
-      getService: vi.fn(),
-      listTasks: vi.fn(),
+      listContainers: vi.fn<VitestMockProcedure>(),
+      getContainer: vi.fn<VitestMockProcedure>(),
+      getService: vi.fn<VitestMockProcedure>(),
+      listTasks: vi.fn<VitestMockProcedure>(),
     };
   });
 
@@ -74,7 +74,7 @@ describe("pages/api/docker/status/[...service]", () => {
   it("inspects an existing container and returns status + health", async () => {
     state.docker.listContainers.mockResolvedValue([{ Names: ["/myapp"], Id: "cid1" }]);
     state.docker.getContainer.mockReturnValue({
-      inspect: vi.fn().mockResolvedValue({ State: { Status: "running", Health: { Status: "healthy" } } }),
+      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ State: { Status: "running", Health: { Status: "healthy" } } }),
     });
 
     const req = { query: { service: ["myapp", "local"] } };
@@ -104,7 +104,7 @@ describe("pages/api/docker/status/[...service]", () => {
     state.dockerArgs.swarm = true;
     state.docker.listContainers.mockResolvedValue([{ Names: ["/other"], Id: "cid1" }]);
     state.docker.getService.mockReturnValue({
-      inspect: vi.fn().mockResolvedValue({ Spec: { Mode: { Replicated: { Replicas: "2" } } } }),
+      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ Spec: { Mode: { Replicated: { Replicas: "2" } } } }),
     });
     state.docker.listTasks.mockResolvedValue([{ Status: {} }, { Status: {} }]);
 
@@ -121,7 +121,7 @@ describe("pages/api/docker/status/[...service]", () => {
     state.dockerArgs.swarm = true;
     state.docker.listContainers.mockResolvedValue([{ Names: ["/other"], Id: "cid1" }]);
     state.docker.getService.mockReturnValue({
-      inspect: vi.fn().mockResolvedValue({ Spec: { Mode: { Replicated: { Replicas: "3" } } } }),
+      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ Spec: { Mode: { Replicated: { Replicas: "3" } } } }),
     });
     state.docker.listTasks.mockResolvedValue([{ Status: {} }]);
 
@@ -138,13 +138,13 @@ describe("pages/api/docker/status/[...service]", () => {
     state.dockerArgs.swarm = true;
     state.docker.listContainers.mockResolvedValue([{ Names: ["/other"], Id: "local1" }]);
     state.docker.getService.mockReturnValue({
-      inspect: vi.fn().mockResolvedValue({ Spec: { Mode: { Global: {} } } }),
+      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ Spec: { Mode: { Global: {} } } }),
     });
     state.docker.listTasks.mockResolvedValue([
       { Status: { ContainerStatus: { ContainerID: "local1" }, State: "running" } },
     ]);
     state.docker.getContainer.mockReturnValue({
-      inspect: vi.fn().mockResolvedValue({ State: { Status: "running", Health: { Status: "unhealthy" } } }),
+      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ State: { Status: "running", Health: { Status: "unhealthy" } } }),
     });
 
     const req = { query: { service: ["svc", "local"] } };
@@ -160,13 +160,13 @@ describe("pages/api/docker/status/[...service]", () => {
     state.dockerArgs.swarm = true;
     state.docker.listContainers.mockResolvedValue([{ Names: ["/other"], Id: "local1" }]);
     state.docker.getService.mockReturnValue({
-      inspect: vi.fn().mockResolvedValue({ Spec: { Mode: { Global: {} } } }),
+      inspect: vi.fn<VitestMockProcedure>().mockResolvedValue({ Spec: { Mode: { Global: {} } } }),
     });
     state.docker.listTasks.mockResolvedValue([
       { Status: { ContainerStatus: { ContainerID: "local1" }, State: "pending" } },
     ]);
     state.docker.getContainer.mockReturnValue({
-      inspect: vi.fn().mockRejectedValue(new Error("nope")),
+      inspect: vi.fn<VitestMockProcedure>().mockRejectedValue(new Error("nope")),
     });
 
     const req = { query: { service: ["svc", "local"] } };
@@ -182,7 +182,7 @@ describe("pages/api/docker/status/[...service]", () => {
     state.dockerArgs.swarm = true;
     state.docker.listContainers.mockResolvedValue([{ Names: ["/other"], Id: "cid1" }]);
     state.docker.getService.mockReturnValue({
-      inspect: vi.fn().mockRejectedValue(new Error("not found")),
+      inspect: vi.fn<VitestMockProcedure>().mockRejectedValue(new Error("not found")),
     });
 
     const req = { query: { service: ["svc", "local"] } };
