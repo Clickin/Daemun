@@ -1,7 +1,63 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
-import { afterEach, vi } from "vitest";
+import { afterEach, beforeEach, vi } from "vitest";
+
+class MemoryStorage {
+  #items = new Map();
+
+  get length() {
+    return this.#items.size;
+  }
+
+  clear() {
+    this.#items.clear();
+  }
+
+  getItem(key) {
+    return this.#items.get(String(key)) ?? null;
+  }
+
+  key(index) {
+    return Array.from(this.#items.keys())[index] ?? null;
+  }
+
+  removeItem(key) {
+    this.#items.delete(String(key));
+  }
+
+  setItem(key, value) {
+    this.#items.set(String(key), String(value));
+  }
+}
+
+function installBrowserStorage() {
+  if (typeof window === "undefined") return;
+
+  let storage;
+  try {
+    storage = window.localStorage;
+  } catch {
+    storage = undefined;
+  }
+
+  if (!storage) {
+    storage = new MemoryStorage();
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: storage,
+    });
+  }
+
+  Object.defineProperty(globalThis, "localStorage", {
+    configurable: true,
+    value: storage,
+  });
+}
+
+beforeEach(() => {
+  installBrowserStorage();
+});
 
 afterEach(() => {
   // Node-environment tests shouldn't require jsdom; guard cleanup accordingly.

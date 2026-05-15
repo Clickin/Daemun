@@ -35,7 +35,7 @@ const localStorageKey = "search-name";
 
 export function getStoredProvider() {
   if (typeof window !== "undefined") {
-    const storedName = localStorage.getItem(localStorageKey);
+    const storedName = window.localStorage.getItem(localStorageKey);
     if (storedName) {
       return Object.values(searchProviders).find((el) => el.name === storedName);
     }
@@ -43,6 +43,8 @@ export function getStoredProvider() {
   return null;
 }
 
-export function storeProvider(provider) {
-  localStorage.setItem(localStorageKey, provider.name);
+type SearchProvider = (typeof searchProviders)[keyof typeof searchProviders];
+
+export function storeProvider(provider: SearchProvider) {
+  window.localStorage.setItem(localStorageKey, provider.name);
 }

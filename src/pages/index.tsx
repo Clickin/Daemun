@@ -57,15 +57,16 @@ function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "
   useEffect(() => {
     if (hashData) {
       if (typeof window !== "undefined") {
-        const previousHash = localStorage.getItem("hash");
+        const storage = window.localStorage;
+        const previousHash = storage.getItem("hash");
 
         if (!previousHash) {
-          localStorage.setItem("hash", hashData.hash);
+          storage.setItem("hash", hashData.hash);
         }
 
         if (previousHash && previousHash !== hashData.hash) {
           setStale(true);
-          localStorage.setItem("hash", hashData.hash);
+          storage.setItem("hash", hashData.hash);
 
           fetch("/api/revalidate").then((res) => {
             if (res.ok) {
