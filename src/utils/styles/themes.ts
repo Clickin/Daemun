@@ -3,7 +3,7 @@ const themes = {
     light: "#ffffff",
     iconStart: "#ffffff",
     iconEnd: "#282828",
-    dark: "#ffffff",
+    dark: "#282828",
   },
   slate: {
     light: "#f8fafc",
