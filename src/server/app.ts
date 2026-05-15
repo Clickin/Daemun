@@ -62,7 +62,7 @@ function apiHostValidation() {
   };
 }
 
-const catchAllService = (c: Context) => ({ service: splitCatchAll(c.req.param("*")) });
+const catchAllService = (c: Context) => ({ service: splitCatchAll(c.req.param("service")) });
 
 interface CreateAppOptions {
   staticHome?: { middleware(): MiddlewareHandler };
@@ -107,11 +107,11 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
   app.get("/api/widgets/stocks", honoApiHandler(widgetsStocks));
   app.get("/api/widgets/weather", honoApiHandler(widgetsWeather));
   app.get("/api/widgets", honoApiHandler(widgets));
-  app.get("/api/docker/status/*", honoApiHandler(dockerStatus, catchAllService));
-  app.get("/api/docker/stats/*", honoApiHandler(dockerStats, catchAllService));
-  app.get("/api/kubernetes/status/*", honoApiHandler(kubernetesStatus, catchAllService));
-  app.get("/api/kubernetes/stats/*", honoApiHandler(kubernetesStats, catchAllService));
-  app.get("/api/proxmox/stats/*", honoApiHandler(proxmoxStats, catchAllService));
+  app.get("/api/docker/status/:service{.+}", honoApiHandler(dockerStatus, catchAllService));
+  app.get("/api/docker/stats/:service{.+}", honoApiHandler(dockerStats, catchAllService));
+  app.get("/api/kubernetes/status/:service{.+}", honoApiHandler(kubernetesStatus, catchAllService));
+  app.get("/api/kubernetes/stats/:service{.+}", honoApiHandler(kubernetesStats, catchAllService));
+  app.get("/api/proxmox/stats/:service{.+}", honoApiHandler(proxmoxStats, catchAllService));
 
   app.get("/browserconfig.xml", (c) => c.body(browserConfigXml(), 200, { "content-type": "text/xml" }));
   app.get("/favicon.ico", (c) =>
