@@ -43,7 +43,7 @@ export function ThemeProvider({ initialTheme, children }: ThemeProviderProps) {
     root.classList.remove("dark", "light", "scheme-dark", "scheme-light");
     root.classList.add(rawTheme, isDark ? "scheme-dark" : "scheme-light");
 
-    localStorage.setItem("theme-mode", rawTheme);
+    window.localStorage?.setItem("theme-mode", rawTheme);
   };
 
   useEffect(() => {

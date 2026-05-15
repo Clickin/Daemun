@@ -25,6 +25,8 @@
 benchmarks/results/
 coverage/
 dist/
+!dist/
+!dist/**
 dist-docs/
 docs/
 images/

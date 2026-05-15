@@ -43,7 +43,7 @@ export function ColorProvider({ initialColor, children }: ColorProviderProps) {
     }
     root.classList.add(desiredClass);
 
-    localStorage.setItem("theme-color", rawColor);
+    window.localStorage?.setItem("theme-color", rawColor);
   };
 
   useEffect(() => {
