@@ -157,10 +157,13 @@ in [BENCHMARK.md](BENCHMARK.md).
 
 The published documentation is the Astro Starlight site in `docs-site/`.
 Search is powered by Pagefind through Starlight’s built-in search provider.
+The sample image on the docs front page is captured from a built Daemun app,
+not drawn as a mockup.
 
 ```bash
 pnpm docs:dev
 pnpm docs:build
+pnpm docs:assets
 ```
 
 GitHub Pages deployment is handled by `.github/workflows/docs-publish.yml` and
@@ -169,9 +172,6 @@ publishes the built Starlight site to:
 ```text
 https://clickin.github.io/Daemun/
 ```
-
-The old `docs/` directory is retained as migration source material only. It is
-not the Daemun documentation surface.
 
 ## Security Notice
 

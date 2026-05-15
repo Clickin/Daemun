@@ -49,6 +49,10 @@ dist-docs/
 .astro/
 .cache/
 
+# legacy upstream docs/source-image mirrors
+/docs/
+/images/
+
 # benchmark output
 /benchmarks/results/
 

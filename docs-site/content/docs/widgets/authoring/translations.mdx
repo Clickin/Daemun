@@ -1,15 +1,15 @@
 ---
 title: Translations Guide
-description: Tips and tricks for translating and localizing Homepage widgets.
+description: Tips and tricks for translating and localizing Daemun widgets.
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-All text and numerical content in widgets should be translated and localized. English is the default language, and other languages can be added via [Crowdin](https://crowdin.com/project/gethomepage).
+All text and numerical content in widgets should be translated and localized. English is the default language, and other locales are maintained directly in `public/locales`.
 
 ## Translations
 
-Homepage uses [i18next](https://www.i18next.com/) with [react-i18next](https://react.i18next.com/) to handle translations. These libraries provide hooks and utilities to help you localize your widgets, and Homepage has extended this stack to support additional features.
+Daemun uses [i18next](https://www.i18next.com/) with [react-i18next](https://react.i18next.com/) to handle translations. These libraries provide hooks and utilities to help you localize your widgets.
 
 <Tabs>
   <TabItem label="component.jsx">
@@ -40,7 +40,7 @@ export default function Component() {
 
 ## Set up translation strings
 
-Homepage uses translated and localized strings for **all text and numerical content** in widgets. English is the default language, and other languages can be added via [Crowdin](https://crowdin.com/project/gethomepage). To add the English translations for your widget, follow these steps:
+Daemun uses translated and localized strings for **all text and numerical content** in widgets. To add the English translations for your widget, follow these steps:
 
 Open the `public/locales/en/common.json` file.
 
@@ -56,12 +56,12 @@ Add a new object for your widget to the bottom of the list, like this:
 
 :::note
 
-Even if you natively speak another language, you should only add English translations. You can then add translations in your native language via [Crowdin](https://crowdin.com/project/gethomepage), once your widget is merged.
+New widget contributions should include English strings first. Translations for other locales can be added in the same pull request when you can maintain the translated values directly.
 :::
 
 ## Common Translations
 
-Homepage provides a set of common translations that you can use in your widgets. These translations are used to format numerical content, dates, and other common elements.
+Daemun provides a set of common translations that you can use in your widgets. These translations are used to format numerical content, dates, and other common elements.
 
 ### Numbers
 

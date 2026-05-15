@@ -1,13 +1,30 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { findLegacyMarkdownLinks } from "../docs/normalize-starlight-links.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const sourceRoot = path.join(root, "docs");
 const starlightRoot = path.join(root, "docs-site/content/docs");
+const sampleScreenshot = path.join(root, "public/docs-assets/daemun-sample.png");
+const staleSourceRoots = ["docs", "images"];
 
-const allowedExtraDocs = new Set(["404.md", "stack-migration.md"]);
+const minimumMigratedDocs = 190;
+const requiredDocs = new Set([
+  "index.md",
+  "installation/docker.md",
+  "installation/k8s.md",
+  "installation/source.md",
+  "configs/custom-css-js.md",
+  "configs/info-widgets.md",
+  "configs/services.md",
+  "configs/settings.md",
+  "widgets/index.md",
+  "widgets/info/resources.md",
+  "widgets/services/glances.md",
+  "widgets/services/index.md",
+  "troubleshooting/index.md",
+  "stack-migration.md",
+]);
 
 function walk(dir) {
   const entries = [];
@@ -33,12 +50,10 @@ function hasNullByte(file) {
   return readFileSync(file).includes(0);
 }
 
-const sourceDocs = new Set(walk(sourceRoot).map((file) => relDoc(file, sourceRoot)));
 const starlightFiles = walk(starlightRoot);
 const starlightDocs = new Set(starlightFiles.map((file) => relDoc(file, starlightRoot)));
 
-const missing = [...sourceDocs].filter((rel) => !starlightDocs.has(rel));
-const unexpected = [...starlightDocs].filter((rel) => !sourceDocs.has(rel) && !allowedExtraDocs.has(rel));
+const missingRequiredDocs = [...requiredDocs].filter((rel) => !starlightDocs.has(rel));
 const nulFiles = starlightFiles.filter(hasNullByte).map((file) => relDoc(file, starlightRoot));
 const emptyFiles = starlightFiles
   .filter((file) => statSync(file).size === 0)
@@ -48,14 +63,17 @@ const legacyRouteLinks = starlightFiles.flatMap((file) =>
     ({ line, target }) => `${relDoc(file, starlightRoot)}:${line} -> ${target}`,
   ),
 );
+const staleRoots = staleSourceRoots.filter((rel) => existsSync(path.join(root, rel)));
 
 const failures = [];
-if (missing.length)
-  failures.push(`Missing docs-site files for source docs:\n${missing.map((rel) => `  - ${rel}`).join("\n")}`);
-if (unexpected.length)
+if (starlightDocs.size < minimumMigratedDocs) {
+  failures.push(`Starlight docs count dropped below ${minimumMigratedDocs}: ${starlightDocs.size}`);
+}
+if (missingRequiredDocs.length) {
   failures.push(
-    `Unexpected docs-site files without parity allowance:\n${unexpected.map((rel) => `  - ${rel}`).join("\n")}`,
+    `Required migrated Starlight docs are missing:\n${missingRequiredDocs.map((rel) => `  - ${rel}`).join("\n")}`,
   );
+}
 if (nulFiles.length)
   failures.push(`Docs-site files contain NUL bytes:\n${nulFiles.map((rel) => `  - ${rel}`).join("\n")}`);
 if (emptyFiles.length) failures.push(`Docs-site files are empty:\n${emptyFiles.map((rel) => `  - ${rel}`).join("\n")}`);
@@ -66,6 +84,19 @@ if (legacyRouteLinks.length) {
       .join("\n")}`,
   );
 }
+if (staleRoots.length) {
+  failures.push(
+    `Legacy upstream documentation asset roots should not be tracked at repo root:\n${staleRoots
+      .map((rel) => `  - ${rel}/`)
+      .join("\n")}`,
+  );
+}
+if (!existsSync(sampleScreenshot) || statSync(sampleScreenshot).size < 10_000) {
+  failures.push("Daemun docs sample screenshot is missing or too small; regenerate it with `pnpm docs:assets`.");
+}
+if (existsSync(path.join(root, "public/docs-assets/daemun-sample.svg"))) {
+  failures.push("Daemun docs sample must be a live app screenshot, not the old generated SVG mock.");
+}
 
 if (failures.length) {
   console.error(failures.join("\n\n"));
@@ -73,5 +104,5 @@ if (failures.length) {
 }
 
 console.log(
-  `Daemun docs parity gate passed: ${sourceDocs.size} source docs mapped to ${starlightDocs.size} Starlight docs.`,
+  `Daemun docs parity gate passed: ${starlightDocs.size} Starlight docs verified with no legacy root docs/images.`,
 );

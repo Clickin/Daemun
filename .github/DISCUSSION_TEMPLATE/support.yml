@@ -4,7 +4,7 @@ body:
       value: |
         ### ⚠️ Before opening a discussion:
 
-        - Check the inherited troubleshooting guide under `docs/troubleshooting/` and include the output of all relevant steps below.
+        - Check the troubleshooting guide in the published Starlight documentation and include the output of all relevant steps below.
         - Search existing issues and discussions in this repository, including closed ones.
   - type: textarea
     id: description

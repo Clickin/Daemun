@@ -3,17 +3,21 @@ title: Translations
 description: Contributing Translations
 ---
 
-Homepage is developed in English, component contributions must be in English. All translations are community provided, so a huge thanks go out to all those who have helped out so far!
+Daemun keeps the inherited locale files under `public/locales`. English is the
+source language for new UI strings, and translated strings are maintained
+directly in the repository.
 
 ## Support Translations
 
-If you'd like to lend a hand in translating Homepage into more languages, or to improve existing translations, the process is very simple:
+Daemun does not currently run an external translation sync service. If you'd
+like to improve an existing translation:
 
-1. Create a free account at [Crowdin](https://crowdin.com/join)
-2. Visit the [Homepage project](https://crowdin.com/project/gethomepage)
-3. Select the language you'd like to translate
-4. Start translating!
+1. Update the matching file under `public/locales/<locale>/common.json`.
+2. Keep keys aligned with `public/locales/en/common.json`.
+3. Open a pull request with the locale and area changed in the description.
 
 ## Adding a new language
 
-If you'd like to add a new language, please [create a new Discussion on Crowdin](https://crowdin.com/project/gethomepage/discussions), and we'll add it to the project.
+To add a new language, copy `public/locales/en/common.json` into a new locale
+directory, translate the values, and include a short note about the locale code
+you chose.

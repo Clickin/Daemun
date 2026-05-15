@@ -1,7 +1,7 @@
 ---
 title: More
-description: More homepage resources and guides.
+description: Additional Daemun resources and compatibility notes.
 icon: material/information-slab-circle
 ---
 
-Here you'll find resources and guides for Homepage, troubleshooting tips, and more.
+Additional Daemun resources, migration notes, and project maintenance guides.

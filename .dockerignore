@@ -26,6 +26,8 @@ benchmarks/results/
 coverage/
 dist/
 dist-docs/
+docs/
+images/
 README.md
 config/
 k3d/
