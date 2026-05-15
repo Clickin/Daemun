@@ -55,6 +55,8 @@ function installBrowserStorage() {
   });
 }
 
+installBrowserStorage();
+
 beforeEach(() => {
   installBrowserStorage();
 });
