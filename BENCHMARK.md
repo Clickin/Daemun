@@ -76,13 +76,13 @@ product-level comparison.
 
 Environment:
 
-- Date: 2026-05-15
+- Date: 2026-05-16
 - Host: Windows/Rancher Desktop, Docker Client 29.1.4-rd, Docker Server
   29.1.3, Linux amd64 engine under WSL2
 - Daemun node-only image: `daemun:node-bench`,
-  `sha256:f2d02cdad455aa07d77cc7d87dd9732923f1a237b78f1f737d112d375b2a279c`
+  `sha256:833896c6eaea962054d1c8f1fc93c06811ed615cdbcda968ca3d8acf2b8266a1`
 - Daemun nginx image: `daemun:nginx-bench`,
-  `sha256:dc7b5bc14a24915677be95b7bc27064b6b670c04e3d7f084eaf4adee6bacf3a6`
+  `sha256:d6b0aaba7598cb8d104d20fc1499077acd3bbde8ed229772366b978b961e9fcc`
 - Upstream image: `ghcr.io/gethomepage/homepage:latest`,
   `sha256:d8d784e5090111b6e4c56dfd90e272d2953a2094e87349f647165df0fa6c4401`
 - Limits: no CPU limit, `--memory 512m --memory-swap 512m`
@@ -91,20 +91,20 @@ Environment:
   script asset.
 
 Raw result:
-`benchmarks/results/container-benchmark-2026-05-15T09-49-59-102Z.json`.
+`benchmarks/results/container-benchmark-2026-05-16T03-19-53-579Z.json`.
 
 | Metric                    |  Daemun node | Daemun nginx | Upstream Homepage |
 | ------------------------- | -----------: | -----------: | ----------------: |
-| Image size                |      75.3 MB |      76.2 MB |           84.2 MB |
-| Idle cgroup memory        |    131.8 MiB |     79.2 MiB |         196.9 MiB |
-| Post-stress cgroup memory |    151.1 MiB |     86.0 MiB |         229.2 MiB |
-| Peak cgroup memory        |    155.2 MiB |     91.0 MiB |         242.6 MiB |
-| Idle Docker memory        |    58.92 MiB |    72.67 MiB |         101.8 MiB |
-| Post-stress Docker memory |    71.75 MiB |     79.3 MiB |         132.3 MiB |
-| Aggregate throughput      | 484.40 req/s | 509.57 req/s |      362.57 req/s |
+| Image size                |      67.9 MB |      72.6 MB |           84.2 MB |
+| Idle cgroup memory        |     64.0 MiB |     80.3 MiB |         197.0 MiB |
+| Post-stress cgroup memory |     75.4 MiB |     86.3 MiB |         225.7 MiB |
+| Peak cgroup memory        |     79.9 MiB |     91.2 MiB |         238.6 MiB |
+| Idle Docker memory        |    63.05 MiB |    79.03 MiB |         101.7 MiB |
+| Post-stress Docker memory |       74 MiB |    84.64 MiB |         129.2 MiB |
+| Aggregate throughput      | 451.03 req/s | 477.13 req/s |      322.40 req/s |
 | Aggregate failures        |            0 |            0 |                 0 |
-| Aggregate p50 latency     |     57.03 ms |     13.84 ms |          93.37 ms |
-| Aggregate p95 latency     |    144.15 ms |    210.03 ms |         175.76 ms |
+| Aggregate p50 latency     |     61.55 ms |     11.08 ms |         103.24 ms |
+| Aggregate p95 latency     |    157.83 ms |    224.29 ms |         197.34 ms |
 
 Browser cold-load timing:
 
@@ -117,28 +117,28 @@ as direct Hono and upstream Homepage.
 
 | Browser metric for `/` | Daemun node | Daemun nginx | Upstream Homepage |
 | ---------------------- | ----------: | -----------: | ----------------: |
-| TTLB avg               |    59.76 ms |     12.49 ms |          60.16 ms |
-| TTLB p50               |    45.60 ms |     11.10 ms |          62.70 ms |
-| FCP avg                |   345.14 ms |    291.43 ms |         277.14 ms |
-| FCP p50                |   328.00 ms |    284.00 ms |         272.00 ms |
-| DOMContentLoaded avg   |   323.59 ms |    272.99 ms |         284.89 ms |
-| Load avg               |   331.81 ms |    279.67 ms |         286.71 ms |
+| TTLB avg               |    56.37 ms |      5.59 ms |          63.07 ms |
+| TTLB p50               |    51.90 ms |      5.10 ms |          62.90 ms |
+| FCP avg                |    93.71 ms |     37.71 ms |         128.57 ms |
+| FCP p50                |   100.00 ms |     32.00 ms |         128.00 ms |
+| DOMContentLoaded avg   |    99.83 ms |     37.21 ms |         166.21 ms |
+| Load avg               |   105.31 ms |     37.46 ms |         166.54 ms |
 
 Focused `/` stress result:
 
 Raw result:
-`benchmarks/results/container-benchmark-2026-05-15T09-52-25-922Z.json`.
+`benchmarks/results/container-benchmark-2026-05-16T03-23-12-049Z.json`.
 
 Same limits and duration as the mixed benchmark, but with `BENCH_ENDPOINTS=/`.
 
 | `/` only metric           |   Daemun node |  Daemun nginx | Upstream Homepage |
 | ------------------------- | ------------: | ------------: | ----------------: |
-| Throughput                | 6482.50 req/s | 6183.27 req/s |     1414.93 req/s |
+| Throughput                | 4144.30 req/s | 4319.40 req/s |     1322.17 req/s |
 | Failures                  |             0 |             0 |                 0 |
-| p50 latency               |       3.28 ms |       3.56 ms |          19.40 ms |
-| p95 latency               |      12.08 ms |      12.88 ms |          39.18 ms |
-| p99 latency               |      17.30 ms |      18.34 ms |          44.56 ms |
-| Post-stress cgroup memory |      64.4 MiB |      77.8 MiB |         109.1 MiB |
+| p50 latency               |       7.36 ms |       7.03 ms |          20.31 ms |
+| p95 latency               |      11.74 ms |      11.40 ms |          41.60 ms |
+| p99 latency               |      14.55 ms |      14.33 ms |          50.76 ms |
+| Post-stress cgroup memory |      72.4 MiB |      83.4 MiB |         109.2 MiB |
 
 This focused run shows that both Daemun images are much faster than upstream
 Homepage on the baked root route. It does not show a meaningful nginx-vs-node
@@ -152,27 +152,29 @@ Endpoint p50 latency:
 
 | Endpoint             | Daemun node | Daemun nginx | Upstream Homepage |
 | -------------------- | ----------: | -----------: | ----------------: |
-| `/`                  |    27.09 ms |      1.75 ms |          30.08 ms |
-| Static stylesheet    |    61.11 ms |      4.09 ms |          95.64 ms |
-| Static script        |    49.20 ms |      3.00 ms |         102.55 ms |
-| `/favicon-32x32.png` |    47.44 ms |      1.21 ms |          75.31 ms |
-| `/api/healthcheck`   |    25.75 ms |     33.50 ms |          27.55 ms |
-| `/api/bookmarks`     |    82.47 ms |    121.65 ms |         100.90 ms |
-| `/api/widgets`       |    82.80 ms |    122.48 ms |         101.12 ms |
-| `/api/services`      |   141.07 ms |    206.78 ms |         172.65 ms |
+| `/`                  |    24.52 ms |      2.31 ms |          33.67 ms |
+| Static stylesheet    |    68.10 ms |      4.60 ms |         106.23 ms |
+| Static script        |    51.83 ms |      2.08 ms |         113.39 ms |
+| `/favicon-32x32.png` |    52.09 ms |      1.48 ms |          82.90 ms |
+| `/api/healthcheck`   |    27.27 ms |     35.23 ms |          31.15 ms |
+| `/api/bookmarks`     |    91.36 ms |    129.39 ms |         111.45 ms |
+| `/api/widgets`       |    90.01 ms |    130.22 ms |         110.82 ms |
+| `/api/services`      |   154.42 ms |    220.50 ms |         191.73 ms |
 
 Interpretation:
 
 - The node-only image is still the smallest and lowest-memory Daemun runtime.
   It keeps a single Hono process and lets Hono serve the baked home page, public
   files, Vite assets, and APIs.
-- The nginx image adds about 0.9 MB to image size and about 13.8 MiB idle Docker
+- The nginx image adds about 4.7 MB to image size and about 16.0 MiB idle Docker
   memory compared with node-only, but it removes Node from the hot path for
   `index.html` and static assets. Root and static asset p50 latency dropped to
   low single-digit milliseconds.
 - Browser timing shows the same effect at the page-load level: in this run
-  nginx reduced `/` TTLB average to 12.49 ms and FCP average to 291.43 ms under
-  the same headless Chrome executable and cache-disabled cold-load settings.
+  nginx reduced `/` TTLB average to 5.59 ms and FCP average to 37.71 ms under
+  the same headless Chrome executable and cache-disabled cold-load settings. The
+  current client chunking and Inertia removal also lowered node-only and nginx
+  FCP compared with the previous recorded benchmark.
 - The nginx image exposes only nginx to the host. The Hono server listens on
   `/run/daemun/daemun.sock`; `/api/**` and dynamic PWA/config routes proxy to
   Hono over that Unix socket, while nginx serves the baked
@@ -184,8 +186,8 @@ Interpretation:
   eight-endpoint benchmark favors nginx because `/`, favicon, CSS, and JS are
   served without entering Node.
 - Both Daemun images remain below upstream Homepage memory in this fixture:
-  post-stress Docker memory was 71.75 MiB for node-only, 79.3 MiB for nginx,
-  and 132.3 MiB for upstream. cgroup memory can include page cache, so Docker
+  post-stress Docker memory was 74 MiB for node-only, 84.64 MiB for nginx, and
+  129.2 MiB for upstream. cgroup memory can include page cache, so Docker
   `MemUsage` and cgroup current/peak should be read together rather than mixed
   across separate runs.
 
