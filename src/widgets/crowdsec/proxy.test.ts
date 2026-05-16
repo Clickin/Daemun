@@ -20,7 +20,7 @@ const { httpProxy, getServiceWidget, cache, logger } = vi.hoisted(() => {
   };
 });
 
-vi.mock("memory-cache", () => ({
+vi.mock("utils/cache", () => ({
   default: cache,
   ...cache,
 }));

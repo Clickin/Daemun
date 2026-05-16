@@ -22,7 +22,7 @@ const { httpProxy, getServiceWidget, getPrivateWidgetOptions, cache, cookieJar, 
   };
 });
 
-vi.mock("memory-cache", () => ({
+vi.mock("utils/cache", () => ({
   default: cache,
   ...cache,
 }));

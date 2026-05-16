@@ -1,6 +1,6 @@
 /* oxlint-disable no-underscore-dangle */
 
-import cache from "memory-cache";
+import cache from "utils/cache";
 
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 
 import { calendarDayTimestamp, compareCalendarDates, createCurrentCalendarDate, subtractCalendarDays } from "./date";
@@ -30,7 +30,7 @@ export default function Agenda({ service, colorVariants, events, showDate }) {
     return (
       <div className="text-center">
         <div className="pl-2 pr-2">
-          <div className={classNames("flex flex-col", !eventsArray.length && !events.length && "animate-pulse")}>
+          <div className={clsx("flex flex-col", !eventsArray.length && !events.length && "animate-pulse")}>
             <Event
               key="no-event"
               event={{
@@ -51,7 +51,7 @@ export default function Agenda({ service, colorVariants, events, showDate }) {
 
   return (
     <div className="pl-1 pr-1 pb-1">
-      <div className={classNames("flex flex-col", !eventsArray.length && !events.length && "animate-pulse")}>
+      <div className={clsx("flex flex-col", !eventsArray.length && !events.length && "animate-pulse")}>
         {eventsByDay.map((eventsDay, i) => (
           <div key={days[i]}>
             {eventsDay.map((event, j) => (

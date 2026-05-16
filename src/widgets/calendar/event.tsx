@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
@@ -17,7 +17,7 @@ export default function Event({ event, colorVariants, showDate = false, showTime
         </span>
       )}
       <span className="ml-2 h-2 w-2">
-        <span className={classNames("block w-2 h-2 rounded-sm", colorVariants[event.color] ?? "gray")} />
+        <span className={clsx("block w-2 h-2 rounded-sm", colorVariants[event.color] ?? "gray")} />
       </span>
       <div className="ml-2 h-5 text-left relative truncate" style={{ width: "70%" }}>
         <div className="absolute mt-0.5 text-xs">{hover && event.additional ? event.additional : event.title}</div>
@@ -34,7 +34,7 @@ export default function Event({ event, colorVariants, showDate = false, showTime
   const key = `event-${event.title}-${event.date}-${event.additional}`;
   return event.url ? (
     <a
-      className={classNames(className, "hover:bg-theme-300/50 dark:hover:bg-theme-800/20")}
+      className={clsx(className, "hover:bg-theme-300/50 dark:hover:bg-theme-800/20")}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       key={key}

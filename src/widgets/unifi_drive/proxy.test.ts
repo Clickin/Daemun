@@ -17,7 +17,7 @@ const { httpProxy, getServiceWidget, cache, logger } = vi.hoisted(() => {
   };
 });
 
-vi.mock("memory-cache", () => ({ default: cache, ...cache }));
+vi.mock("utils/cache", () => ({ default: cache, ...cache }));
 vi.mock("utils/logger", () => ({ default: () => logger }));
 vi.mock("utils/config/service-helpers", () => ({ default: getServiceWidget }));
 vi.mock("utils/proxy/http", () => ({ httpProxy }));

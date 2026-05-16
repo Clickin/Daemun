@@ -9,7 +9,7 @@ import {
   ListboxOptions,
   Transition,
 } from "@headlessui/react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -178,7 +178,7 @@ export default function Search({ options }) {
                         <ListboxOption key={providerId} value={p} as={Fragment}>
                           {({ active }) => (
                             <li
-                              className={classNames(
+                              className={clsx(
                                 "rounded-md cursor-pointer",
                                 active ? "bg-theme-600/10 dark:bg-white/10 dark:text-gray-900" : "dark:text-gray-100",
                               )}
@@ -211,7 +211,7 @@ export default function Search({ options }) {
                         if (active) currentSuggestion = suggestion;
                         return (
                           <div
-                            className={classNames(
+                            className={clsx(
                               "px-2 py-1 rounded-md w-full flex-nowrap",
                               active ? "bg-theme-300/20 dark:bg-white/10" : "",
                             )}

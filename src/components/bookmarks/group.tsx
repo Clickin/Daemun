@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import classNames from "classnames";
+import clsx from "clsx";
 import List from "components/bookmarks/list";
 import ErrorBoundary from "components/errorboundry";
 import ResolvedIcon from "components/resolvedicon";
@@ -35,7 +35,7 @@ export default function BookmarksGroup({
   return (
     <div
       key={bookmarks.name}
-      className={classNames(
+      className={clsx(
         "bookmark-group flex-1 overflow-hidden",
         layout?.style === "row" ? "basis-full" : "basis-full md:basis-1/4 lg:basis-1/5 xl:basis-1/6",
         layout?.style !== "row" && maxGroupColumns && parseInt(String(maxGroupColumns), 10) > 6
@@ -58,7 +58,7 @@ export default function BookmarksGroup({
                   {bookmarks.name}
                 </h2>
                 <MdKeyboardArrowDown
-                  className={classNames(
+                  className={clsx(
                     disableCollapse ? "hidden" : "",
                     "transition-all opacity-0 group-hover:opacity-100 ml-auto text-theme-800 dark:text-theme-300 text-xl",
                     open ? "" : "rotate-180",

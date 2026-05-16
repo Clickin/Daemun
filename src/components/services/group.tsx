@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import classNames from "classnames";
+import clsx from "clsx";
 import ResolvedIcon from "components/resolvedicon";
 import List from "components/services/list";
 import { useEffect, useRef } from "react";
@@ -41,7 +41,7 @@ export default function ServicesGroup({
   return (
     <div
       key={group.name}
-      className={classNames(
+      className={clsx(
         "services-group flex-1",
         layout?.style === "row" ? "basis-full" : "basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4",
         layout?.style !== "row" && maxGroupColumns ? `3xl:basis-1/${maxGroupColumns}` : "",
@@ -63,7 +63,7 @@ export default function ServicesGroup({
                   {group.name}
                 </h2>
                 <MdKeyboardArrowDown
-                  className={classNames(
+                  className={clsx(
                     disableCollapse ? "hidden" : "",
                     "transition-all opacity-0 group-hover:opacity-100 ml-auto text-theme-800 dark:text-theme-300 text-xl",
                     open ? "" : "rotate-180",

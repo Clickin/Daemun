@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
@@ -264,7 +264,7 @@ export default function Component({ service }) {
                 return itemUrl ? (
                   <a
                     key={`${itemName}-${index}`}
-                    className={classNames(className, "hover:bg-theme-300/50 dark:hover:bg-theme-800/20")}
+                    className={clsx(className, "hover:bg-theme-300/50 dark:hover:bg-theme-800/20")}
                     href={itemUrl}
                     target="_blank"
                     rel="noopener noreferrer"

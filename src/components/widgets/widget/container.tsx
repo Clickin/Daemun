@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { Children, isValidElement, useContext, type ReactElement, type ReactNode } from "react";
 import type { UnknownRecord } from "../../../types";
 import { SettingsContext } from "utils/contexts/settings";
@@ -39,7 +39,7 @@ export function getAllClasses(options?: WidgetContainerOptions, additionalClassN
       ].join(" ");
     }
 
-    return classNames(
+    return clsx(
       "flex flex-col justify-center",
       "mt-2 m:mb-0 rounded-md shadow-md shadow-theme-900/10 dark:shadow-theme-900/20 bg-theme-100/20 dark:bg-white/5 p-2 pl-3 pr-3",
       additionalClassNames,
@@ -51,7 +51,7 @@ export function getAllClasses(options?: WidgetContainerOptions, additionalClassN
     widgetAlignedClasses = "flex flex-col justify-center";
   }
 
-  return classNames(widgetAlignedClasses, additionalClassNames);
+  return clsx(widgetAlignedClasses, additionalClassNames);
 }
 
 export function getInnerBlock(children: ReactNode) {

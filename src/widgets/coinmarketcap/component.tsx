@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import Dropdown from "components/services/dropdown";
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
@@ -65,7 +65,7 @@ export default function Component({ service }) {
 
   return (
     <Container service={service}>
-      <div className={classNames(service.description ? "-top-10" : "-top-8", "absolute right-1 z-20")}>
+      <div className={clsx(service.description ? "-top-10" : "-top-8", "absolute right-1 z-20")}>
         <Dropdown options={dateRangeOptions} value={dateRange} setValue={setDateRange} />
       </div>
 

@@ -100,7 +100,7 @@ vi.mock("follow-redirects", async () => {
   };
 });
 
-vi.mock("memory-cache", () => ({
+vi.mock("utils/cache", () => ({
   default: cache,
 }));
 

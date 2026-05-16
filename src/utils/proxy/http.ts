@@ -3,7 +3,7 @@ import net from "node:net";
 import { createUnzip, constants as zlibConstants } from "node:zlib";
 
 import followRedirects from "follow-redirects";
-import cache from "memory-cache";
+import cache from "utils/cache";
 
 import { sanitizeErrorURL } from "./api-helpers";
 import { addCookieToJar, setCookieHeader } from "./cookie-jar";

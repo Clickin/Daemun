@@ -1,53 +1,47 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { state, winston, checkAndCopyConfig, getSettings } = vi.hoisted(() => {
+const { checkAndCopyConfig, configureSync, getFileSink, getLogger, getSettings, mkdirSync, state } = vi.hoisted(() => {
   const state = {
-    created: [],
-    lastCreateLoggerArgs: null,
+    config: null,
+    fileSinks: [],
+    records: [],
   };
 
-  function ConsoleTransport(opts) {
-    this.opts = opts;
-  }
-  function FileTransport(opts) {
-    this.opts = opts;
-  }
-
-  const createLogger = vi.fn<VitestMockProcedure>((args) => {
-    state.lastCreateLoggerArgs = args;
-
-    const base = {
-      child: vi.fn<VitestMockProcedure>(() => base),
-      debug: vi.fn<VitestMockProcedure>(),
-      info: vi.fn<VitestMockProcedure>(),
-      warn: vi.fn<VitestMockProcedure>(),
-      error: vi.fn<VitestMockProcedure>(),
-    };
-    state.created.push(base);
-    return base;
-  });
-
-  const winston = {
-    transports: { Console: ConsoleTransport, File: FileTransport },
-    format: {
-      combine: (...parts) => ({ parts }),
-      errors: () => ({}),
-      timestamp: () => ({}),
-      colorize: () => ({}),
-      printf: (fn) => fn,
-    },
-    createLogger,
+  const logtapeLogger = {
+    emit: vi.fn<VitestMockProcedure>((record) => {
+      state.records.push(record);
+    }),
   };
 
   return {
-    state,
-    winston,
     checkAndCopyConfig: vi.fn<VitestMockProcedure>(),
+    configureSync: vi.fn<VitestMockProcedure>((config) => {
+      state.config = config;
+    }),
+    getFileSink: vi.fn<VitestMockProcedure>((filename, options) => {
+      const sink = vi.fn<VitestMockProcedure>();
+      state.fileSinks.push({ filename, options, sink });
+      return sink;
+    }),
+    getLogger: vi.fn<VitestMockProcedure>(() => logtapeLogger),
     getSettings: vi.fn<() => { logpath?: string }>(() => ({ logpath: "/tmp" })),
+    mkdirSync: vi.fn<VitestMockProcedure>(),
+    state,
   };
 });
 
-vi.mock("winston", () => ({ default: winston, ...winston }));
+vi.mock("node:fs", () => ({
+  mkdirSync,
+}));
+
+vi.mock("@logtape/logtape", () => ({
+  configureSync,
+  getLogger,
+}));
+
+vi.mock("@logtape/file", () => ({
+  getFileSink,
+}));
 
 vi.mock("utils/config/config", () => ({
   default: checkAndCopyConfig,
@@ -58,18 +52,30 @@ vi.mock("utils/config/config", () => ({
 describe("utils/logger", () => {
   const originalEnv = process.env;
   const originalConsole = { ...console };
+  let stdoutWrite;
+  let stderrWrite;
+
+  function resetState() {
+    state.config = null;
+    state.fileSinks = [];
+    state.records = [];
+    vi.clearAllMocks();
+  }
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    resetState();
     process.env = { ...originalEnv };
   });
 
   afterEach(() => {
-    // Restore patched console methods if init() ran.
+    stdoutWrite?.mockRestore();
+    stderrWrite?.mockRestore();
+    stdoutWrite = undefined;
+    stderrWrite = undefined;
     Object.assign(console, originalConsole);
   });
 
-  it("initializes winston on first createLogger() and caches per label", async () => {
+  it("initializes LogTape on first createLogger() and caches per label", async () => {
     vi.resetModules();
     process.env.LOG_TARGETS = "stdout";
 
@@ -80,35 +86,45 @@ describe("utils/logger", () => {
     const b = createLogger("b");
 
     expect(checkAndCopyConfig).toHaveBeenCalledWith("settings.yaml");
-    expect(winston.createLogger).toHaveBeenCalled();
+    expect(configureSync).toHaveBeenCalled();
+    expect(getLogger).toHaveBeenCalledWith([]);
+    expect(state.config.loggers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ category: [], sinks: ["stream"] }),
+        expect.objectContaining({
+          category: ["logtape", "meta"],
+          lowestLevel: "fatal",
+          parentSinks: "override",
+          sinks: [],
+        }),
+      ]),
+    );
     expect(a1).toBe(a2);
-    expect(b).toBeDefined();
+    expect(b).not.toBe(a1);
   });
 
-  it("selects stdout/file/both transports based on LOG_TARGETS", async () => {
+  it("selects stdout/file/both sinks based on LOG_TARGETS", async () => {
     vi.resetModules();
     process.env.LOG_TARGETS = "file";
 
     const createLogger = (await import("./logger")).default;
     createLogger("x");
 
-    const transports = state.lastCreateLoggerArgs.transports;
-    expect(transports).toHaveLength(1);
-    expect(transports[0].opts.filename).toBe("/tmp/logs/daemun.log");
-  });
+    expect(Object.keys(state.config.sinks)).toEqual(["file"]);
+    expect(mkdirSync).toHaveBeenCalledWith("/tmp/logs", { recursive: true });
+    expect(getFileSink).toHaveBeenCalledWith(
+      "/tmp/logs/daemun.log",
+      expect.objectContaining({ bufferSize: 0, formatter: expect.any(Function) }),
+    );
 
-  it("defaults to both transports for unknown LOG_TARGETS and patches console methods", async () => {
+    resetState();
     vi.resetModules();
     process.env.LOG_TARGETS = "wat";
 
-    const createLogger = (await import("./logger")).default;
-    const instance = createLogger("x");
+    const createLoggerWithUnknownTarget = (await import("./logger")).default;
+    createLoggerWithUnknownTarget("x");
 
-    const transports = state.lastCreateLoggerArgs.transports;
-    expect(transports).toHaveLength(2);
-
-    console.log("hello");
-    expect(instance.info).toHaveBeenCalledWith("hello");
+    expect(Object.keys(state.config.sinks).sort()).toEqual(["file", "stream"]);
   });
 
   it("uses CONF_DIR as the default logpath when settings.logpath is not set", async () => {
@@ -119,64 +135,114 @@ describe("utils/logger", () => {
     const createLogger = (await import("./logger")).default;
     createLogger("x");
 
-    const transports = state.lastCreateLoggerArgs.transports;
-    expect(transports[0].opts.filename).toBe("/conf/logs/daemun.log");
+    expect(mkdirSync).toHaveBeenCalledWith("/conf/logs", { recursive: true });
+    expect(getFileSink).toHaveBeenCalledWith(
+      "/conf/logs/daemun.log",
+      expect.objectContaining({ bufferSize: 0, formatter: expect.any(Function) }),
+    );
   });
 
-  it("formats messages and stacks through the printf formatter", async () => {
+  it("patches console methods through the unlabeled base logger", async () => {
     vi.resetModules();
     process.env.LOG_TARGETS = "stdout";
-    process.env.LOG_LEVEL = "debug";
 
     const createLogger = (await import("./logger")).default;
     createLogger("x");
 
-    expect(state.lastCreateLoggerArgs.level).toBe("debug");
+    console.log("hello %s", "world");
+    console.warn("careful");
 
-    const [consoleTransport] = state.lastCreateLoggerArgs.transports;
-    const parts = consoleTransport.opts.format.parts;
-    const formatter = parts.find((p) => typeof p === "function");
-    const splat = parts.find((p) => p && typeof p.transform === "function");
-
-    const msg = formatter({
-      timestamp: "t",
+    expect(state.records[0]).toMatchObject({
       level: "info",
-      label: "x",
-      message: "hello",
+      message: ["hello world"],
+      properties: {},
     });
-    expect(msg).toBe("[t] info: <x> hello");
-
-    const labelStackMsg = formatter({
-      timestamp: "t",
-      level: "error",
-      label: "x",
-      stack: "STACK",
-      message: "ignored",
+    expect(state.records[1]).toMatchObject({
+      level: "warning",
+      message: ["careful"],
+      properties: {},
     });
-    expect(labelStackMsg).toBe("[t] error: <x> STACK");
+  });
 
-    const stackMsg = formatter({
-      timestamp: "t",
-      level: "error",
-      stack: "STACK",
-      message: "ignored",
-    });
-    expect(stackMsg).toBe("[t] error: STACK");
+  it("preserves labeled util.format messages and error stack messages", async () => {
+    vi.resetModules();
+    process.env.LOG_TARGETS = "stdout";
 
-    const plainMsg = formatter({
-      timestamp: "t",
+    const createLogger = (await import("./logger")).default;
+    const logger = createLogger("x");
+    const error = new Error("boom");
+
+    logger.info("Hello %s", "World");
+    logger.error(error);
+
+    expect(state.records[0]).toMatchObject({
       level: "info",
-      message: "hello",
+      message: ["Hello World"],
+      properties: { label: "x" },
     });
-    expect(plainMsg).toBe("[t] info: hello");
+    expect(state.records[1].level).toBe("error");
+    expect(state.records[1].message[0]).toContain("Error: boom");
+    expect(state.records[1].properties).toEqual({ label: "x" });
+  });
 
-    const out = splat.transform(
-      {
-        message: "Hello %s",
-        [Symbol.for("splat")]: ["World"],
-      },
-      {},
-    );
-    expect(out.message).toBe("Hello World");
+  it("formats stream sink output and routes warnings/errors to stderr", async () => {
+    vi.resetModules();
+    process.env.LOG_TARGETS = "stdout";
+    stdoutWrite = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
+    stderrWrite = vi.spyOn(process.stderr, "write").mockImplementation(() => true);
+
+    const createLogger = (await import("./logger")).default;
+    createLogger("x");
+
+    const sink = state.config.sinks.stream;
+    sink({
+      category: [],
+      level: "info",
+      message: ["hello"],
+      properties: { label: "x" },
+      rawMessage: "hello",
+      timestamp: Date.UTC(2024, 0, 2, 3, 4, 5, 6),
+    });
+    sink({
+      category: [],
+      level: "warning",
+      message: ["careful"],
+      properties: {},
+      rawMessage: "careful",
+      timestamp: Date.UTC(2024, 0, 2, 3, 4, 5, 6),
+    });
+
+    expect(stdoutWrite).toHaveBeenCalledWith("[2024-01-02T03:04:05.006Z] \x1B[32minfo\x1B[39m: <x> hello\n");
+    expect(stderrWrite).toHaveBeenCalledWith("[2024-01-02T03:04:05.006Z] \x1B[33mwarn\x1B[39m: careful\n");
+  });
+
+  it("uses the same plain text formatter for file output", async () => {
+    vi.resetModules();
+    process.env.LOG_TARGETS = "file";
+
+    const createLogger = (await import("./logger")).default;
+    createLogger("x");
+
+    const line = state.fileSinks[0].options.formatter({
+      category: [],
+      level: "error",
+      message: ["failed"],
+      properties: { label: "svc" },
+      rawMessage: "failed",
+      timestamp: Date.UTC(2024, 0, 2, 3, 4, 5, 6),
+    });
+
+    expect(line).toBe("[2024-01-02T03:04:05.006Z] error: <svc> failed\n");
+  });
+
+  it("normalizes LOG_LEVEL=warn to LogTape's warning level filter", async () => {
+    vi.resetModules();
+    process.env.LOG_TARGETS = "stdout";
+    process.env.LOG_LEVEL = "warn";
+
+    const createLogger = (await import("./logger")).default;
+    createLogger("x");
+
+    expect(state.config.loggers[0].lowestLevel).toBe("warning");
   });
 });

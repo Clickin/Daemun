@@ -15,7 +15,7 @@ const { cache, cv, useApiQueryMock } = vi.hoisted(() => ({
   useApiQueryMock: vi.fn<VitestMockProcedure>(),
 }));
 
-vi.mock("memory-cache", () => ({
+vi.mock("utils/cache", () => ({
   default: cache,
 }));
 

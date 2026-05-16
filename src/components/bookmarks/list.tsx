@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import Item from "components/bookmarks/item";
 import type { CSSProperties } from "react";
 
@@ -19,7 +19,7 @@ export default function List({ bookmarks, layout, bookmarksStyle }: BookmarksLis
     style.gridTemplateColumns = "repeat(auto-fill, minmax(60px, 1fr))";
   }
   return (
-    <ul className={classNames(classes, "mb-2", layout?.header === false ? "" : "mt-3")} style={style}>
+    <ul className={clsx(classes, "mb-2", layout?.header === false ? "" : "mt-3")} style={style}>
       {bookmarks.map((bookmark) => (
         <Item
           key={`${bookmark.name}-${bookmark.href}`}

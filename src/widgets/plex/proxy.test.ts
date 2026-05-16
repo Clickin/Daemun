@@ -26,7 +26,7 @@ vi.mock("utils/config/service-helpers", () => ({
 vi.mock("utils/proxy/http", () => ({
   httpProxy,
 }));
-vi.mock("memory-cache", () => ({
+vi.mock("utils/cache", () => ({
   default: cache,
   ...cache,
 }));

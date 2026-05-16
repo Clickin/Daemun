@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import cache from "memory-cache";
+import cache from "utils/cache";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("utils/config/config", () => {

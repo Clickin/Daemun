@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { ChangeEvent, KeyboardEvent, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -316,7 +316,7 @@ export default function QuickLaunch({
   return (
     <>
       <div
-        className={classNames(
+        className={clsx(
           "relative z-40 ease-in-out duration-300 transition-opacity",
           hidden && !isOpen && "hidden",
           !hidden && isOpen && "opacity-100",
@@ -334,7 +334,7 @@ export default function QuickLaunch({
               <input
                 name="daemun-quicklaunch"
                 placeholder="Search"
-                className={classNames(
+                className={clsx(
                   results.length > 0 && "rounded-t-md",
                   results.length === 0 && "rounded-md",
                   "w-full p-4 m-0 border-0 border-b border-slate-700 focus:border-slate-700 focus:outline-0 focus:ring-0 text-sm md:text-xl text-theme-700 dark:text-theme-200 bg-theme-60 dark:bg-theme-800",
@@ -356,7 +356,7 @@ export default function QuickLaunch({
                         onMouseEnter={handleItemHover}
                         onClick={handleItemClick}
                         onKeyDown={handleItemKeyDown}
-                        className={classNames(
+                        className={clsx(
                           "flex flex-row w-full items-center justify-between rounded-md text-sm md:text-xl py-2 px-4 cursor-pointer text-theme-700 dark:text-theme-200",
                           i === currentItemIndex && "bg-theme-300/50 dark:bg-theme-700/50",
                         )}

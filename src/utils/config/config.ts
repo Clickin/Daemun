@@ -2,7 +2,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync } from "fs";
 import { join } from "path";
 
 import yaml from "js-yaml";
-import cache from "memory-cache";
+import cache from "utils/cache";
 
 const cacheKey = "daemunEnvironmentVariables";
 const daemunVarPrefix = "HOMEPAGE_VAR_";

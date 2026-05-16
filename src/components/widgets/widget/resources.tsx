@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { Children, isValidElement, type ReactNode } from "react";
 
 import ContainerLink from "./container_link";
@@ -16,7 +16,7 @@ interface ResourcesProps {
 
 export default function Resources({ options = {}, children, target, additionalClassNames }: ResourcesProps) {
   const widgetParts = Children.toArray(children).filter(isValidElement);
-  const addedClassNames = classNames("information-widget-resources", additionalClassNames);
+  const addedClassNames = clsx("information-widget-resources", additionalClassNames);
 
   return (
     <ContainerLink options={options} target={target} additionalClassNames={addedClassNames}>

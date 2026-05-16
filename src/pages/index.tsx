@@ -1,5 +1,5 @@
 /* oxlint-disable react/no-array-index-key */
-import classNames from "classnames";
+import clsx from "clsx";
 import BookmarksGroup from "components/bookmarks/group";
 import DocumentHead from "components/document-head";
 import ErrorBoundary from "components/errorboundry";
@@ -259,7 +259,7 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
         {tabs.length > 0 && (
           <div key="tabs" id="tabs" className="m-5 sm:m-9 sm:mt-4 sm:mb-0">
             <ul
-              className={classNames(
+              className={clsx(
                 "sm:flex rounded-md bg-theme-100/20 dark:bg-white/5",
                 settings.cardBlur !== undefined &&
                   `backdrop-blur${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
@@ -353,7 +353,7 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
       <DocumentHead settings={{ ...initialSettings, ...settings }} />
 
       <div
-        className={classNames(
+        className={clsx(
           settings.fullWidth ? "" : "container",
           "relative m-auto flex flex-col justify-start z-10 h-full min-h-screen",
         )}
@@ -369,7 +369,7 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
         )}
         <div
           id="information-widgets"
-          className={classNames(
+          className={clsx(
             "flex flex-row flex-wrap justify-between z-20",
             headerStyles[headerStyle as keyof typeof headerStyles],
             settings.cardBlur !== undefined &&
@@ -377,7 +377,7 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
               `backdrop-blur${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
           )}
         >
-          <div id="widgets-wrap" className={classNames("flex flex-row w-full flex-wrap justify-between gap-x-2")}>
+          <div id="widgets-wrap" className={clsx("flex flex-row w-full flex-wrap justify-between gap-x-2")}>
             {widgets && (
               <>
                 {widgets
@@ -392,7 +392,7 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
 
                 <div
                   id="information-widgets-right"
-                  className={classNames(
+                  className={clsx(
                     "m-auto flex flex-wrap grow sm:basis-auto justify-between md:justify-end",
                     "m-auto flex flex-wrap grow sm:basis-auto justify-between md:justify-end gap-x-2",
                   )}
@@ -493,7 +493,7 @@ export default function Wrapper({ initialSettings, fallback }: Pick<HomePageProp
         <div
           id="inner_wrapper"
           tabIndex={-1}
-          className={classNames(
+          className={clsx(
             "w-full h-full overflow-auto",
             backgroundBlur &&
               `backdrop-blur${typeof backgroundBlur === "string" && backgroundBlur.length ? `-${backgroundBlur}` : ""}`,

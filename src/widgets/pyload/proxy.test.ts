@@ -33,7 +33,7 @@ vi.mock("utils/proxy/http", () => ({
   httpProxy,
 }));
 
-vi.mock("memory-cache", () => ({
+vi.mock("utils/cache", () => ({
   default: cache,
   ...cache,
 }));

@@ -7,6 +7,12 @@ const manifestPath = path.join(root, "dist/client/.vite/manifest.json");
 const packagePath = path.join(root, "package.json");
 const lockfilePath = path.join(root, "pnpm-lock.yaml");
 const defaultBudgetKiB = 700;
+const retiredDependencies = [
+  { label: "Recharts", pattern: /\brecharts\b/i },
+  { label: "classnames", pattern: /\bclassnames\b/i },
+  { label: "memory-cache", pattern: /\bmemory-cache\b/i },
+  { label: "winston", pattern: /\bwinston\b/i },
+];
 
 function parseBudgetKiB() {
   const budgetArg = process.argv.find((arg) => arg.startsWith("--budget-kib="));
@@ -137,13 +143,17 @@ function collectProblems(manifest, clientEntryKey, budgetKiB) {
 
   for (const filePath of [packagePath, lockfilePath]) {
     const contents = readFileSync(filePath, "utf8");
-    if (/\brecharts\b/.test(contents)) {
-      problems.push(`${path.relative(root, filePath)} still references Recharts`);
+    for (const { label, pattern } of retiredDependencies) {
+      if (pattern.test(contents)) {
+        problems.push(`${path.relative(root, filePath)} still references retired dependency ${label}`);
+      }
     }
   }
 
-  if (/\brecharts\b/i.test(JSON.stringify(manifest))) {
-    problems.push("Client manifest still references Recharts");
+  for (const { label, pattern } of retiredDependencies) {
+    if (pattern.test(JSON.stringify(manifest))) {
+      problems.push(`Client manifest still references retired dependency ${label}`);
+    }
   }
 
   for (const key of initialClosure) {
@@ -154,7 +164,11 @@ function collectProblems(manifest, clientEntryKey, budgetKiB) {
       problems.push(`Initial static import closure includes broad chunk ${describeEntry(entry, key)}`);
     }
 
-    if (key !== clientEntryKey && isWidgetComponent(entry, key) && !isInitialCoreServiceComponent(entryId(key, entry))) {
+    if (
+      key !== clientEntryKey &&
+      isWidgetComponent(entry, key) &&
+      !isInitialCoreServiceComponent(entryId(key, entry))
+    ) {
       problems.push(`Initial static import closure includes lazy widget component ${describeEntry(entry, key)}`);
     }
   }

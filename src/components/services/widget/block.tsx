@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { ReactNode } from "react";
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,7 +44,7 @@ export default function Block({ value, highlightValue, label = "", field }: Bloc
 
   return (
     <div
-      className={classNames(
+      className={clsx(
         "bg-theme-200/50 dark:bg-theme-900/20 rounded-sm m-1 flex-1 flex flex-col items-center justify-center text-center p-1",
         value === undefined ? "animate-pulse" : "",
         highlightClass,
@@ -55,7 +55,7 @@ export default function Block({ value, highlightValue, label = "", field }: Bloc
     >
       <div className="font-thin text-sm">{value === undefined || value === null ? "-" : value}</div>
       <div
-        className={classNames("font-bold text-xs uppercase", applyToValueOnly && "text-theme-700 dark:text-theme-200")}
+        className={clsx("font-bold text-xs uppercase", applyToValueOnly && "text-theme-700 dark:text-theme-200")}
       >
         {typeof label === "string" ? t(label) : label}
       </div>

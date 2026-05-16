@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import ResolvedIcon from "components/resolvedicon";
 import { useContext, useState } from "react";
 import { SettingsContext } from "utils/contexts/settings";
@@ -42,7 +42,7 @@ export default function Item({ service, groupName, useEqualHeights }: ServiceIte
   return (
     <li key={service.name} id={service.id} className="service" data-name={service.name || ""}>
       <div
-        className={classNames(
+        className={clsx(
           settings.cardBlur !== undefined && `backdrop-blur${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
           useEqualHeights && "h-[calc(100%-0.5rem)]",
           "transition-all mb-2 p-1 rounded-md font-medium text-theme-700 dark:text-theme-200 dark:hover:text-theme-300 shadow-md shadow-theme-900/10 dark:shadow-theme-900/20 bg-theme-100/20 hover:bg-theme-300/20 dark:bg-white/5 dark:hover:bg-white/10 relative overflow-clip service-card",
@@ -145,7 +145,7 @@ export default function Item({ service, groupName, useEqualHeights }: ServiceIte
 
         {service.container && service.server && (
           <div
-            className={classNames(
+            className={clsx(
               showStats || (statsOpen && !statsClosing) ? "max-h-[110px] opacity-100" : " max-h-0 opacity-0",
               "w-full overflow-hidden transition-all duration-300 ease-in-out service-stats",
             )}
@@ -157,7 +157,7 @@ export default function Item({ service, groupName, useEqualHeights }: ServiceIte
         )}
         {service.app && (
           <div
-            className={classNames(
+            className={clsx(
               showStats || (statsOpen && !statsClosing) ? "max-h-[55px] opacity-100" : " max-h-0 opacity-0",
               "w-full overflow-hidden transition-all duration-300 ease-in-out service-stats",
             )}
@@ -173,7 +173,7 @@ export default function Item({ service, groupName, useEqualHeights }: ServiceIte
         )}
         {service.proxmoxNode && service.proxmoxVMID && (
           <div
-            className={classNames(
+            className={clsx(
               showStats || (statsOpen && !statsClosing) ? "max-h-[110px] opacity-100" : " max-h-0 opacity-0",
               "w-full overflow-hidden transition-all duration-300 ease-in-out service-stats",
             )}

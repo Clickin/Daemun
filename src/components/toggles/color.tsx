@@ -1,5 +1,5 @@
 import { Popover, Transition } from "@headlessui/react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { Fragment, useContext } from "react";
 import { IoColorPalette } from "react-icons/io5";
 import { ColorContext } from "utils/contexts/color";
@@ -63,7 +63,7 @@ export default function ColorToggle() {
                     <div
                       title={color}
                       style={{ backgroundColor: "rgb(var(--color-400))" }}
-                      className={classNames(
+                      className={clsx(
                         active === color ? "border-2" : "border-0",
                         `rounded-md w-5 h-5 border-black/50 dark:border-white/50 theme-${color}`,
                       )}

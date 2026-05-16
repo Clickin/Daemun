@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import Item from "components/services/item";
 
 import { columnMap } from "../../utils/layout/columns";
@@ -15,7 +15,7 @@ interface ServicesListProps {
 export default function List({ groupName, services, layout, useEqualHeights, header }: ServicesListProps) {
   return (
     <ul
-      className={classNames(
+      className={clsx(
         layout?.style === "row" ? `grid ${columnMap[layout?.columns]} gap-x-2` : "flex flex-col",
         header ? "mt-3" : "",
         "services-list",

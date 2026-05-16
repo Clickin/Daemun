@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
@@ -96,7 +96,7 @@ export default function Component({ service }) {
 
   return (
     <Container service={service}>
-      <div className={classNames(service.description ? "-top-10" : "-top-8", "absolute right-1 z-20")}>
+      <div className={clsx(service.description ? "-top-10" : "-top-8", "absolute right-1 z-20")}>
         {showUSMarketStatus === true && <MarketStatus service={service} />}
       </div>
 

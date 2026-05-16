@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { FaMemory, FaRegClock, FaThermometerHalf } from "react-icons/fa";
@@ -89,7 +89,7 @@ export default function Widget({ options }) {
       : [data.fs.find((d) => d.mnt_point === options.disk)].filter((d) => d);
   }
 
-  const addedClasses = classNames("information-widget-glances", { expanded: options.expanded });
+  const addedClasses = clsx("information-widget-glances", { expanded: options.expanded });
 
   return (
     <Resources options={options} target={settings.target ?? "_blank"} additionalClassNames={addedClasses}>

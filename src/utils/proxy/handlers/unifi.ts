@@ -1,4 +1,4 @@
-import cache from "memory-cache";
+import cache from "utils/cache";
 
 import createLogger from "utils/logger";
 import { formatApiCall } from "utils/proxy/api-helpers";

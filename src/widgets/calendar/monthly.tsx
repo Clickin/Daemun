@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -57,7 +57,7 @@ export function Day({ cellDate, events, colorVariants, showDate, setShowDate, cu
     <button
       key={`day-${toCalendarDateKey(cellDate)}`}
       type="button"
-      className={classNames(dayStyles(cellDate), cellStyle)}
+      className={clsx(dayStyles(cellDate), cellStyle)}
       style={{ width: "14%" }}
       onClick={() => setShowDate(cellDate)}
     >
@@ -69,7 +69,7 @@ export function Day({ cellDate, events, colorVariants, showDate, setShowDate, cu
             .map((event) => (
               <span
                 key={`${calendarDayTimestamp(event.date)}+${event.color}-${event.title}-${event.additional}`}
-                className={classNames("inline-flex h-1 w-1 m-0.5 rounded-sm", colorVariants[event.color] ?? "gray")}
+                className={clsx("inline-flex h-1 w-1 m-0.5 rounded-sm", colorVariants[event.color] ?? "gray")}
               />
             ))}
       </span>
@@ -102,7 +102,7 @@ export default function Monthly({ service, colorVariants, events, showDate, setS
           <button
             type="button"
             onClick={() => setShowDate(startOfCalendarDay(subtractCalendarMonths(showDate, 1)))}
-            className={classNames(monthButton)}
+            className={clsx(monthButton)}
           >
             &lt;
           </button>
@@ -116,7 +116,7 @@ export default function Monthly({ service, colorVariants, events, showDate, setS
           <button
             type="button"
             onClick={() => setShowDate(startOfCalendarDay(addCalendarMonths(showDate, 1)))}
-            className={classNames(monthButton)}
+            className={clsx(monthButton)}
           >
             &gt;
           </button>
@@ -126,14 +126,14 @@ export default function Monthly({ service, colorVariants, events, showDate, setS
       <div className="pl-1 pr-1 pb-1 w-full">
         <div className="flex justify-between flex-wrap">
           {dayNames.map((name) => (
-            <span key={name} className={classNames(cellStyle)} style={{ width: "14%" }}>
+            <span key={name} className={clsx(cellStyle)} style={{ width: "14%" }}>
               {name}
             </span>
           ))}
         </div>
 
         <div
-          className={classNames(
+          className={clsx(
             "flex justify-between flex-wrap pb-1",
             !eventsArray.length && widget?.integrations?.length && "animate-pulse",
           )}

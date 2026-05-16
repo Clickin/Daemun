@@ -1,5 +1,5 @@
 import { compareVersions, validate } from "compare-versions";
-import cache from "memory-cache";
+import cache from "utils/cache";
 import { useTranslation } from "react-i18next";
 import { MdNewReleases } from "react-icons/md";
 import { useApiQuery } from "utils/query/api-query";

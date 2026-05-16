@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useContext } from "react";
 import { TabContext } from "utils/contexts/tab";
 
@@ -19,7 +19,7 @@ export default function Tab({ tab }: { tab: string }) {
     <li
       key={tab}
       role="presentation"
-      className={classNames("text-theme-700 dark:text-theme-200 relative h-10 w-full rounded-md flex")}
+      className={clsx("text-theme-700 dark:text-theme-200 relative h-10 w-full rounded-md flex")}
     >
       <button
         id={`${tab}-tab`}
@@ -27,7 +27,7 @@ export default function Tab({ tab }: { tab: string }) {
         role="tab"
         aria-controls={`#${tab}`}
         aria-selected={matchesTab ? "true" : "false"}
-        className={classNames(
+        className={clsx(
           "w-full rounded-md m-1",
           matchesTab ? "bg-theme-300/20 dark:bg-white/10" : "hover:bg-theme-100/20 dark:hover:bg-white/5",
         )}

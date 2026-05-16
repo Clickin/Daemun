@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { Fragment } from "react";
 import { BiCog } from "react-icons/bi";
 
@@ -44,7 +44,7 @@ export default function Dropdown({ options, value, setValue }: DropdownProps) {
                     setValue(option.value);
                   }}
                   type="button"
-                  className={classNames(
+                  className={clsx(
                     value === option.value ? "bg-theme-300/40 dark:bg-theme-900/40" : "",
                     "w-full block px-3 py-1.5 text-sm hover:bg-theme-300/70 dark:hover:bg-theme-900/70 text-left",
                   )}
