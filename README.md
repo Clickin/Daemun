@@ -63,9 +63,10 @@ waterfalls.
   call for the enabled metrics, Glances starts independent metric calls in
   parallel, and Docker/Kubernetes built-ins use summary paths where that preserves
   the existing UI contract.
-- The static home path does not depend on Next.js ISR. Daemun can bake and
-  refresh the home document from the current YAML/config state inside the normal
-  runtime, and it keeps serving the last good document if a refresh fails.
+- The static home path does not depend on Next.js ISR or a browser discovering
+  stale config. Daemun watches YAML config changes from the server process,
+  refreshes the baked home document inside the normal runtime, and keeps serving
+  the last good document if a refresh fails.
 
 The measured container and browser results against upstream Homepage are kept in
 [BENCHMARK.md](BENCHMARK.md). Re-run the benchmark on your target host before
