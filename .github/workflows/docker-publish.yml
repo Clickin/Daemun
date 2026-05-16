@@ -15,6 +15,7 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/clickin/daemun
+  IMAGE_DESCRIPTION: "A full TypeScript, Hono-powered homelab dashboard with React and YAML compatibility from Homepage."
 
 jobs:
   build:
@@ -111,6 +112,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: |
+            index:org.opencontainers.image.description=${{ env.IMAGE_DESCRIPTION }}
           build-args: |
             CI=true
             BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
@@ -130,6 +133,9 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-nginx.outputs.tags }}
           labels: ${{ steps.meta-nginx.outputs.labels }}
+          annotations: |
+            index:org.opencontainers.image.description=${{ env.IMAGE_DESCRIPTION }}
+            org.opencontainers.image.description=${{ env.IMAGE_DESCRIPTION }}
           build-args: |
             CI=true
             BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
