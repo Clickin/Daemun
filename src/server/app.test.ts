@@ -52,7 +52,7 @@ describe("Hono app", () => {
     expect(await response.json()).toEqual({ error: "Host validation failed. See logs for more details." });
   });
 
-  it("renders the home page through Inertia", async () => {
+  it("renders the home page through raw Hono JSON for API-style requests", async () => {
     const { createApp } = await import("./app");
     const response = await createApp().request("/", {
       headers: { accept: "application/json" },
@@ -70,6 +70,22 @@ describe("Hono app", () => {
       initialSettings: { title: "Daemun" },
       locale: "en",
     });
+  });
+
+  it("renders browser home HTML without Inertia response headers", async () => {
+    const { createApp } = await import("./app");
+    const response = await createApp().request("/", {
+      headers: { accept: "text/html" },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Inertia")).toBeNull();
+    expect(response.headers.get("X-Inertia-Location")).toBeNull();
+    const html = await response.text();
+    expect(html).toContain("<title>Daemun</title>");
+    expect(html).toContain('id="daemun-page-props"');
+    expect(html).toContain('id="daemun-query-data"');
+    expect(html).not.toContain('data-page="app"');
   });
 
   it("serves the browser fallback favicon request", async () => {

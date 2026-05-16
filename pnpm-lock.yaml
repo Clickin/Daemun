@@ -14,9 +14,6 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.2
         version: 2.0.2(hono@4.12.18)
-      '@inertiajs/react':
-        specifier: ^3.1.1
-        version: 3.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@kubernetes/client-node':
         specifier: ^1.0.0
         version: 1.0.0
@@ -704,20 +701,6 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [win32]
-
-  '@inertiajs/core@3.1.1':
-    resolution: {integrity: sha512-l8NfuI6xaeLcSTUH67fk/RPKGr5Pm+oyeWJy6mBfWxHIiNpMctPQtha5/NLQ+RqGekJdmJ7cHH8l3JDkvoPXYg==}
-    peerDependencies:
-      axios: ^1.15.2
-    peerDependenciesMeta:
-      axios:
-        optional: true
-
-  '@inertiajs/react@3.1.1':
-    resolution: {integrity: sha512-Z1MhuMaRC1rv7hdK8p8I4u88seku358Je4q7OPVG+FRSZAfnUGXGRBYaHq34HYDjoz1axb+/irkk1WdJFs37Rg==}
-    peerDependencies:
-      react: ^19.0.0
-      react-dom: ^19.0.0
 
   '@internationalized/date@3.12.1':
     resolution: {integrity: sha512-6IedsVWXyq4P9Tj+TxuU8WGWM70hYLl12nbYU8jkikVpa6WXapFazPUcHUMDMoWftIDE2ILDkFFte6W2nFCkRQ==}
@@ -2667,14 +2650,6 @@ packages:
 
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
-
-  laravel-precognition@2.0.0:
-    resolution: {integrity: sha512-dmA4HGc9m+TsVNsJs9/XQBI8u6j7coilN+qKkBuhuXQzH3HypwS/c5dFQ4UqUGjBbcxIM7zdk91kM/SRZwIvWQ==}
-    peerDependencies:
-      axios: ^1.4.0
-    peerDependenciesMeta:
-      axios:
-        optional: true
 
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
@@ -4651,22 +4626,6 @@ snapshots:
 
   '@img/sharp-win32-x64@0.34.5':
     optional: true
-
-  '@inertiajs/core@3.1.1':
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      es-toolkit: 1.39.10
-      laravel-precognition: 2.0.0
-
-  '@inertiajs/react@3.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
-    dependencies:
-      '@inertiajs/core': 3.1.1
-      es-toolkit: 1.39.10
-      laravel-precognition: 2.0.0
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
-    transitivePeerDependencies:
-      - axios
 
   '@internationalized/date@3.12.1':
     dependencies:
@@ -6653,10 +6612,6 @@ snapshots:
   klona@2.0.6: {}
 
   kuler@2.0.0: {}
-
-  laravel-precognition@2.0.0:
-    dependencies:
-      es-toolkit: 1.39.10
 
   lightningcss-android-arm64@1.32.0:
     optional: true

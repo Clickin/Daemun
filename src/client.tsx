@@ -1,4 +1,3 @@
-import { createInertiaApp } from "@inertiajs/react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
 import "styles/globals.css";
@@ -8,43 +7,33 @@ import "utils/i18n";
 import { AppProviders } from "./app";
 import Home from "./pages/index";
 import { readBakedInitialPageProps, readBakedInitialQueryData } from "./utils/query/initial-data";
+import type { HomePageProps } from "./types";
 
-const pages = {
-  Home,
-};
-
-function mergeBakedInitialPageProps(props) {
-  const bakedPageProps = readBakedInitialPageProps();
-  if (!bakedPageProps || !props.initialPage) return props;
+function readInitialHomeProps(): Pick<HomePageProps, "fallback" | "initialSettings" | "locale"> {
+  const initialPageProps = readBakedInitialPageProps() ?? {};
+  const initialQueryData = readBakedInitialQueryData() ?? {};
 
   return {
-    ...props,
-    initialPage: {
-      ...props.initialPage,
-      props: {
-        ...bakedPageProps,
-        ...props.initialPage.props,
-      },
-    },
+    fallback: initialQueryData as HomePageProps["fallback"],
+    initialSettings: (initialPageProps.initialSettings ?? {}) as HomePageProps["initialSettings"],
+    locale: typeof initialPageProps.locale === "string" ? initialPageProps.locale : "en",
   };
 }
 
-createInertiaApp({
-  resolve: (name) => pages[name],
-  setup({ el, App, props }) {
-    const mergedProps = mergeBakedInitialPageProps(props);
-    const initialSettings = mergedProps.initialPage?.props?.initialSettings;
-    const initialQueryData = mergedProps.initialPage?.props?.fallback ?? readBakedInitialQueryData();
-    const app = (
-      <AppProviders initialQueryData={initialQueryData} initialSettings={initialSettings}>
-        <App {...mergedProps} />
-      </AppProviders>
-    );
+const el = document.getElementById("app");
+if (!el) {
+  throw new Error("Daemun client root element #app was not found");
+}
 
-    if (el.hasChildNodes()) {
-      hydrateRoot(el, app);
-    } else {
-      createRoot(el).render(app);
-    }
-  },
-});
+const initialProps = readInitialHomeProps();
+const app = (
+  <AppProviders initialQueryData={initialProps.fallback} initialSettings={initialProps.initialSettings}>
+    <Home {...initialProps} />
+  </AppProviders>
+);
+
+if (el.hasChildNodes()) {
+  hydrateRoot(el, app);
+} else {
+  createRoot(el).render(app);
+}

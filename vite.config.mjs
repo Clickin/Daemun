@@ -32,10 +32,6 @@ export function clientManualChunks(id) {
       return "vendor-react";
     }
 
-    if (isPackage("@inertiajs/core") || isPackage("@inertiajs/react")) {
-      return "vendor-inertia";
-    }
-
     if (isPackage("@tanstack/query-core") || isPackage("@tanstack/react-query")) {
       return "vendor-query";
     }
@@ -46,6 +42,15 @@ export function clientManualChunks(id) {
   }
 
   return undefined;
+}
+
+export function clientChunkFileNames(chunkInfo) {
+  const moduleIds = chunkInfo.moduleIds ?? [];
+  const isGlancesChartPayload =
+    chunkInfo.name === "custom_tooltip" &&
+    moduleIds.some((id) => id.replaceAll("\\", "/").includes("/node_modules/recharts/"));
+
+  return isGlancesChartPayload ? "assets/glances-charts-[hash].js" : "assets/[name]-[hash].js";
 }
 
 export default defineConfig((configEnv) => {
@@ -76,6 +81,7 @@ export default defineConfig((configEnv) => {
           rollupOptions: {
             input: "src/client.tsx",
             output: {
+              chunkFileNames: clientChunkFileNames,
               manualChunks: clientManualChunks,
             },
           },

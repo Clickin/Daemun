@@ -10,7 +10,6 @@ import { toSSG } from "hono/ssg";
 
 import { CONF_DIR } from "utils/config/config";
 
-import { getAssetVersion } from "./build-info.ts";
 import { loadHomePageProps } from "./home-props.ts";
 import { renderHomeHtml } from "./render-home.tsx";
 import { rootView } from "./root-view.ts";
@@ -33,7 +32,6 @@ interface StaticHomeCacheOptions {
 
 interface StaticHomeBakeOptions {
   dir?: string;
-  version?: string;
 }
 
 function errorMessage(error: unknown) {
@@ -79,7 +77,7 @@ type ActiveStaticHomeCache = Pick<StaticHomeCache, "refresh">;
 
 let activeStaticHomeCache: ActiveStaticHomeCache | null = null;
 
-function createStaticHomeApp(version = getAssetVersion()) {
+function createStaticHomeApp() {
   const app = new Hono();
   let propsPromise: ReturnType<typeof loadHomePageProps> | null = null;
 
@@ -87,15 +85,7 @@ function createStaticHomeApp(version = getAssetVersion()) {
     const props = await (propsPromise ??= loadHomePageProps());
 
     return c.html(
-      rootView(
-        {
-          component: "Home",
-          props,
-          url: "/",
-          version,
-        },
-        { appHtml: renderHomeHtml(props) },
-      ),
+      rootView(props, { appHtml: renderHomeHtml(props) }),
     );
   });
 
@@ -104,7 +94,6 @@ function createStaticHomeApp(version = getAssetVersion()) {
 
 function isBrowserHomeRequest(c: Context) {
   if (c.req.method !== "GET") return false;
-  if (c.req.header("X-Inertia")) return false;
 
   const url = new URL(c.req.url);
   if (url.pathname !== "/" || url.search) return false;
@@ -119,14 +108,13 @@ export function isStaticHomeConfigFile(filename?: string) {
 
 export async function bakeStaticHome({
   dir = defaultBakeDir,
-  version = getAssetVersion(),
 }: StaticHomeBakeOptions = {}) {
   let stagingDir: string | null = null;
 
   try {
     stagingDir = await createBakeStagingDir(dir);
 
-    const result = await toSSG(createStaticHomeApp(version), fs, {
+    const result = await toSSG(createStaticHomeApp(), fs, {
       concurrency: 1,
       dir: stagingDir,
     });
@@ -167,7 +155,6 @@ export class StaticHomeCache {
   queuedRefreshReason: string | null;
   refreshPromise: Promise<boolean> | null;
   timer: ReturnType<typeof setTimeout> | null;
-  version: string;
   watchEnabled: boolean;
   watcher: FSWatcher | null;
 
@@ -184,7 +171,6 @@ export class StaticHomeCache {
     this.queuedRefreshReason = null;
     this.refreshPromise = null;
     this.timer = null;
-    this.version = getAssetVersion();
     this.watchEnabled = watch;
     this.watcher = null;
   }
@@ -219,7 +205,7 @@ export class StaticHomeCache {
         const reason = this.queuedRefreshReason;
         this.queuedRefreshReason = null;
 
-        lastResult = await bakeStaticHome({ dir: this.dir, version: this.version })
+        lastResult = await bakeStaticHome({ dir: this.dir })
           .then(({ html }) => {
             this.html = html;
             this.logger.info?.(`Static home baked (${reason})`);

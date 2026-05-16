@@ -6,13 +6,10 @@ import {
   BAKED_QUERY_DATA_ELEMENT_ID,
   compactInitialPageProps,
   compactInitialQueryData,
-  isBakedInitialQueryPath,
 } from "utils/query/initial-data";
 import themes from "utils/styles/themes";
 
-import { serializePage } from "./inertia.ts";
-import type { InertiaPage } from "./inertia.ts";
-import type { SettingsRecord } from "../types";
+import type { HomePageProps, SettingsRecord } from "../types";
 
 interface RootViewOptions {
   appHtml?: string;
@@ -39,6 +36,10 @@ function escapeText(value: unknown) {
 
 function escapeAttribute(value: unknown) {
   return escapeText(value).replaceAll('"', "&quot;");
+}
+
+function serializeScriptJson(value: unknown): string {
+  return JSON.stringify(value).replaceAll("/", "\\/");
 }
 
 function getClientManifest() {
@@ -162,45 +163,22 @@ function bakedInitialQueryDataScript(fallback: unknown) {
   const compactQueryData = compactInitialQueryData(fallback);
   if (Object.keys(compactQueryData).length === 0) return "";
 
-  return `<script id="${BAKED_QUERY_DATA_ELEMENT_ID}" type="application/json">${serializePage(compactQueryData)}</script>`;
+  return `<script id="${BAKED_QUERY_DATA_ELEMENT_ID}" type="application/json">${serializeScriptJson(compactQueryData)}</script>`;
 }
 
 function bakedInitialPagePropsScript(pageProps: unknown) {
   const compactPageProps = compactInitialPageProps(pageProps);
   if (Object.keys(compactPageProps).length === 0) return "";
 
-  return `<script id="${BAKED_PAGE_PROPS_ELEMENT_ID}" type="application/json">${serializePage(compactPageProps)}</script>`;
+  return `<script id="${BAKED_PAGE_PROPS_ELEMENT_ID}" type="application/json">${serializeScriptJson(compactPageProps)}</script>`;
 }
 
-function clientPageForHtml(page: InertiaPage) {
-  const fallback = page.props?.fallback;
-  const props = { ...page.props };
-
-  delete props.initialSettings;
-  delete props.locale;
-
-  if (!fallback || typeof fallback !== "object") return { ...page, props };
-
-  const remainingFallback = Object.fromEntries(
-    Object.entries(fallback).filter(([pathName]) => !isBakedInitialQueryPath(pathName)),
-  );
-
-  if (Object.keys(remainingFallback).length > 0) {
-    props.fallback = remainingFallback;
-  } else {
-    delete props.fallback;
-  }
-
-  return { ...page, props };
-}
-
-export function rootView(page: InertiaPage, context: unknown = {}) {
-  const settings = (page.props?.initialSettings || {}) as SettingsRecord;
+export function rootView(props: Pick<HomePageProps, "fallback" | "initialSettings" | "locale">, context: unknown = {}) {
+  const settings = (props.initialSettings || {}) as SettingsRecord;
   const theme = settings.theme || "dark";
   const color = settings.color || "slate";
-  const initialPagePropsScript = bakedInitialPagePropsScript(page.props);
-  const initialQueryDataScript = bakedInitialQueryDataScript(page.props?.fallback);
-  const clientPage = clientPageForHtml(page);
+  const initialPagePropsScript = bakedInitialPagePropsScript(props);
+  const initialQueryDataScript = bakedInitialQueryDataScript(props.fallback);
   const appHtml = isRootViewOptions(context) ? (context.appHtml ?? "") : "";
 
   return `<!DOCTYPE html>
@@ -211,7 +189,6 @@ export function rootView(page: InertiaPage, context: unknown = {}) {
   <body>
     ${initialPagePropsScript}
     ${initialQueryDataScript}
-    <script data-page="app" type="application/json">${serializePage(clientPage)}</script>
     <div id="app">${appHtml}</div>
     <script src="/api/config/custom.js"></script>
   </body>

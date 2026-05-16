@@ -62,7 +62,7 @@ function collectStaticClosure(manifest, startKey) {
 }
 
 function isAllowedVendorChunk(base) {
-  return /^vendor-(i18n|inertia|query|react)-/.test(base);
+  return /^vendor-(i18n|query|react)-/.test(base);
 }
 
 function isBroadChunk(entry, key) {

@@ -33,10 +33,9 @@ import widgetsResources from "../pages/api/widgets/resources.ts";
 import widgetsStocks from "../pages/api/widgets/stocks.ts";
 import widgetsWeather from "../pages/api/widgets/weather.ts";
 
-import { getAssetVersion } from "./build-info.ts";
 import { loadHomePageProps } from "./home-props.ts";
 import { honoApiHandler, splitCatchAll } from "./api-handler-adapter.ts";
-import { inertia } from "./inertia.ts";
+import { renderHomeHtml } from "./render-home.tsx";
 import { rootView } from "./root-view.ts";
 import { browserConfigXml, robotsTxt, siteWebmanifest } from "./static-pages.ts";
 
@@ -74,13 +73,6 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
   const clientRoot = path.resolve(process.cwd(), "dist/client");
 
   app.use("/api/*", apiHostValidation());
-
-  app.use(
-    inertia({
-      rootView,
-      version: getAssetVersion(),
-    }),
-  );
 
   app.get("/api/bookmarks", honoApiHandler(bookmarks));
   app.get("/api/hash", honoApiHandler(hash));
@@ -124,12 +116,14 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
     app.use("*", staticHome.middleware());
   }
 
-  app.get("/", async (c) =>
-    (c.render as (component: string, props: unknown) => Response | Promise<Response>)(
-      "Home",
-      await loadHomePageProps(),
-    ),
-  );
+  app.get("/", async (c) => {
+    const props = await loadHomePageProps();
+    if (c.req.header("Accept")?.includes("application/json")) {
+      return c.json(props, 200);
+    }
+
+    return c.html(rootView(props, { appHtml: renderHomeHtml(props) }));
+  });
 
   if (existsSync(clientRoot)) {
     app.use("/assets/*", serveStatic({ root: clientRoot }));

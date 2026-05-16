@@ -42,6 +42,10 @@ vi.mock("./home-props", () => ({
   loadHomePageProps,
 }));
 
+vi.mock("./render-home.tsx", () => ({
+  renderHomeHtml: vi.fn<VitestMockProcedure>(() => "<main>static home</main>"),
+}));
+
 vi.mock("utils/i18n", () => ({
   default: { changeLanguage: vi.fn<VitestMockProcedure>(), language: "en" },
   loadLanguage: vi.fn<VitestMockProcedure>(async (language) => language),
@@ -70,10 +74,10 @@ describe("static home SSG cache", () => {
     rmSync(tempDir, { force: true, recursive: true });
   });
 
-  it("bakes the Inertia home route to index.html through Hono SSG", async () => {
+  it("bakes the raw Hono home route to index.html through Hono SSG", async () => {
     const { bakeStaticHome } = await import("./static-home");
 
-    const result = await bakeStaticHome({ dir: tempDir, version: "test-version" });
+    const result = await bakeStaticHome({ dir: tempDir });
     const html = await readFile(path.join(tempDir, "index.html"), "utf8");
 
     expect(result.files.map((file) => file.replaceAll("\\", "/")).some((file) => file.endsWith("/index.html"))).toBe(
@@ -85,8 +89,10 @@ describe("static home SSG cache", () => {
     expect(html).toContain("Static App");
     expect(html).toContain("Static Bookmarks");
     expect(html).toContain("Static Link");
-    expect(html).toContain('data-page="app"');
-    expect(html).toContain('"version":"test-version"');
+    expect(html).toContain('id="daemun-page-props"');
+    expect(html).toContain('id="daemun-query-data"');
+    expect(html).not.toContain('data-page="app"');
+    expect(html).not.toContain('"component":"Home"');
     expect(loadHomePageProps).toHaveBeenCalledTimes(1);
   });
 
@@ -99,7 +105,7 @@ describe("static home SSG cache", () => {
     try {
       const { bakeStaticHome } = await import("./static-home");
 
-      const result = await bakeStaticHome({ version: "runtime-dir-version" });
+      const result = await bakeStaticHome();
 
       expect(result.filePath).toBe(path.join(runtimeDir, "index.html"));
       await expect(readFile(path.join(runtimeDir, "index.html"), "utf8")).resolves.toBe(result.html);
@@ -148,7 +154,7 @@ describe("static home SSG cache", () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
     try {
-      await expect(bakeStaticHome({ dir: tempDir, version: "failed-version" })).rejects.toThrow();
+      await expect(bakeStaticHome({ dir: tempDir })).rejects.toThrow();
     } finally {
       consoleError.mockRestore();
     }
@@ -164,11 +170,11 @@ describe("static home SSG cache", () => {
     await writeFile(path.join(tempDir, "index.html"), "<!doctype html><title>old snapshot</title>");
     await writeFile(sentinelPath, "keep me");
 
-    const result = await bakeStaticHome({ dir: tempDir, version: "replacement-version" });
+    const result = await bakeStaticHome({ dir: tempDir });
 
     await expect(readFile(sentinelPath, "utf8")).resolves.toBe("keep me");
     expect(result.html).toContain("<title>Static Lab</title>");
-    expect(result.html).toContain('"version":"replacement-version"');
+    expect(result.html).not.toContain('data-page="app"');
     await expect(readFile(path.join(tempDir, "index.html"), "utf8")).resolves.toBe(result.html);
     const entries = await readdir(tempDir);
     expect(entries.filter((entry) => entry.startsWith(".bake-"))).toEqual([]);
@@ -181,7 +187,7 @@ describe("static home SSG cache", () => {
     await mkdir(staleDir);
     await writeFile(path.join(staleDir, "index.html"), "<!doctype html><title>stale staging</title>");
 
-    await bakeStaticHome({ dir: tempDir, version: "cleanup-version" });
+    await bakeStaticHome({ dir: tempDir });
 
     const entries = await readdir(tempDir);
     expect(entries.filter((entry) => entry.startsWith(".bake-"))).toEqual([]);
