@@ -6,8 +6,8 @@ description: Daemun documentation entrypoint.
 import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 Daemun is a lightweight application dashboard for self-hosted services. It is a
-fork of the upstream Homepage project, rebuilt around Hono, Vite, React, and
-Inertia instead of the original Next.js server runtime.
+fork of the upstream Homepage project, rebuilt around Hono, Vite, and React instead
+of the original Next.js runtime.
 
 <img
   src="/Daemun/docs-assets/daemun-sample.png"
@@ -49,7 +49,9 @@ Inertia instead of the original Next.js server runtime.
 
 - Hono serves the app and the existing `/api/**` route contracts.
 - Vite builds the browser bundle and the server bundle.
-- React and Inertia render the dashboard.
+- React renders the dashboard.
+- Unlike upstream Homepage’s JS-first stack, Daemun is implemented as full TypeScript
+  across app, server, and widget layers.
 - Astro Starlight publishes this documentation as static HTML.
 - Starlight search is explicitly backed by Pagefind.
 

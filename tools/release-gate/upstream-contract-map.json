@@ -9,7 +9,7 @@
     {
       "upstreamPath": "src/__tests__/pages/_app.test.jsx",
       "contractPaths": ["src/app.test.tsx", "src/server/root-view.test.ts"],
-      "rationale": "Next _app is replaced by the Inertia app provider tree plus Hono root viewport/head contract."
+      "rationale": "Next _app is replaced by the Hono root viewport/head contract plus the same app-level data bootstrap."
     },
     {
       "upstreamPath": "src/__tests__/pages/_document.test.jsx",
@@ -159,7 +159,7 @@
     {
       "upstreamPath": "src/__tests__/pages/index.test.jsx",
       "contractPaths": ["src/server/home-props.test.ts", "test/pages/index.test.tsx"],
-      "rationale": "Next getStaticProps becomes Inertia initial props; the React page behavior remains a component contract."
+      "rationale": "Next getStaticProps becomes Hono-rendered initial props; the React page behavior remains a component contract."
     },
     {
       "upstreamPath": "src/__tests__/pages/robots.txt.test.js",

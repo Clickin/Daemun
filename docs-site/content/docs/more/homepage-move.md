@@ -3,7 +3,7 @@ title: Daemun Fork Migration
 description: Migrating from Homepage to Daemun
 ---
 
-Daemun is a fork of [gethomepage/homepage](https://github.com/gethomepage/homepage/) that keeps the existing YAML configuration and widget compatibility model while replacing the Next.js runtime with Hono, Vite, Inertia, and static page baking.
+Daemun is a fork of [gethomepage/homepage](https://github.com/gethomepage/homepage/) that keeps the existing YAML configuration and widget compatibility model while replacing the Next.js runtime with Hono, Vite, and static page baking.
 
 For Docker installs, migration is usually a container image and port change:
 

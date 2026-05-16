@@ -20,7 +20,9 @@ runtime and project identity now belong to Daemun.
 ## Runtime Direction
 
 - Hono serves the production HTTP runtime and the existing `/api/**` contracts.
-- Vite builds the React/Inertia browser bundle and the Node server bundle.
+- Vite builds the React client browser bundle and the Node server bundle.
+- Upstream Homepage is a JavaScript-based stack; Daemun is a full TypeScript
+  stack across app, server, and widget layers.
 - `pnpm` owns the app, docs, test, and build workflows.
 - Astro Starlight replaces the old Python documentation stack.
 - Starlight search uses Pagefind.
@@ -29,6 +31,25 @@ runtime and project identity now belong to Daemun.
   listen on port `80`.
 - Docker images are built around the generated `dist` output plus only the
   native runtime dependencies that cannot be bundled.
+
+## Release Versioning
+
+Release versions follow the upstream `gethomepage/homepage` family for the
+`major.minor` line, while Daemun keeps fork-only behavior changes in the patch
+slot.
+
+- Align the first two semver fields (`major.minor`) with the tracked upstream
+  version family.
+- Use Daemun patch increments (`patch`) for fork-specific changes and runtime
+  replacements that keep compatibility contracts intact.
+- If a Daemun change is a true compatibility-breaking change, use a major/minor
+  bump following normal semver.
+
+Under this policy, this build is `v1.14.3` (upstream-family `1.14`, Daemun patch
+`3`).
+
+This keeps Daemun readable against upstream history while still giving us a
+predictable release space for fork differences.
 
 ## Compatibility
 

@@ -23,7 +23,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) to start.
 
-This is a Hono application with Vite-built React/Inertia client assets.
+This is a Hono application with Vite-built React client assets.
 
 ## Code Linting
 
