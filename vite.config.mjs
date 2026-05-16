@@ -22,60 +22,27 @@ const buildTime = process.env.VITE_BUILDTIME || process.env.BUILDTIME || "";
 const revision = process.env.VITE_REVISION || process.env.REVISION || "";
 const version = process.env.VITE_VERSION || process.env.VERSION || "";
 
-function clientManualChunks(id) {
+export function clientManualChunks(id) {
   const normalizedId = id.replaceAll("\\", "/");
 
   if (normalizedId.includes("/node_modules/")) {
-    if (
-      normalizedId.includes("/react/") ||
-      normalizedId.includes("/react-dom/") ||
-      normalizedId.includes("/scheduler/") ||
-      normalizedId.includes("/@inertiajs/")
-    ) {
+    const isPackage = (packageName) => normalizedId.includes(`/node_modules/${packageName}/`);
+
+    if (isPackage("react") || isPackage("react-dom") || isPackage("scheduler")) {
       return "vendor-react";
     }
 
-    if (normalizedId.includes("/@headlessui/")) {
-      return "vendor-headlessui";
+    if (isPackage("@inertiajs/core") || isPackage("@inertiajs/react")) {
+      return "vendor-inertia";
     }
 
-    if (normalizedId.includes("/react-icons/")) {
-      return "vendor-icons";
+    if (isPackage("@tanstack/query-core") || isPackage("@tanstack/react-query")) {
+      return "vendor-query";
     }
 
-    if (
-      normalizedId.includes("/i18next") ||
-      normalizedId.includes("/react-i18next/") ||
-      normalizedId.includes("/i18next-browser-languagedetector/")
-    ) {
+    if (isPackage("i18next") || isPackage("react-i18next")) {
       return "vendor-i18n";
     }
-
-    if (normalizedId.includes("/@tanstack/") || normalizedId.includes("/hono/") || normalizedId.includes("/zod/")) {
-      return "vendor-data";
-    }
-
-    if (normalizedId.includes("/date-fns/") || normalizedId.includes("/dayjs/")) {
-      return "vendor-date";
-    }
-
-    return "vendor";
-  }
-
-  if (normalizedId.includes("/src/components/quicklaunch")) {
-    return "quicklaunch";
-  }
-
-  if (normalizedId.includes("/src/components/services/")) {
-    return "services";
-  }
-
-  if (normalizedId.includes("/src/components/bookmarks/")) {
-    return "bookmarks";
-  }
-
-  if (normalizedId.includes("/src/components/widgets/")) {
-    return "info-widgets";
   }
 
   return undefined;

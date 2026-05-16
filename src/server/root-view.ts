@@ -18,6 +18,14 @@ interface RootViewOptions {
   appHtml?: string;
 }
 
+interface ManifestEntry {
+  css?: string[];
+  file?: string;
+  imports?: string[];
+}
+
+type ClientManifest = Record<string, ManifestEntry>;
+
 function isRootViewOptions(value: unknown): value is RootViewOptions {
   return Boolean(value) && typeof value === "object" && "appHtml" in value;
 }
@@ -33,12 +41,42 @@ function escapeAttribute(value: unknown) {
   return escapeText(value).replaceAll('"', "&quot;");
 }
 
-function getManifestEntry() {
-  const manifestPath = path.resolve(process.cwd(), "dist/client/.vite/manifest.json");
+function getClientManifest() {
+  const manifestPath = process.env.DAEMUN_CLIENT_MANIFEST_PATH || path.resolve(process.cwd(), "dist/client/.vite/manifest.json");
   if (!existsSync(manifestPath)) return null;
 
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  return JSON.parse(readFileSync(manifestPath, "utf8")) as ClientManifest;
+}
+
+function getManifestEntry(manifest: ClientManifest) {
   return manifest["src/client.tsx"];
+}
+
+function collectStaticImportFiles(manifest: ClientManifest, entry: ManifestEntry) {
+  const files: string[] = [];
+  const seen = new Set<string>();
+
+  function visit(key: string) {
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    const imported = manifest[key];
+    if (!imported) return;
+
+    if (imported.file?.endsWith(".js")) {
+      files.push(imported.file);
+    }
+
+    for (const childKey of imported.imports || []) {
+      visit(childKey);
+    }
+  }
+
+  for (const key of entry.imports || []) {
+    visit(key);
+  }
+
+  return files;
 }
 
 function devAssetTags() {
@@ -61,14 +99,18 @@ function devAssetTags() {
 function assetTags() {
   if (process.env.VITE_DEV_SERVER_ORIGIN) return devAssetTags();
 
-  const entry = getManifestEntry();
+  const manifest = getClientManifest();
+  const entry = manifest ? getManifestEntry(manifest) : null;
   if (!entry) {
     return ['<script type="module" src="/src/client.tsx"></script>'];
   }
 
   const styles = (entry.css || []).map((href) => `<link rel="stylesheet" href="/${escapeAttribute(href)}">`);
+  const modulePreloads = collectStaticImportFiles(manifest, entry).map(
+    (href) => `<link rel="modulepreload" crossorigin href="/${escapeAttribute(href)}">`,
+  );
 
-  return [...styles, `<script type="module" src="/${escapeAttribute(entry.file)}"></script>`];
+  return [...styles, ...modulePreloads, `<script type="module" src="/${escapeAttribute(entry.file)}"></script>`];
 }
 
 function defaultIconTags(settings: SettingsRecord) {

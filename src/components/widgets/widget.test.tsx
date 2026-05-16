@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { dynamic } = vi.hoisted(() => {
-  const dynamic = vi.fn<VitestMockProcedure>((loader, opts) => {
+const { cachedDynamic } = vi.hoisted(() => {
+  const cachedDynamic = vi.fn<VitestMockProcedure>((loader, opts) => {
     const loaderStr = loader.toString();
     const ssr = opts?.ssr === false ? "false" : "true";
 
@@ -20,20 +20,24 @@ const { dynamic } = vi.hoisted(() => {
     };
   });
 
-  return { dynamic };
+  return { cachedDynamic };
 });
 
 vi.mock("utils/dynamic", () => ({
-  default: dynamic,
+  cachedDynamic,
 }));
 
 vi.mock("components/errorboundry", () => ({
   default: ({ children }) => <div data-testid="error-boundary">{children}</div>,
 }));
 
-import Widget from "./widget";
+import Widget from "./widget-resolved";
 
 describe("components/widgets/widget", () => {
+  beforeEach(() => {
+    cachedDynamic.mockClear();
+  });
+
   it("renders the mapped widget component and forwards style into options", () => {
     render(
       <Widget widget={{ type: "search", options: { provider: ["google"] } }} style={{ header: "boxedWidgets" }} />,
@@ -44,15 +48,27 @@ describe("components/widgets/widget", () => {
 
     const el = screen.getByTestId("dynamic-widget");
     expect(el.getAttribute("data-loader")).toContain("search/search");
+    expect(el.getAttribute("data-loader")).not.toContain("logo/logo");
+    expect(cachedDynamic).toHaveBeenCalledOnce();
 
     const forwarded = JSON.parse(el.getAttribute("data-options"));
     expect(forwarded.provider).toEqual(["google"]);
     expect(forwarded.style).toEqual({ header: "boxedWidgets" });
   });
 
+  it("preserves the client-only option for the logo widget loader", () => {
+    render(<Widget widget={{ type: "logo", options: {} }} style={{}} />);
+
+    const el = screen.getByTestId("dynamic-widget");
+    expect(el.getAttribute("data-loader")).toContain("logo/logo");
+    expect(el.getAttribute("data-ssr")).toBe("false");
+    expect(cachedDynamic).toHaveBeenCalledOnce();
+  });
+
   it("renders a missing message when widget type is unknown", () => {
     render(<Widget widget={{ type: "nope", options: {} }} style={{}} />);
     expect(screen.getByText("Missing")).toBeInTheDocument();
     expect(screen.getByText("nope")).toBeInTheDocument();
+    expect(cachedDynamic).not.toHaveBeenCalled();
   });
 });

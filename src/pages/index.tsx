@@ -3,14 +3,12 @@ import classNames from "classnames";
 import BookmarksGroup from "components/bookmarks/group";
 import DocumentHead from "components/document-head";
 import ErrorBoundary from "components/errorboundry";
-import QuickLaunch from "components/quicklaunch";
 import ServicesGroup from "components/services/group";
 import Tab, { slugifyAndEncode } from "components/tab";
 import Revalidate from "components/toggles/revalidate";
 import Widget from "components/widgets/widget";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BiError } from "react-icons/bi";
 import { ColorContext } from "utils/contexts/color";
 import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
@@ -34,7 +32,13 @@ const Version = dynamic(() => import("components/version"), {
   ssr: false,
 });
 
+const QuickLaunch = dynamic(() => import("components/quicklaunch"), {
+  ssr: false,
+});
+
 const rightAlignedWidgets = ["weatherapi", "openweathermap", "weather", "openmeteo", "search", "datetime"];
+const validationErrorIconClass =
+  "float-right inline-flex h-6 w-6 items-center justify-center rounded-full border border-current text-sm leading-none";
 
 function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "initialSettings">) {
   const windowFocused = useWindowFocus();
@@ -84,7 +88,9 @@ function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "
         <div className="flex flex-col">
           <div className="basis-1/2 bg-theme-500 dark:bg-theme-600 text-theme-600 dark:text-theme-300 m-2 rounded-md font-mono shadow-md border-4 border-transparent">
             <div className="bg-rose-200 text-rose-800 dark:text-rose-200 dark:bg-rose-800 p-2 rounded-md font-bold">
-              <BiError className="float-right w-6 h-6" />
+              <span aria-hidden="true" className={validationErrorIconClass}>
+                !
+              </span>
               Error
             </div>
             <div className="p-2 text-theme-100 dark:text-theme-200">
@@ -114,7 +120,9 @@ function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "
               key={i}
             >
               <div className="bg-amber-200 text-amber-800 dark:text-amber-200 dark:bg-amber-800 p-2 rounded-md font-bold">
-                <BiError className="float-right w-6 h-6" />
+                <span aria-hidden="true" className={validationErrorIconClass}>
+                  !
+                </span>
                 {error.config}
               </div>
               <div className="p-2 text-theme-100 dark:text-theme-200">
@@ -378,13 +386,15 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
           "relative m-auto flex flex-col justify-start z-10 h-full min-h-screen",
         )}
       >
-        <QuickLaunch
-          servicesAndBookmarks={servicesAndBookmarks}
-          searchString={searchString}
-          setSearchString={setSearchString}
-          isOpen={searching}
-          setSearching={setSearching}
-        />
+        {(searching || settings.quicklaunch?.mobileButtonPosition) && (
+          <QuickLaunch
+            servicesAndBookmarks={servicesAndBookmarks}
+            searchString={searchString}
+            setSearchString={setSearchString}
+            isOpen={searching}
+            setSearching={setSearching}
+          />
+        )}
         <div
           id="information-widgets"
           className={classNames(

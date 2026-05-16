@@ -1,0 +1,27 @@
+import ErrorBoundary from "components/errorboundry";
+import { useTranslation } from "react-i18next";
+import { cachedDynamic } from "utils/dynamic";
+
+import components from "widgets/components";
+
+export default function ResolvedWidget({ widget, service }) {
+  const { t } = useTranslation("common");
+
+  const loader = components[widget.type];
+  const ServiceWidget = loader ? cachedDynamic(loader) : undefined;
+
+  const fullService = { ...service, widget };
+  if (ServiceWidget) {
+    return (
+      <ErrorBoundary>
+        <ServiceWidget service={fullService} />
+      </ErrorBoundary>
+    );
+  }
+
+  return (
+    <div className="bg-theme-200/50 dark:bg-theme-900/20 rounded-sm m-1 flex-1 flex flex-col items-center justify-center p-1 service-missing">
+      <div className="font-thin text-sm">{t("widget.missing_type", { type: widget.type })}</div>
+    </div>
+  );
+}

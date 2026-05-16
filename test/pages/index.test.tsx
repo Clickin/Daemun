@@ -63,7 +63,20 @@ const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoiste
 });
 
 vi.mock("utils/dynamic", () => ({
-  default: () => () => null,
+  default: (loader) => {
+    if (loader.toString().includes("quicklaunch")) {
+      return (props) => {
+        state.quickLaunchProps = props;
+        return (
+          <div data-testid="quicklaunch">
+            {props.isOpen ? "open" : "closed"}:{props.servicesAndBookmarks?.length ?? 0}
+          </div>
+        );
+      };
+    }
+
+    return () => null;
+  },
 }));
 
 vi.mock("react-i18next", () => ({
@@ -323,18 +336,19 @@ describe("pages/index Home behavior", () => {
       settings: { title: "Daemun", layout: {}, language: "en" },
     });
 
-    await waitFor(() => {
-      expect(state.quickLaunchProps).toBeTruthy();
-    });
-
-    expect(state.quickLaunchProps.servicesAndBookmarks.map((i) => i.name)).toEqual(["b1", "s1", "s3"]);
-    expect(screen.getByTestId("quicklaunch")).toHaveTextContent("closed:3");
+    expect(screen.queryByTestId("quicklaunch")).toBeNull();
+    expect(state.quickLaunchProps).toBeNull();
 
     fireEvent.keyDown(document.body, { key: "a" });
-    expect(screen.getByTestId("quicklaunch")).toHaveTextContent("open:3");
+    await waitFor(() => {
+      expect(screen.getByTestId("quicklaunch")).toHaveTextContent("open:3");
+    });
+    expect(state.quickLaunchProps.servicesAndBookmarks.map((i) => i.name)).toEqual(["b1", "s1", "s3"]);
 
     fireEvent.keyDown(document.body, { key: "Escape" });
-    expect(screen.getByTestId("quicklaunch")).toHaveTextContent("closed:3");
+    await waitFor(() => {
+      expect(screen.queryByTestId("quicklaunch")).toBeNull();
+    });
   });
 
   it("renders services and bookmark groups when present", async () => {
