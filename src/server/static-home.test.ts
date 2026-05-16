@@ -127,11 +127,16 @@ describe("static home SSG cache", () => {
     expect(entrypoint).toContain('export DAEMUN_STATIC_HOME_DIR="$STATIC_HOME_DIR"');
     expect(entrypoint).toContain('STATIC_INDEX="$STATIC_HOME_DIR/index.html"');
     expect(nginxConfig).toContain("charset utf-8;");
+    expect(nginxConfig).toContain("tcp_nopush on;");
+    expect(nginxConfig).toContain("tcp_nodelay on;");
+    expect(nginxConfig).toContain('add_header Cache-Control "no-cache" always;');
+    expect(nginxConfig).not.toContain('add_header Cache-Control "no-store"');
     expect(nginxConfig).toContain("root /tmp/daemun/ssg;");
     expect(nginxConfig).toContain("location /api/");
     expect(nginxConfig).toContain("root /app/public;");
     expect(nginxConfig).toContain("location /assets/");
     expect(nginxConfig).toContain("alias /app/dist/client/assets/;");
+    expect(nginxConfig).toContain('add_header Cache-Control "public, max-age=31536000, immutable";');
   });
 
   it("keeps runtime config and static directories writable after dropping privileges", async () => {
