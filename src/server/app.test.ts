@@ -4,7 +4,6 @@ const { loadHomePageProps } = vi.hoisted(() => ({
   loadHomePageProps: vi.fn<VitestMockProcedure>(async () => ({
     fallback: {
       "/api/bookmarks": [],
-      "/api/hash": false,
       "/api/services": [],
       "/api/validate": [],
       "/api/widgets": [],
@@ -62,7 +61,6 @@ describe("Hono app", () => {
     expect(await response.json()).toEqual({
       fallback: {
         "/api/bookmarks": [],
-        "/api/hash": false,
         "/api/services": [],
         "/api/validate": [],
         "/api/widgets": [],

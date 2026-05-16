@@ -136,7 +136,6 @@ export interface HomePageProps extends UnknownRecord {
   initialSettings: SettingsRecord;
   fallback: {
     "/api/bookmarks": BookmarkGroupRecord[];
-    "/api/hash": false | UnknownRecord;
     "/api/services": ServiceGroupRecord[];
     "/api/validate": unknown;
     "/api/widgets": UnknownRecord[];

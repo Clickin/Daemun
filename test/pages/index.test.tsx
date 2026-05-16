@@ -11,8 +11,6 @@ import type { HomePageProps, ServiceGroupRecord, SettingsRecord, UnknownRecord }
 
 type IndexTestState = {
   bookmarksData: HomePageProps["fallback"]["/api/bookmarks"];
-  hashData: false | UnknownRecord | null;
-  mutateHash: ReturnType<typeof vi.fn>;
   quickLaunchProps: {
     isOpen?: boolean;
     servicesAndBookmarks?: Array<{ name?: string }>;
@@ -22,21 +20,17 @@ type IndexTestState = {
   validateData: unknown;
   widgetCalls: Array<{ style?: { isRightAligned?: boolean }; widget: UnknownRecord }>;
   widgetsData: UnknownRecord[];
-  windowFocused: boolean;
 };
 
-const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoisted(() => {
+const { state, i18n, loadLanguage, useApiQueryMock } = vi.hoisted(() => {
   const state: IndexTestState = {
     throwIn: null,
     validateData: [],
-    hashData: null,
-    mutateHash: vi.fn<VitestMockProcedure>(),
     servicesData: [],
     bookmarksData: [],
     widgetsData: [],
     quickLaunchProps: null,
     widgetCalls: [],
-    windowFocused: false,
   };
 
   const i18n = { language: "en", changeLanguage: vi.fn<VitestMockProcedure>() };
@@ -44,21 +38,17 @@ const { state, i18n, loadLanguage, useApiQueryMock, useWindowFocus } = vi.hoiste
 
   const useApiQueryMock = vi.fn<VitestMockProcedure>((key) => {
     if (key === "/api/validate") return { data: state.validateData };
-    if (key === "/api/hash") return { data: state.hashData, mutate: state.mutateHash };
     if (key === "/api/services") return { data: state.servicesData };
     if (key === "/api/bookmarks") return { data: state.bookmarksData };
     if (key === "/api/widgets") return { data: state.widgetsData };
     return { data: undefined };
   });
 
-  const useWindowFocus = vi.fn<VitestMockProcedure>(() => state.windowFocused);
-
   return {
     state,
     i18n,
     loadLanguage,
     useApiQueryMock,
-    useWindowFocus,
   };
 });
 
@@ -88,10 +78,6 @@ vi.mock("react-i18next", () => ({
 
 vi.mock("utils/query/api-query", () => ({
   useApiQuery: useApiQueryMock,
-}));
-
-vi.mock("utils/hooks/window-focus", () => ({
-  default: useWindowFocus,
 }));
 
 vi.mock("utils/i18n", () => ({
@@ -179,7 +165,6 @@ describe("pages/index Wrapper", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     state.validateData = [];
-    state.hashData = null;
     state.servicesData = [];
     state.bookmarksData = [];
     state.widgetsData = [];
@@ -233,8 +218,6 @@ describe("pages/index Wrapper", () => {
 describe("pages/index Index routing + query branches", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    state.hashData = null;
-    state.mutateHash.mockClear();
     state.servicesData = [];
     state.bookmarksData = [];
     state.widgetsData = [];
@@ -259,56 +242,12 @@ describe("pages/index Index routing + query branches", () => {
     expect(screen.getByText("x: y")).toBeInTheDocument();
   });
 
-  it("marks the UI stale when the hash changes and triggers a revalidate reload", async () => {
+  it("does not query the config hash from the browser", async () => {
     state.validateData = [];
-    state.hashData = { hash: "new-hash" };
-    localStorage.setItem("hash", "old-hash");
-
-    const fetchSpy: typeof fetch = vi.fn<VitestMockProcedure>(async () => ({ ok: true }) as Response);
-    vi.stubGlobal("fetch", fetchSpy);
-
-    let reloadSpy;
-    try {
-      reloadSpy = vi.spyOn(window.location, "reload").mockImplementation(() => {});
-    } catch {
-      // jsdom can make window.location non-configurable in some contexts.
-      Object.defineProperty(window, "location", { value: { reload: vi.fn<VitestMockProcedure>() }, writable: true });
-      reloadSpy = vi.spyOn(window.location, "reload").mockImplementation(() => {});
-    }
 
     await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
 
-    await waitFor(() => {
-      expect(fetchSpy).toHaveBeenCalledWith("/api/revalidate");
-    });
-    await waitFor(() => {
-      expect(reloadSpy).toHaveBeenCalled();
-    });
-    expect(document.querySelector(".animate-spin")).toBeTruthy();
-  });
-
-  it("mutates the hash when the window regains focus", async () => {
-    state.validateData = [];
-    state.hashData = { hash: "h" };
-    state.windowFocused = true;
-
-    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
-
-    await waitFor(() => {
-      expect(state.mutateHash).toHaveBeenCalled();
-    });
-  });
-
-  it("stores the initial hash in localStorage when none exists", async () => {
-    state.validateData = [];
-    state.hashData = { hash: "first-hash" };
-    localStorage.removeItem("hash");
-
-    await renderIndex({ initialSettings: { title: "Daemun", layout: {} }, settings: { layout: {} } });
-
-    await waitFor(() => {
-      expect(localStorage.getItem("hash")).toBe("first-hash");
-    });
+    expect(useApiQueryMock.mock.calls.map(([key]) => key)).not.toContain("/api/hash");
   });
 });
 
@@ -316,7 +255,6 @@ describe("pages/index Home behavior", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     state.validateData = [];
-    state.hashData = null;
     state.servicesData = [
       {
         name: "Services",

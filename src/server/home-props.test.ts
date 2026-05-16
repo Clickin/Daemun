@@ -65,7 +65,7 @@ describe("loadHomePageProps", () => {
     expect(result.fallback["/api/bookmarks"]).toEqual([{ name: "bm" }]);
     expect(result.fallback["/api/widgets"]).toEqual([{ type: "search" }]);
     expect(result.fallback["/api/validate"]).toEqual([]);
-    expect(result.fallback["/api/hash"]).toBe(false);
+    expect(result.fallback).not.toHaveProperty("/api/hash");
     expect(result.locale).toBe("en");
     expect(servicesResponse).toHaveBeenCalledWith({ language: "en", providers: { x: 1 }, title: "Daemun" });
     expect(bookmarksResponse).toHaveBeenCalledWith({ language: "en", providers: { x: 1 }, title: "Daemun" });
@@ -129,6 +129,7 @@ describe("loadHomePageProps", () => {
     expect(result.fallback["/api/bookmarks"]).toEqual([]);
     expect(result.fallback["/api/widgets"]).toEqual([]);
     expect(result.fallback["/api/validate"]).toEqual([]);
+    expect(result.fallback).not.toHaveProperty("/api/hash");
     expect(result.locale).toBe("en");
     expect(logger.error).toHaveBeenCalled();
   });

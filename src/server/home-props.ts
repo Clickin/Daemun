@@ -29,7 +29,6 @@ export async function loadHomePageProps(): Promise<HomePageProps> {
       },
       fallback: {
         "/api/bookmarks": bookmarks,
-        "/api/hash": false,
         "/api/services": services,
         "/api/validate": validation,
         "/api/widgets": widgets,
@@ -45,7 +44,6 @@ export async function loadHomePageProps(): Promise<HomePageProps> {
       initialSettings: {},
       fallback: {
         "/api/bookmarks": [],
-        "/api/hash": false,
         "/api/services": [],
         "/api/validate": [],
         "/api/widgets": [],

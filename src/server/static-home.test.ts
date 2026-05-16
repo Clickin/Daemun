@@ -15,7 +15,6 @@ const { loadHomePageProps, staticHomeProps } = vi.hoisted(() => {
           name: "Static Bookmarks",
         },
       ],
-      "/api/hash": false,
       "/api/services": [
         {
           groups: [],

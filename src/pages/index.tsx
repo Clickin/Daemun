@@ -14,7 +14,6 @@ import { SettingsContext } from "utils/contexts/settings";
 import { TabContext } from "utils/contexts/tab";
 import { ThemeContext } from "utils/contexts/theme";
 import dynamic from "utils/dynamic";
-import useWindowFocus from "utils/hooks/window-focus";
 import { loadLanguage } from "utils/i18n";
 import { normalizeLanguage } from "utils/i18n/language";
 import { useApiQuery } from "utils/query/api-query";
@@ -47,46 +46,11 @@ const validationErrorIconClass =
   "float-right inline-flex h-6 w-6 items-center justify-center rounded-full border border-current text-sm leading-none";
 
 function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "initialSettings">) {
-  const windowFocused = useWindowFocus();
-  const [stale, setStale] = useState(false);
   const { data: errorsData } = useApiQuery("/api/validate", {
     immutable: true,
     initialData: fallback?.["/api/validate"] ?? [],
   });
   const { error: validateError } = errorsData || {};
-  const { data: hashData, mutate: mutateHash } = useApiQuery("/api/hash", {
-    initialData: fallback?.["/api/hash"],
-  });
-
-  useEffect(() => {
-    if (windowFocused) {
-      mutateHash();
-    }
-  }, [windowFocused, mutateHash]);
-
-  useEffect(() => {
-    if (hashData) {
-      if (typeof window !== "undefined") {
-        const storage = window.localStorage;
-        const previousHash = storage.getItem("hash");
-
-        if (!previousHash) {
-          storage.setItem("hash", hashData.hash);
-        }
-
-        if (previousHash && previousHash !== hashData.hash) {
-          setStale(true);
-          storage.setItem("hash", hashData.hash);
-
-          fetch("/api/revalidate").then((res) => {
-            if (res.ok) {
-              window.location.reload();
-            }
-          });
-        }
-      }
-    }
-  }, [hashData]);
 
   if (validateError) {
     return (
@@ -104,14 +68,6 @@ function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (stale) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="w-24 h-24 border-2 border-theme-400 border-solid rounded-full animate-spin border-t-transparent" />
       </div>
     );
   }

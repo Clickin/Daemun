@@ -219,10 +219,10 @@ describe("rootView", () => {
       b: [{ name: "Bookmark One" }],
       w: [{ type: "search" }],
       v: [],
-      h: "abc123",
     });
     expect(html).not.toContain('data-page="app"');
     expect(html).not.toContain('"component":"Home"');
+    expect(html).not.toContain("/api/hash");
     expect(html).not.toContain("/api/future");
     expect(html).toContain('link rel="stylesheet" href="/api/config/custom.css"');
     expect(html).toContain('<script src="/api/config/custom.js"></script>');

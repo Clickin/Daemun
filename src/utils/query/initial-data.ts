@@ -8,7 +8,6 @@ const compactQueryPathByKey = {
   b: "/api/bookmarks",
   w: "/api/widgets",
   v: "/api/validate",
-  h: "/api/hash",
 };
 type CompactQueryKey = keyof typeof compactQueryPathByKey;
 
