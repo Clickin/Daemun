@@ -79,7 +79,11 @@ function isServiceWidgetComponent(id) {
 }
 
 function isInitialCoreServiceComponent(id) {
-  return id === "src/widgets/docker/component.tsx";
+  return (
+    id === "src/widgets/docker/component.tsx" ||
+    id === "src/widgets/kubernetes/component.tsx" ||
+    id === "src/widgets/proxmoxvm/component.tsx"
+  );
 }
 
 function isInfoWidgetComponent(id) {

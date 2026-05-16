@@ -26,9 +26,37 @@ interface ManifestEntry {
 }
 
 type ClientManifest = Record<string, ManifestEntry>;
+type UnknownRecord = Record<string, unknown>;
+
+const serviceWidgetEntryAliases: Record<string, string> = {
+  hoarder: "karakeep",
+  jellyseerr: "seerr",
+  overseerr: "seerr",
+  pialert: "netalertx",
+};
+
+const infoWidgetEntries: Record<string, string> = {
+  datetime: "src/components/widgets/datetime/datetime.tsx",
+  glances: "src/components/widgets/glances/glances.tsx",
+  greeting: "src/components/widgets/greeting/greeting.tsx",
+  kubernetes: "src/components/widgets/kubernetes/kubernetes.tsx",
+  logo: "src/components/widgets/logo/logo.tsx",
+  longhorn: "src/components/widgets/longhorn/longhorn.tsx",
+  openmeteo: "src/components/widgets/openmeteo/openmeteo.tsx",
+  openweathermap: "src/components/widgets/openweathermap/weather.tsx",
+  resources: "src/components/widgets/resources/resources.tsx",
+  search: "src/components/widgets/search/search.tsx",
+  stocks: "src/components/widgets/stocks/stocks.tsx",
+  unifi_console: "src/components/widgets/unifi_console/unifi_console.tsx",
+  weatherapi: "src/components/widgets/weather/weather.tsx",
+};
 
 function isRootViewOptions(value: unknown): value is RootViewOptions {
   return Boolean(value) && typeof value === "object" && "appHtml" in value;
+}
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
 function escapeText(value: unknown) {
@@ -59,8 +87,19 @@ function getManifestEntry(manifest: ClientManifest) {
 }
 
 function collectStaticImportFiles(manifest: ClientManifest, entry: ManifestEntry) {
+  return collectManifestFiles(manifest, entry.imports || []);
+}
+
+function collectManifestFiles(manifest: ClientManifest, keys: string[]) {
   const files: string[] = [];
   const seen = new Set<string>();
+  const seenFiles = new Set<string>();
+
+  function addFile(file?: string) {
+    if (!file?.endsWith(".js") || seenFiles.has(file)) return;
+    seenFiles.add(file);
+    files.push(file);
+  }
 
   function visit(key: string) {
     if (seen.has(key)) return;
@@ -69,20 +108,75 @@ function collectStaticImportFiles(manifest: ClientManifest, entry: ManifestEntry
     const imported = manifest[key];
     if (!imported) return;
 
-    if (imported.file?.endsWith(".js")) {
-      files.push(imported.file);
-    }
+    addFile(imported.file);
 
     for (const childKey of imported.imports || []) {
       visit(childKey);
     }
   }
 
-  for (const key of entry.imports || []) {
+  for (const key of keys) {
     visit(key);
   }
 
   return files;
+}
+
+function serviceWidgetEntry(type: string) {
+  const entryType = serviceWidgetEntryAliases[type] || type;
+  return `src/widgets/${entryType}/component.tsx`;
+}
+
+function addWidgetEntry(target: Set<string>, widget: unknown, manifestEntryForType: (type: string) => string | undefined) {
+  if (!isRecord(widget) || typeof widget.type !== "string") return;
+
+  const entry = manifestEntryForType(widget.type);
+  if (entry) target.add(entry);
+}
+
+function collectServiceWidgetEntries(target: Set<string>, service: unknown) {
+  if (!isRecord(service) || !Array.isArray(service.widgets)) return;
+
+  for (const widget of service.widgets) {
+    addWidgetEntry(target, widget, serviceWidgetEntry);
+  }
+}
+
+function collectServiceGroupWidgetEntries(target: Set<string>, group: unknown) {
+  if (!isRecord(group)) return;
+
+  if (Array.isArray(group.services)) {
+    for (const service of group.services) {
+      collectServiceWidgetEntries(target, service);
+    }
+  }
+
+  if (Array.isArray(group.groups)) {
+    for (const nestedGroup of group.groups) {
+      collectServiceGroupWidgetEntries(target, nestedGroup);
+    }
+  }
+}
+
+function collectConfiguredWidgetEntryKeys(fallback: unknown) {
+  const entries = new Set<string>();
+  if (!isRecord(fallback)) return [];
+
+  const services = fallback["/api/services"];
+  if (Array.isArray(services)) {
+    for (const group of services) {
+      collectServiceGroupWidgetEntries(entries, group);
+    }
+  }
+
+  const widgets = fallback["/api/widgets"];
+  if (Array.isArray(widgets)) {
+    for (const widget of widgets) {
+      addWidgetEntry(entries, widget, (type) => infoWidgetEntries[type]);
+    }
+  }
+
+  return [...entries];
 }
 
 function devAssetTags() {
@@ -102,7 +196,7 @@ function devAssetTags() {
   ];
 }
 
-function assetTags() {
+function assetTags(props: RootViewProps) {
   if (process.env.VITE_DEV_SERVER_ORIGIN) return devAssetTags();
 
   const manifest = getClientManifest();
@@ -112,7 +206,11 @@ function assetTags() {
   }
 
   const styles = (entry.css || []).map((href) => `<link rel="stylesheet" href="/${escapeAttribute(href)}">`);
-  const modulePreloads = collectStaticImportFiles(manifest, entry).map(
+  const preloadFiles = [
+    ...collectStaticImportFiles(manifest, entry),
+    ...collectManifestFiles(manifest, collectConfiguredWidgetEntryKeys(props.fallback)),
+  ];
+  const modulePreloads = [...new Set(preloadFiles)].map(
     (href) => `<link rel="modulepreload" crossorigin href="/${escapeAttribute(href)}">`,
   );
 
@@ -138,7 +236,8 @@ function defaultIconTags(settings: SettingsRecord) {
   ];
 }
 
-function headTags(settings: SettingsRecord) {
+function headTags(props: RootViewProps) {
+  const settings = (props.initialSettings || {}) as SettingsRecord;
   const title = settings.title || "Daemun";
   const description =
     settings.description || "A compact self-hosted dashboard with Docker and service API integrations.";
@@ -161,7 +260,7 @@ function headTags(settings: SettingsRecord) {
     `<meta data-daemun-head name="msapplication-TileColor" content="${escapeAttribute(themeColor)}">`,
     `<meta data-daemun-head name="theme-color" content="${escapeAttribute(themeColor)}">`,
     '<meta data-daemun-head name="color-scheme" content="dark light">',
-    ...assetTags(),
+    ...assetTags(props),
   ].filter(Boolean);
 }
 
@@ -190,7 +289,7 @@ export function rootView(props: RootViewProps, context: unknown = {}) {
   return `<!DOCTYPE html>
 <html class="${escapeAttribute(`${theme === "dark" ? "dark scheme-dark" : "scheme-light"} theme-${color}`)}">
   <head>
-    ${headTags(settings).join("\n    ")}
+    ${headTags(props).join("\n    ")}
   </head>
   <body>
     ${initialPagePropsScript}

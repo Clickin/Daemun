@@ -2,8 +2,9 @@ import classNames from "classnames";
 import ResolvedIcon from "components/resolvedicon";
 import { useContext, useState } from "react";
 import { SettingsContext } from "utils/contexts/settings";
-import dynamic from "utils/dynamic";
 import Docker from "widgets/docker/component";
+import Kubernetes from "widgets/kubernetes/component";
+import ProxmoxVM from "widgets/proxmoxvm/component";
 import type { ServiceRecord } from "../../types";
 
 import KubernetesStatus from "./kubernetes-status";
@@ -12,9 +13,6 @@ import ProxmoxStatus from "./proxmox-status";
 import SiteMonitor from "./site-monitor";
 import Status from "./status";
 import Widget from "./widget";
-
-const Kubernetes = dynamic(() => import("widgets/kubernetes/component"));
-const ProxmoxVM = dynamic(() => import("widgets/proxmoxvm/component"));
 
 interface ServiceItemProps {
   service: ServiceRecord;

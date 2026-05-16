@@ -112,6 +112,87 @@ describe("rootView", () => {
     expect(html.indexOf('href="/assets/vendor-react.js"')).toBeLessThan(html.indexOf('src="/assets/client.js"'));
   });
 
+  it("preloads configured lazy widget chunks from the Vite manifest", () => {
+    tempDir = mkdtempSync(path.join(os.tmpdir(), "daemun-root-view-"));
+    const manifestDir = path.join(tempDir, ".vite");
+    mkdirSync(manifestDir, { recursive: true });
+    const manifestPath = path.join(manifestDir, "manifest.json");
+    process.env.DAEMUN_CLIENT_MANIFEST_PATH = manifestPath;
+
+    writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        "src/client.tsx": {
+          css: ["assets/client.css"],
+          file: "assets/client.js",
+          imports: ["_vendor-react.js", "_shared.js"],
+        },
+        "_vendor-react.js": {
+          file: "assets/vendor-react.js",
+          imports: ["_runtime.js"],
+        },
+        "_shared.js": {
+          file: "assets/shared.js",
+          imports: ["_runtime.js"],
+        },
+        "_runtime.js": {
+          file: "assets/runtime.js",
+        },
+        "src/widgets/plex/component.tsx": {
+          file: "assets/plex.js",
+          imports: ["_widget-shared.js"],
+        },
+        "src/widgets/seerr/component.tsx": {
+          file: "assets/seerr.js",
+        },
+        "src/components/widgets/glances/glances.tsx": {
+          file: "assets/glances.js",
+          imports: ["_widget-shared.js"],
+        },
+        "_widget-shared.js": {
+          file: "assets/widget-shared.js",
+        },
+        "src/widgets/unused/component.tsx": {
+          file: "assets/unused.js",
+        },
+      }),
+    );
+
+    const html = rootView({
+      fallback: {
+        "/api/services": [
+          {
+            services: [
+              {
+                widgets: [{ type: "plex" }, { type: "jellyseerr" }],
+              },
+            ],
+            groups: [
+              {
+                services: [
+                  {
+                    widgets: [{ type: "plex" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        "/api/widgets": [{ type: "glances" }],
+      },
+      initialSettings: { title: "Daemun" },
+      locale: "en",
+    });
+
+    expect(html).toContain('link rel="modulepreload" crossorigin href="/assets/plex.js"');
+    expect(html).toContain('link rel="modulepreload" crossorigin href="/assets/seerr.js"');
+    expect(html).toContain('link rel="modulepreload" crossorigin href="/assets/glances.js"');
+    expect(html).toContain('link rel="modulepreload" crossorigin href="/assets/widget-shared.js"');
+    expect(html).not.toContain("/assets/unused.js");
+    expect(html.match(/href="\/assets\/widget-shared\.js"/g)).toHaveLength(1);
+    expect(html.indexOf('href="/assets/plex.js"')).toBeLessThan(html.indexOf('src="/assets/client.js"'));
+  });
+
   it("bakes static query data without an Inertia page payload", () => {
     const html = rootView({
       initialSettings: { color: "emerald", title: "Lab" },
