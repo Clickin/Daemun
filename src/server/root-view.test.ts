@@ -59,6 +59,7 @@ describe("rootView", () => {
       locale: "en",
     });
 
+    expect(html).toContain('<meta charset="utf-8">');
     expect(html).toContain('meta name="viewport"');
     expect(html).toContain('meta name="mobile-web-app-capable" content="yes"');
     expect(html).toContain('link rel="manifest" href="/site.webmanifest?v=4"');

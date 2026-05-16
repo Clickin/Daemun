@@ -126,6 +126,7 @@ describe("static home SSG cache", () => {
     expect(entrypoint).toContain("STATIC_HOME_DIR=/tmp/daemun/ssg");
     expect(entrypoint).toContain('export DAEMUN_STATIC_HOME_DIR="$STATIC_HOME_DIR"');
     expect(entrypoint).toContain('STATIC_INDEX="$STATIC_HOME_DIR/index.html"');
+    expect(nginxConfig).toContain("charset utf-8;");
     expect(nginxConfig).toContain("root /tmp/daemun/ssg;");
     expect(nginxConfig).toContain("location /api/");
     expect(nginxConfig).toContain("root /app/public;");

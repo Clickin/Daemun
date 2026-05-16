@@ -142,6 +142,7 @@ function headTags(settings: SettingsRecord) {
   const themeColor = themes[color]?.[theme] || themes.slate.dark;
 
   return [
+    '<meta charset="utf-8">',
     `<title>${escapeText(title)}</title>`,
     '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">',
     '<meta name="mobile-web-app-capable" content="yes">',
