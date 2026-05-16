@@ -45,8 +45,8 @@ slot.
 - If a Daemun change is a true compatibility-breaking change, use a major/minor
   bump following normal semver.
 
-Under this policy, this build is `v1.14.3` (upstream-family `1.14`, Daemun patch
-`3`).
+Under this policy, this build is `v1.14.4` (upstream-family `1.14`, Daemun patch
+`4`).
 
 This keeps Daemun readable against upstream history while still giving us a
 predictable release space for fork differences.
