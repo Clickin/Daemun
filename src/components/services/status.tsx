@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { DOCKER_REVALIDATE_OPTIONS, dockerStatusUrl } from "utils/docker-api";
 import { useApiQuery } from "utils/query/api-query";
 import type { ServiceRecord } from "../../types";
 
@@ -10,7 +11,10 @@ interface StatusProps {
 export default function Status({ service, style }: StatusProps) {
   const { t } = useTranslation();
 
-  const { data, error } = useApiQuery(`/api/docker/status/${service.container}/${service.server || ""}`);
+  const { data, error } = useApiQuery(
+    dockerStatusUrl(service.container, service.server),
+    DOCKER_REVALIDATE_OPTIONS,
+  );
 
   let statusLabel = t("docker.unknown");
   let backgroundClass = "px-1.5 py-0.5 bg-theme-500/10 dark:bg-theme-900/50";

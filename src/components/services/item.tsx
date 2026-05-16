@@ -3,6 +3,7 @@ import ResolvedIcon from "components/resolvedicon";
 import { useContext, useState } from "react";
 import { SettingsContext } from "utils/contexts/settings";
 import dynamic from "utils/dynamic";
+import Docker from "widgets/docker/component";
 import type { ServiceRecord } from "../../types";
 
 import KubernetesStatus from "./kubernetes-status";
@@ -12,7 +13,6 @@ import SiteMonitor from "./site-monitor";
 import Status from "./status";
 import Widget from "./widget";
 
-const Docker = dynamic(() => import("widgets/docker/component"));
 const Kubernetes = dynamic(() => import("widgets/kubernetes/component"));
 const ProxmoxVM = dynamic(() => import("widgets/proxmoxvm/component"));
 

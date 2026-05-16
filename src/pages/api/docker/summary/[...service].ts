@@ -24,7 +24,7 @@ function statsResult(container, containerId) {
     .catch((error) => {
       logger.warn("Unable to retrieve Docker stats for '%s': %s", containerId, error?.message ?? "Unknown error");
       return { ok: false };
-  });
+    });
 }
 
 export default async function handler(req, res) {

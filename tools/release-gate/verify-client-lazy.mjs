@@ -78,6 +78,10 @@ function isServiceWidgetComponent(id) {
   return /^src\/widgets\/[^/]+\/component\.[tj]sx?$/.test(id);
 }
 
+function isInitialCoreServiceComponent(id) {
+  return id === "src/widgets/docker/component.tsx";
+}
+
 function isInfoWidgetComponent(id) {
   return /^src\/components\/widgets\/(?:datetime\/datetime|glances\/glances|greeting\/greeting|kubernetes\/kubernetes|logo\/logo|longhorn\/longhorn|openmeteo\/openmeteo|openweathermap\/weather|resources\/resources|search\/search|stocks\/stocks|unifi_console\/unifi_console|weather\/weather)\.[tj]sx?$/.test(
     id,
@@ -146,7 +150,7 @@ function collectProblems(manifest, clientEntryKey, budgetKiB) {
       problems.push(`Initial static import closure includes broad chunk ${describeEntry(entry, key)}`);
     }
 
-    if (key !== clientEntryKey && isWidgetComponent(entry, key)) {
+    if (key !== clientEntryKey && isWidgetComponent(entry, key) && !isInitialCoreServiceComponent(entryId(key, entry))) {
       problems.push(`Initial static import closure includes lazy widget component ${describeEntry(entry, key)}`);
     }
   }

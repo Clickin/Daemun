@@ -21,7 +21,10 @@ describe("components/services/status", () => {
 
     render(<Status service={{ container: "c", server: "s" }} />);
 
-    expect(useApiQueryMock).toHaveBeenCalledWith("/api/docker/status/c/s");
+    expect(useApiQueryMock).toHaveBeenCalledWith("/api/docker/status/c/s", {
+      refetchOnReconnect: "always",
+      refetchOnWindowFocus: "always",
+    });
     expect(screen.getByText("docker.unknown")).toBeInTheDocument();
   });
 
