@@ -49,27 +49,27 @@ export default async function handler(req, res) {
   privateWidgetOptions.version = parseVersionForUrl(version, 3);
 
   try {
-    const cpuData = await retrieveFromGlancesAPI(privateWidgetOptions, "cpu");
-    const loadData = await retrieveFromGlancesAPI(privateWidgetOptions, "load");
-    const memoryData = await retrieveFromGlancesAPI(privateWidgetOptions, "mem");
-    const data: Record<string, unknown> = {
-      cpu: cpuData,
-      load: loadData,
-      mem: memoryData,
-    };
+    const tasks: [string, Promise<unknown>][] = [
+      ["cpu", retrieveFromGlancesAPI(privateWidgetOptions, "cpu")],
+      ["load", retrieveFromGlancesAPI(privateWidgetOptions, "load")],
+      ["mem", retrieveFromGlancesAPI(privateWidgetOptions, "mem")],
+    ];
 
     // Disabled by default, dont call unless needed
     if (includeUptime) {
-      data.uptime = await retrieveFromGlancesAPI(privateWidgetOptions, "uptime");
+      tasks.push(["uptime", retrieveFromGlancesAPI(privateWidgetOptions, "uptime")]);
     }
 
     if (includeCpuTemp) {
-      data.sensors = await retrieveFromGlancesAPI(privateWidgetOptions, "sensors");
+      tasks.push(["sensors", retrieveFromGlancesAPI(privateWidgetOptions, "sensors")]);
     }
 
     if (includeDisks) {
-      data.fs = await retrieveFromGlancesAPI(privateWidgetOptions, "fs");
+      tasks.push(["fs", retrieveFromGlancesAPI(privateWidgetOptions, "fs")]);
     }
+
+    const entries = await Promise.all(tasks.map(async ([key, task]) => [key, await task] as const));
+    const data = Object.fromEntries(entries);
 
     return res.status(200).send(data);
   } catch (e) {

@@ -11,11 +11,14 @@ export async function loadHomePageProps(): Promise<HomePageProps> {
 
   try {
     logger = createLogger("index");
-    const { providers: _, ...settings } = getSettings();
+    const loadedSettings = getSettings();
+    const { providers: _, ...settings } = loadedSettings;
 
-    const services = await servicesResponse();
-    const bookmarks = await bookmarksResponse();
-    const widgets = await widgetsResponse();
+    const [services, bookmarks, widgets] = await Promise.all([
+      servicesResponse(loadedSettings),
+      bookmarksResponse(loadedSettings),
+      widgetsResponse(),
+    ]);
     const validation = validateConfigResponse();
     const language = normalizeLanguage(settings.language);
 

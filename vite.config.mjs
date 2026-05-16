@@ -44,13 +44,8 @@ export function clientManualChunks(id) {
   return undefined;
 }
 
-export function clientChunkFileNames(chunkInfo) {
-  const moduleIds = chunkInfo.moduleIds ?? [];
-  const isGlancesChartPayload =
-    chunkInfo.name === "custom_tooltip" &&
-    moduleIds.some((id) => id.replaceAll("\\", "/").includes("/node_modules/recharts/"));
-
-  return isGlancesChartPayload ? "assets/glances-charts-[hash].js" : "assets/[name]-[hash].js";
+export function clientChunkFileNames() {
+  return "assets/[name]-[hash].js";
 }
 
 export default defineConfig((configEnv) => {

@@ -5,14 +5,21 @@ import { useApiQuery } from "utils/query/api-query";
 import Error from "../widget/error";
 import Resource from "../widget/resource";
 
-export default function Network({ options, refresh = 1500 }) {
+export default function Network({
+  options,
+  refresh = 1500,
+  batched = false,
+  data: batchData = undefined,
+  error: batchError = undefined,
+}) {
   const { t } = useTranslation();
-  // oxlint-disable-next-line no-param-reassign
-  if (options.network === true) options.network = "default";
+  const interfaceName = options.network === true ? "default" : options.network;
 
-  const { data, error } = useApiQuery(`/api/widgets/resources?type=network&interfaceName=${options.network}`, {
+  const query = useApiQuery(batched ? null : `/api/widgets/resources?type=network&interfaceName=${interfaceName}`, {
     refreshInterval: refresh,
   });
+  const data = batched ? batchData : query.data;
+  const error = batched ? batchError : query.error;
 
   if (error || data?.error) {
     return <Error />;

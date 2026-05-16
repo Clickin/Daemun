@@ -41,6 +41,14 @@ vi.mock("utils/config/service-helpers", () => serviceHelpers);
 
 import { bookmarksResponse, servicesResponse, widgetsResponse } from "./api-response";
 
+function deferred<T>(_sample?: T) {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
 describe("utils/config/api-response", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -75,6 +83,15 @@ describe("utils/config/api-response", () => {
 
     const res = await bookmarksResponse();
     expect(res.map((g) => g.name)).toEqual(["B", "A"]);
+  });
+
+  it("bookmarksResponse can reuse already-loaded settings", async () => {
+    fs.readFile.mockResolvedValueOnce("ignored");
+    yaml.load.mockReturnValueOnce([{ A: [{ LinkA: [{ href: "a" }] }] }, { B: [{ LinkB: [{ href: "b" }] }] }]);
+
+    const res = await bookmarksResponse({ layout: { B: {}, A: {} } });
+    expect(res.map((g) => g.name)).toEqual(["B", "A"]);
+    expect(config.getSettings).not.toHaveBeenCalled();
   });
 
   it("bookmarksResponse appends groups not present in the layout", async () => {
@@ -147,6 +164,61 @@ describe("utils/config/api-response", () => {
     expect(debugSpy).toHaveBeenCalledWith("No containers were found with homepage labels.");
 
     debugSpy.mockRestore();
+  });
+
+  it("servicesResponse can reuse already-loaded settings", async () => {
+    serviceHelpers.findGroupByName.mockImplementation((groups, name) => groups.find((g) => g.name === name) ?? null);
+
+    serviceHelpers.servicesFromDocker.mockResolvedValueOnce([]);
+    serviceHelpers.servicesFromKubernetes.mockResolvedValueOnce([]);
+    serviceHelpers.servicesFromConfig.mockResolvedValueOnce([
+      { name: "A", services: [{ name: "svcA", weight: 1 }], groups: [] },
+      { name: "B", services: [{ name: "svcB", weight: 1 }], groups: [] },
+    ]);
+
+    const groups = await servicesResponse({ layout: { B: {}, A: {} } });
+    expect(groups.map((g) => g.name)).toEqual(["B", "A"]);
+    expect(config.getSettings).not.toHaveBeenCalled();
+  });
+
+  it("servicesResponse starts independent service sources before awaiting the first result", async () => {
+    const started: string[] = [];
+    const docker = deferred([]);
+    const kubernetes = deferred([]);
+    const configServices = deferred([]);
+    const settings = deferred({});
+
+    serviceHelpers.findGroupByName.mockImplementation((groups, name) => groups.find((g) => g.name === name) ?? null);
+    serviceHelpers.servicesFromDocker.mockImplementationOnce(() => {
+      started.push("docker");
+      return docker.promise;
+    });
+    serviceHelpers.servicesFromKubernetes.mockImplementationOnce(() => {
+      started.push("kubernetes");
+      return kubernetes.promise;
+    });
+    serviceHelpers.servicesFromConfig.mockImplementationOnce(() => {
+      started.push("config");
+      return configServices.promise;
+    });
+    config.getSettings.mockImplementationOnce(() => {
+      started.push("settings");
+      return settings.promise;
+    });
+
+    const groupsPromise = servicesResponse();
+    await Promise.resolve();
+
+    try {
+      expect(started).toEqual(["docker", "kubernetes", "config", "settings"]);
+    } finally {
+      docker.resolve([]);
+      kubernetes.resolve([]);
+      configServices.resolve([]);
+      settings.resolve({});
+    }
+
+    expect(await groupsPromise).toEqual([]);
   });
 
   it("servicesResponse tolerates discovery/load failures and returns [] when nothing can be loaded", async () => {

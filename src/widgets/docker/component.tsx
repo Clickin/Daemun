@@ -10,20 +10,13 @@ export default function Component({ service }) {
 
   const { widget } = service;
 
-  const { data: statusData, error: statusError } = useApiQuery(
-    `/api/docker/status/${widget.container}/${widget.server || ""}`,
-  );
+  const { data, error } = useApiQuery(`/api/docker/summary/${widget.container}/${widget.server || ""}`);
 
-  const { data: statsData, error: statsError } = useApiQuery(
-    `/api/docker/stats/${widget.container}/${widget.server || ""}`,
-  );
-
-  if (statsError || statsData?.error || statusError || statusData?.error) {
-    const finalError = statsError ?? statsData?.error ?? statusError ?? statusData?.error;
-    return <Container service={service} error={finalError} />;
+  if (error || data?.error) {
+    return <Container service={service} error={error ?? data?.error} />;
   }
 
-  if (statusData && !(statusData.status.includes("running") || statusData.status.includes("partial"))) {
+  if (data && !(data.status.includes("running") || data.status.includes("partial"))) {
     return (
       <Container>
         <Block label={t("widget.status")} value={t("docker.offline")} />
@@ -31,7 +24,7 @@ export default function Component({ service }) {
     );
   }
 
-  if (!statsData || !statusData) {
+  if (!data?.stats) {
     return (
       <Container service={service}>
         <Block label="docker.cpu" />
@@ -42,17 +35,17 @@ export default function Component({ service }) {
     );
   }
 
-  const { rxBytes, txBytes } = calculateThroughput(statsData.stats);
-  const cpuPercent = calculateCPUPercent(statsData.stats);
-  const usedMemory = calculateUsedMemory(statsData.stats);
+  const { rxBytes, txBytes } = calculateThroughput(data.stats);
+  const cpuPercent = calculateCPUPercent(data.stats);
+  const usedMemory = calculateUsedMemory(data.stats);
 
   return (
     <Container service={service}>
       <Block label="docker.cpu" value={t("common.percent", { value: cpuPercent })} highlightValue={cpuPercent} />
-      {statsData.stats.memory_stats.usage && (
+      {data.stats.memory_stats.usage && (
         <Block label="docker.mem" value={t("common.bytes", { value: usedMemory })} highlightValue={usedMemory} />
       )}
-      {statsData.stats.networks && (
+      {data.stats.networks && (
         <>
           <Block label="docker.rx" value={t("common.bytes", { value: rxBytes })} highlightValue={rxBytes} />
           <Block label="docker.tx" value={t("common.bytes", { value: txBytes })} highlightValue={txBytes} />

@@ -25,6 +25,7 @@ const { dockerState, DockerCtor, getDockerArguments } = vi.hoisted(() => {
     return {
       listContainers: vi.fn<VitestMockProcedure>(async () => [{ Names: ["/nginx"], Id: "cid1" }]),
       getContainer: vi.fn<VitestMockProcedure>(() => ({
+        inspect: vi.fn<VitestMockProcedure>(async () => ({ State: { Status: "running" } })),
         stats: vi.fn<VitestMockProcedure>(async () => dockerState.stats),
       })),
     };
@@ -198,6 +199,10 @@ describe("Hono API route contracts", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ stats: dockerState.stats });
     expect(getDockerArguments).toHaveBeenCalledWith("my-docker");
+
+    const summary = await createApp().request("/api/docker/summary/nginx/my-docker");
+    expect(summary.status).toBe(200);
+    expect(await summary.json()).toEqual({ status: "running", stats: dockerState.stats });
   });
 
   it("passes kubernetes catch-all path segments to status and stats handlers", async () => {
@@ -225,6 +230,20 @@ describe("Hono API route contracts", () => {
       },
     });
     expect(metricsApi.getPodMetrics).toHaveBeenCalledWith("default");
+
+    const summary = await app.request("/api/kubernetes/summary/default/nginx");
+    expect(summary.status).toBe(200);
+    expect(await summary.json()).toEqual({
+      status: "running",
+      stats: {
+        cpu: 0.1,
+        cpuLimit: 0.5,
+        cpuUsage: 20,
+        mem: 64000000,
+        memLimit: 128000000,
+        memUsage: 50,
+      },
+    });
   });
 
   it("passes proxmox catch-all path segments to the stats handler", async () => {

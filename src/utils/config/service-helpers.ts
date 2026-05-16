@@ -730,7 +730,22 @@ export function findGroupByName(groups, name) {
   return null;
 }
 
-export async function getServiceItem(group, service) {
+const DEFAULT_SERVICE_LOOKUP_CACHE_MS = 5000;
+const parsedServiceLookupCacheMs = Number.parseInt(process.env.DAEMUN_SERVICE_LOOKUP_CACHE_MS ?? "", 10);
+const serviceLookupCacheMs = Number.isFinite(parsedServiceLookupCacheMs)
+  ? parsedServiceLookupCacheMs
+  : DEFAULT_SERVICE_LOOKUP_CACHE_MS;
+const serviceLookupCache = new Map<string, { expiresAt: number; promise: Promise<false | UnknownRecord> }>();
+
+function serviceLookupKey(group, service) {
+  return `${group}\0${service}`;
+}
+
+export function clearServiceLookupCache() {
+  serviceLookupCache.clear();
+}
+
+async function resolveServiceItem(group, service) {
   const configuredServices = await servicesFromConfig();
 
   const serviceGroup = findGroupByName(configuredServices, group);
@@ -755,6 +770,26 @@ export async function getServiceItem(group, service) {
   }
 
   return false;
+}
+
+export async function getServiceItem(group, service) {
+  if (serviceLookupCacheMs <= 0) {
+    return resolveServiceItem(group, service);
+  }
+
+  const cacheKey = serviceLookupKey(group, service);
+  const now = Date.now();
+  const cached = serviceLookupCache.get(cacheKey);
+  if (cached && cached.expiresAt > now) {
+    return cached.promise;
+  }
+
+  const promise = resolveServiceItem(group, service).catch((error) => {
+    serviceLookupCache.delete(cacheKey);
+    throw error;
+  }) as Promise<false | UnknownRecord>;
+  serviceLookupCache.set(cacheKey, { expiresAt: now + serviceLookupCacheMs, promise });
+  return promise;
 }
 
 export default async function getServiceWidget(group, service, index) {

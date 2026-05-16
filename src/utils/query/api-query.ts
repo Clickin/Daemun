@@ -1,17 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { hc } from "hono/client";
-import type { ZodError, ZodType } from "zod";
-
-import { schemaForApiPath } from "./schemas";
+import type { hc } from "hono/client";
+import type { createApp } from "../../server/app";
 
 const staticInitialApiPaths = new Set(["/api/bookmarks", "/api/services", "/api/validate", "/api/widgets"]);
 
 export type ApiJson = ReturnType<typeof JSON.parse>;
-type ApiSchema<T = ApiJson> = Pick<ZodType<T>, "safeParse">;
+export type ApiApp = ReturnType<typeof createApp>;
+export type ApiRpcClient = ReturnType<typeof hc<ApiApp>>;
 
-type QueryValue = string | string[];
-
-interface RpcJsonOptions {
+interface ApiFetchOptions {
   baseUrl?: string;
   fetch?: typeof fetch;
   init?: RequestInit;
@@ -26,7 +23,8 @@ interface ApiQueryOptions<TData = ApiJson> {
   initialData?: TData;
   queryKey?: readonly unknown[];
   refreshInterval?: number | false;
-  schema?: ApiSchema<TData>;
+  schema?: unknown;
+  gcTime?: number;
   refetchInterval?: number | false;
   refetchOnMount?: boolean | "always";
   refetchOnReconnect?: boolean | "always";
@@ -35,59 +33,23 @@ interface ApiQueryOptions<TData = ApiJson> {
   [key: string]: unknown;
 }
 
-interface RpcGetTarget {
-  $get: (args?: unknown, options?: { init?: RequestInit }) => Promise<Response>;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && (typeof value === "object" || typeof value === "function");
-}
-
-function isStaticInitialApiPath(url?: string) {
-  if (!url) return false;
-  return staticInitialApiPaths.has(resolveUrl(url).pathname);
-}
-
-function collectQuery(searchParams: URLSearchParams) {
-  const query: Record<string, QueryValue> = {};
-
-  for (const [key, value] of searchParams.entries()) {
-    if (query[key] === undefined) {
-      query[key] = value;
-    } else if (Array.isArray(query[key])) {
-      query[key].push(value);
-    } else {
-      query[key] = [query[key], value];
-    }
-  }
-
-  return query;
+function isAbsoluteUrl(url: string) {
+  return url.startsWith("http://") || url.startsWith("https://");
 }
 
 function resolveUrl(path: string, baseUrl = "/") {
-  const origin =
-    baseUrl.startsWith("http://") || baseUrl.startsWith("https://")
-      ? baseUrl
-      : (globalThis.location?.origin ?? "http://localhost");
-
+  const origin = isAbsoluteUrl(baseUrl) ? baseUrl : (globalThis.location?.origin ?? "http://localhost");
   return new URL(path, origin);
 }
 
-function rpcTargetForPath(client: unknown, pathname: string): RpcGetTarget {
-  let target: unknown = client;
+function resolveFetchInput(path: string, baseUrl = "/") {
+  const url = resolveUrl(path, baseUrl);
+  return isAbsoluteUrl(baseUrl) ? url.toString() : `${url.pathname}${url.search}${url.hash}`;
+}
 
-  for (const segment of pathname.split("/").filter(Boolean)) {
-    if (!isRecord(target)) {
-      throw new Error(`Invalid RPC target for ${pathname}`);
-    }
-    target = target[segment];
-  }
-
-  if (!isRecord(target) || typeof target.$get !== "function") {
-    throw new Error(`Missing RPC GET handler for ${pathname}`);
-  }
-
-  return target as unknown as RpcGetTarget;
+function isStaticInitialApiPath(url?: string | null) {
+  if (!url) return false;
+  return staticInitialApiPaths.has(resolveUrl(url).pathname);
 }
 
 async function readResponsePayload(response: Response) {
@@ -99,6 +61,10 @@ async function readResponsePayload(response: Response) {
   }
 
   return response.text();
+}
+
+function isApiFetchOptions(value: unknown): value is ApiFetchOptions {
+  return Boolean(value) && typeof value === "object" && ("baseUrl" in value || "fetch" in value || "init" in value);
 }
 
 export class ApiResponseError extends Error {
@@ -113,75 +79,75 @@ export class ApiResponseError extends Error {
   }
 }
 
-export class ApiValidationError extends Error {
-  declare cause: ZodError;
-
-  constructor(error: ZodError) {
-    super(`Invalid API response: ${error.issues.map((issue) => issue.message).join("; ")}`);
-    this.name = "ApiValidationError";
-    this.cause = error;
-  }
-}
-
-export async function rpcJson(
+export async function fetchJson<TData = ApiJson>(
   path: string,
-  schema: ApiSchema = schemaForApiPath(path) as ApiSchema,
-  { baseUrl = "/", fetch: fetcher, init }: RpcJsonOptions = {},
-) {
-  const url = resolveUrl(path, baseUrl);
-  const query = collectQuery(url.searchParams);
-  const client = hc(baseUrl, { fetch: fetcher });
-  const target = rpcTargetForPath(client, url.pathname);
-  const args = Object.keys(query).length > 0 ? { query } : undefined;
-  const response = await target.$get(args, { init });
+  { baseUrl = "/", fetch: fetcher = globalThis.fetch, init }: ApiFetchOptions = {},
+): Promise<TData> {
+  const response = await fetcher(resolveFetchInput(path, baseUrl), {
+    method: "GET",
+    ...init,
+  });
   const payload = await readResponsePayload(response);
 
   if (!response.ok) {
     throw new ApiResponseError(response, payload);
   }
 
-  const parsed = schema.safeParse(payload);
-  if (!parsed.success) {
-    throw new ApiValidationError(parsed.error);
-  }
-
-  return parsed.data;
+  return payload as TData;
 }
 
-export function apiQueryOptions(
-  url?: string,
+export function rpcJson<TData = ApiJson>(
+  path: string,
+  schemaOrOptions?: unknown,
+  maybeOptions?: ApiFetchOptions,
+): Promise<TData> {
+  return fetchJson<TData>(path, maybeOptions ?? (isApiFetchOptions(schemaOrOptions) ? schemaOrOptions : undefined));
+}
+
+export function apiQueryOptions<TData = ApiJson>(
+  url?: string | null,
   {
     baseUrl,
     enabled = true,
     fetch,
     fallbackData,
+    gcTime,
     immutable = false,
     initialData,
     queryKey,
+    refetchInterval,
+    refetchOnMount,
+    refetchOnReconnect,
+    refetchOnWindowFocus,
     refreshInterval,
-    schema,
+    schema: _schema,
+    staleTime,
     ...queryOptions
-  }: ApiQueryOptions = {},
+  }: ApiQueryOptions<NoInfer<TData>> = {},
 ) {
+  void _schema;
+
   const isEnabled = Boolean(url) && enabled !== false;
   const shouldUseImmutable = immutable || isStaticInitialApiPath(url);
+  const resolvedInitialData = initialData ?? fallbackData;
 
   return {
     queryKey: queryKey ?? ["api", url ?? "disabled"],
-    queryFn: () => rpcJson(url ?? "", schema ?? schemaForApiPath(url ?? ""), { baseUrl, fetch }),
+    queryFn: isEnabled ? () => fetchJson<TData>(url ?? "", { baseUrl, fetch }) : undefined,
     enabled: isEnabled,
-    initialData: initialData ?? fallbackData,
-    refetchInterval: queryOptions.refetchInterval ?? refreshInterval,
-    refetchOnMount: shouldUseImmutable ? false : queryOptions.refetchOnMount,
-    refetchOnReconnect: shouldUseImmutable ? false : queryOptions.refetchOnReconnect,
-    refetchOnWindowFocus: shouldUseImmutable ? false : queryOptions.refetchOnWindowFocus,
-    staleTime: shouldUseImmutable ? Infinity : queryOptions.staleTime,
+    initialData: resolvedInitialData,
+    gcTime: shouldUseImmutable ? Infinity : gcTime,
+    refetchInterval: shouldUseImmutable ? false : (refetchInterval ?? refreshInterval),
+    refetchOnMount: shouldUseImmutable ? false : refetchOnMount,
+    refetchOnReconnect: shouldUseImmutable ? false : refetchOnReconnect,
+    refetchOnWindowFocus: shouldUseImmutable ? false : refetchOnWindowFocus,
+    staleTime: shouldUseImmutable ? Infinity : staleTime,
     ...queryOptions,
   };
 }
 
-export function useApiQuery<TData = ApiJson>(url?: string, options?: ApiQueryOptions<TData>) {
-  const query = useQuery(apiQueryOptions(url, options));
+export function useApiQuery<TData = ApiJson>(url?: string | null, options?: ApiQueryOptions<NoInfer<TData>>) {
+  const query = useQuery<TData>(apiQueryOptions<TData>(url, options));
 
   return {
     ...query,

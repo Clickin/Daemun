@@ -40,6 +40,14 @@ vi.mock("utils/config/api-response", () => ({
   widgetsResponse,
 }));
 
+function deferred<T>(_sample?: T) {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
 describe("loadHomePageProps", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -59,6 +67,8 @@ describe("loadHomePageProps", () => {
     expect(result.fallback["/api/validate"]).toEqual([]);
     expect(result.fallback["/api/hash"]).toBe(false);
     expect(result.locale).toBe("en");
+    expect(servicesResponse).toHaveBeenCalledWith({ language: "en", providers: { x: 1 }, title: "Daemun" });
+    expect(bookmarksResponse).toHaveBeenCalledWith({ language: "en", providers: { x: 1 }, title: "Daemun" });
   });
 
   it("normalizes legacy language codes", async () => {
@@ -69,6 +79,43 @@ describe("loadHomePageProps", () => {
 
     expect(result.initialSettings.language).toBe("zh-Hans");
     expect(result.locale).toBe("zh-Hans");
+  });
+
+  it("starts independent fallback loaders before awaiting the first result", async () => {
+    const started: string[] = [];
+    const services = deferred([{ name: "svc" }]);
+    const bookmarks = deferred([{ name: "bm" }]);
+    const widgets = deferred([{ type: "search" }]);
+
+    servicesResponse.mockImplementationOnce(() => {
+      started.push("services");
+      return services.promise;
+    });
+    bookmarksResponse.mockImplementationOnce(() => {
+      started.push("bookmarks");
+      return bookmarks.promise;
+    });
+    widgetsResponse.mockImplementationOnce(() => {
+      started.push("widgets");
+      return widgets.promise;
+    });
+
+    const { loadHomePageProps } = await import("./home-props");
+    const resultPromise = loadHomePageProps();
+    await Promise.resolve();
+
+    try {
+      expect(started).toEqual(["services", "bookmarks", "widgets"]);
+    } finally {
+      services.resolve([{ name: "svc" }]);
+      bookmarks.resolve([{ name: "bm" }]);
+      widgets.resolve([{ type: "search" }]);
+    }
+
+    const result = await resultPromise;
+    expect(result.fallback["/api/services"]).toEqual([{ name: "svc" }]);
+    expect(result.fallback["/api/bookmarks"]).toEqual([{ name: "bm" }]);
+    expect(result.fallback["/api/widgets"]).toEqual([{ type: "search" }]);
   });
 
   it("falls back to empty props on errors", async () => {

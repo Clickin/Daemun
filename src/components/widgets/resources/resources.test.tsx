@@ -1,10 +1,15 @@
 // @vitest-environment jsdom
 
 import { screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
+const { useApiQueryMock } = vi.hoisted(() => ({
+  useApiQueryMock: vi.fn<VitestMockProcedure>(() => ({ data: undefined, error: undefined })),
+}));
+
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 vi.mock("./cpu", () => ({ default: () => <div data-testid="resources-cpu" /> }));
 vi.mock("./memory", () => ({ default: () => <div data-testid="resources-memory" /> }));
 vi.mock("./disk", () => ({ default: ({ options }) => <div data-testid="resources-disk" data-disk={options.disk} /> }));
@@ -15,6 +20,11 @@ vi.mock("./uptime", () => ({ default: () => <div data-testid="resources-uptime" 
 import Resources from "./resources";
 
 describe("components/widgets/resources", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
+  });
+
   it("renders selected resource blocks and an optional label", () => {
     renderWithProviders(
       <Resources
@@ -38,6 +48,21 @@ describe("components/widgets/resources", () => {
     expect(screen.getByTestId("resources-cputemp")).toBeInTheDocument();
     expect(screen.getByTestId("resources-uptime")).toBeInTheDocument();
     expect(screen.getByText("Host A")).toBeInTheDocument();
+
+    expect(useApiQueryMock).toHaveBeenCalledTimes(1);
+    const url = new URL(useApiQueryMock.mock.calls[0][0], "http://localhost");
+    expect(url.pathname).toBe("/api/widgets/resources");
+    expect(url.searchParams.get("type")).toBe("batch");
+    expect(url.searchParams.get("types")?.split(",").sort()).toEqual([
+      "cpu",
+      "cputemp",
+      "disk",
+      "memory",
+      "network",
+      "uptime",
+    ]);
+    expect(JSON.parse(url.searchParams.get("disks") ?? "[]")).toEqual(["/", "/data"]);
+    expect(url.searchParams.get("interfaceName")).toBe("default");
   });
 
   it("renders a single disk block when disk is not an array", () => {

@@ -24,7 +24,7 @@ function compareServices(service1, service2) {
   return service1.name.localeCompare(service2.name);
 }
 
-export async function bookmarksResponse() {
+export async function bookmarksResponse(settings = undefined) {
   checkAndCopyConfig("bookmarks.yaml");
 
   const bookmarksYaml = path.join(CONF_DIR, "bookmarks.yaml");
@@ -34,14 +34,16 @@ export async function bookmarksResponse() {
 
   if (!bookmarks) return [];
 
-  let initialSettings;
+  let initialSettings = settings;
 
-  try {
-    initialSettings = await getSettings();
-  } catch (e) {
-    console.error("Failed to load settings.yaml, please check for errors");
-    if (e) console.error(e.toString());
-    initialSettings = {};
+  if (!initialSettings) {
+    try {
+      initialSettings = await getSettings();
+    } catch (e) {
+      console.error("Failed to load settings.yaml, please check for errors");
+      if (e) console.error(e.toString());
+      initialSettings = {};
+    }
   }
 
   // map easy to write YAML objects into easy to consume JS arrays
@@ -155,46 +157,55 @@ function mergeLayoutGroupsIntoConfigured(configuredGroups, layoutGroups) {
   }
 }
 
-export async function servicesResponse() {
-  let discoveredDockerServices;
-  let discoveredKubernetesServices;
-  let configuredServices;
-  let initialSettings;
-
-  try {
-    discoveredDockerServices = cleanServiceGroups(await servicesFromDocker());
-    if (discoveredDockerServices?.length === 0) {
-      console.debug("No containers were found with homepage labels.");
+export async function servicesResponse(settings = undefined) {
+  const dockerServicesTask = (async () => {
+    try {
+      const discoveredDockerServices = cleanServiceGroups(await servicesFromDocker());
+      if (discoveredDockerServices?.length === 0) {
+        console.debug("No containers were found with homepage labels.");
+      }
+      return discoveredDockerServices;
+    } catch (e) {
+      console.error("Failed to discover services, please check docker.yaml for errors or remove example entries.");
+      if (e) console.error(e.toString());
+      return [];
     }
-  } catch (e) {
-    console.error("Failed to discover services, please check docker.yaml for errors or remove example entries.");
-    if (e) console.error(e.toString());
-    discoveredDockerServices = [];
-  }
+  })();
 
-  try {
-    discoveredKubernetesServices = cleanServiceGroups(await servicesFromKubernetes());
-  } catch (e) {
-    console.error("Failed to discover services, please check kubernetes.yaml for errors or remove example entries.");
-    if (e) console.error(e.toString());
-    discoveredKubernetesServices = [];
-  }
+  const kubernetesServicesTask = (async () => {
+    try {
+      return cleanServiceGroups(await servicesFromKubernetes());
+    } catch (e) {
+      console.error("Failed to discover services, please check kubernetes.yaml for errors or remove example entries.");
+      if (e) console.error(e.toString());
+      return [];
+    }
+  })();
 
-  try {
-    configuredServices = cleanServiceGroups(await servicesFromConfig());
-  } catch (e) {
-    console.error("Failed to load services.yaml, please check for errors");
-    if (e) console.error(e.toString());
-    configuredServices = [];
-  }
+  const configuredServicesTask = (async () => {
+    try {
+      return cleanServiceGroups(await servicesFromConfig());
+    } catch (e) {
+      console.error("Failed to load services.yaml, please check for errors");
+      if (e) console.error(e.toString());
+      return [];
+    }
+  })();
 
-  try {
-    initialSettings = await getSettings();
-  } catch (e) {
-    console.error("Failed to load settings.yaml, please check for errors");
-    if (e) console.error(e.toString());
-    initialSettings = {};
-  }
+  const settingsTask = settings
+    ? Promise.resolve(settings)
+    : (async () => {
+        try {
+          return await getSettings();
+        } catch (e) {
+          console.error("Failed to load settings.yaml, please check for errors");
+          if (e) console.error(e.toString());
+          return {};
+        }
+      })();
+
+  const [discoveredDockerServices, discoveredKubernetesServices, configuredServices, initialSettings] =
+    await Promise.all([dockerServicesTask, kubernetesServicesTask, configuredServicesTask, settingsTask]);
 
   const mergedGroupsNames = [
     ...new Set(

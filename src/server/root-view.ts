@@ -15,6 +15,10 @@ interface RootViewOptions {
   appHtml?: string;
 }
 
+type RootViewProps = Omit<Pick<HomePageProps, "fallback" | "initialSettings" | "locale">, "fallback"> & {
+  fallback: unknown;
+};
+
 interface ManifestEntry {
   css?: string[];
   file?: string;
@@ -43,7 +47,8 @@ function serializeScriptJson(value: unknown): string {
 }
 
 function getClientManifest() {
-  const manifestPath = process.env.DAEMUN_CLIENT_MANIFEST_PATH || path.resolve(process.cwd(), "dist/client/.vite/manifest.json");
+  const manifestPath =
+    process.env.DAEMUN_CLIENT_MANIFEST_PATH || path.resolve(process.cwd(), "dist/client/.vite/manifest.json");
   if (!existsSync(manifestPath)) return null;
 
   return JSON.parse(readFileSync(manifestPath, "utf8")) as ClientManifest;
@@ -174,7 +179,7 @@ function bakedInitialPagePropsScript(pageProps: unknown) {
   return `<script id="${BAKED_PAGE_PROPS_ELEMENT_ID}" type="application/json">${serializeScriptJson(compactPageProps)}</script>`;
 }
 
-export function rootView(props: Pick<HomePageProps, "fallback" | "initialSettings" | "locale">, context: unknown = {}) {
+export function rootView(props: RootViewProps, context: unknown = {}) {
   const settings = (props.initialSettings || {}) as SettingsRecord;
   const theme = settings.theme || "dark";
   const color = settings.color || "slate";

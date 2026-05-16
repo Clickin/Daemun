@@ -23,8 +23,8 @@ describe("widgets/kubernetes/component", () => {
       { settings: { hideErrors: false } },
     );
 
-    expect(useApiQueryMock.mock.calls[0][0]).toContain("/api/kubernetes/status/ns/app?");
-    expect(useApiQueryMock.mock.calls[1][0]).toContain("/api/kubernetes/stats/ns/app?");
+    expect(useApiQueryMock).toHaveBeenCalledTimes(1);
+    expect(useApiQueryMock.mock.calls[0][0]).toContain("/api/kubernetes/summary/ns/app?");
 
     expect(container.querySelectorAll(".service-block")).toHaveLength(2);
     expect(screen.getByText("docker.cpu")).toBeInTheDocument();
@@ -32,11 +32,7 @@ describe("widgets/kubernetes/component", () => {
   });
 
   it("renders offline status when status endpoint reports non-running state", () => {
-    useApiQueryMock.mockImplementation((key) => {
-      if (String(key).includes("/status/")) return { data: { status: "stopped" }, error: undefined };
-      if (String(key).includes("/stats/")) return { data: { stats: { cpu: 0.1, mem: 10 } }, error: undefined };
-      return { data: undefined, error: undefined };
-    });
+    useApiQueryMock.mockReturnValue({ data: { status: "stopped", stats: { cpu: 0.1, mem: 10 } }, error: undefined });
 
     renderWithProviders(<Component service={{ widget: { type: "kubernetes", namespace: "ns", app: "app" } }} />, {
       settings: { hideErrors: false },
@@ -47,14 +43,9 @@ describe("widgets/kubernetes/component", () => {
   });
 
   it("renders cpu percent when cpuLimit is present, otherwise raw cpu number", () => {
-    useApiQueryMock.mockImplementation((key) => {
-      if (String(key).includes("/status/")) return { data: { status: "running" }, error: undefined };
-      if (String(key).includes("/stats/"))
-        return {
-          data: { stats: { cpuLimit: true, cpuUsage: 12.3, cpu: 0.0001, mem: 1024 } },
-          error: undefined,
-        };
-      return { data: undefined, error: undefined };
+    useApiQueryMock.mockReturnValue({
+      data: { status: "running", stats: { cpuLimit: true, cpuUsage: 12.3, cpu: 0.0001, mem: 1024 } },
+      error: undefined,
     });
 
     renderWithProviders(<Component service={{ widget: { type: "kubernetes", namespace: "ns", app: "app" } }} />, {

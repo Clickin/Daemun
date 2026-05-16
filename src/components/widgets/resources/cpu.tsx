@@ -5,12 +5,20 @@ import { useApiQuery } from "utils/query/api-query";
 import Error from "../widget/error";
 import Resource from "../widget/resource";
 
-export default function Cpu({ expanded, refresh = 1500 }) {
+export default function Cpu({
+  expanded,
+  refresh = 1500,
+  batched = false,
+  data: batchData = undefined,
+  error: batchError = undefined,
+}) {
   const { t } = useTranslation();
 
-  const { data, error } = useApiQuery(`/api/widgets/resources?type=cpu`, {
+  const query = useApiQuery(batched ? null : `/api/widgets/resources?type=cpu`, {
     refreshInterval: refresh,
   });
+  const data = batched ? batchData : query.data;
+  const error = batched ? batchError : query.error;
 
   if (error || data?.error) {
     return <Error />;

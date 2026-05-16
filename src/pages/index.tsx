@@ -20,6 +20,12 @@ import { normalizeLanguage } from "utils/i18n/language";
 import { useApiQuery } from "utils/query/api-query";
 import type { BookmarkGroupRecord, HomePageProps, ServiceGroupRecord } from "../types";
 
+type InformationWidgetRecord = Record<string, unknown> & { type: string };
+type QuickLaunchSourceRecord = (BookmarkGroupRecord["bookmarks"][number] | ServiceGroupRecord["services"][number]) & {
+  href: string;
+  name: string;
+};
+
 const ThemeToggle = dynamic(() => import("components/toggles/theme"), {
   ssr: false,
 });
@@ -163,6 +169,16 @@ function getAllServices(services: ServiceGroupRecord[]) {
   return services.map(getServices).flat();
 }
 
+function isServiceGroupRecord(group: BookmarkGroupRecord | ServiceGroupRecord): group is ServiceGroupRecord {
+  return "services" in group && Array.isArray(group.services);
+}
+
+function hasQuickLaunchTarget(
+  item: BookmarkGroupRecord["bookmarks"][number] | ServiceGroupRecord["services"][number] | undefined,
+): item is QuickLaunchSourceRecord {
+  return Boolean(item) && typeof item.href === "string" && typeof item.name === "string";
+}
+
 function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "initialSettings">) {
   const { i18n } = useTranslation();
   const { theme, setTheme } = useContext(ThemeContext);
@@ -182,13 +198,13 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
     immutable: true,
     initialData: fallback?.["/api/bookmarks"] ?? [],
   });
-  const { data: widgets = [] } = useApiQuery<Record<string, unknown>[]>("/api/widgets", {
+  const { data: widgets = [] } = useApiQuery<InformationWidgetRecord[]>("/api/widgets", {
     immutable: true,
-    initialData: fallback?.["/api/widgets"] ?? [],
+    initialData: (fallback?.["/api/widgets"] ?? []) as InformationWidgetRecord[],
   });
 
   const servicesAndBookmarks = [...bookmarks.map((bg) => bg.bookmarks).flat(), ...getAllServices(services)].filter(
-    (i) => i?.href,
+    hasQuickLaunchTarget,
   );
 
   useEffect(() => {
@@ -305,7 +321,7 @@ function Home({ fallback, initialSettings }: Pick<HomePageProps, "fallback" | "i
         {layoutGroups.length > 0 && (
           <div key="layoutGroups" id="layout-groups" className="flex flex-wrap m-4 sm:m-8 sm:mt-4 items-start mb-2">
             {layoutGroups.map((group) =>
-              group.services ? (
+              isServiceGroupRecord(group) ? (
                 <ServicesGroup
                   key={group.name}
                   group={group}

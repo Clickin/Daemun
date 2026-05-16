@@ -26,9 +26,17 @@ vi.mock("systeminformation", () => ({ default: si }));
 
 import handler from "pages/api/widgets/resources";
 
+function deferred<T>(_sample?: T) {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
 describe("pages/api/widgets/resources", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it("returns CPU load data", async () => {
@@ -170,6 +178,77 @@ describe("pages/api/widgets/resources", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.interface).toBe("en0");
     expect(res.body.network).toEqual({ iface: "en0", rx_bytes: 1 });
+  });
+
+  it("returns a batch of requested resources from one request", async () => {
+    si.currentLoad.mockResolvedValueOnce({ currentLoad: 12.34, avgLoad: 1.23 });
+    si.mem.mockResolvedValueOnce({ total: 10, active: 4, available: 6 });
+    si.fsSize.mockResolvedValueOnce([
+      { mount: "/", size: 10, available: 4 },
+      { mount: "/data", size: 20, available: 12 },
+    ]);
+    si.networkStats.mockResolvedValueOnce([{ iface: "en0", rx_sec: 1, tx_sec: 2 }]);
+    si.networkInterfaceDefault.mockResolvedValueOnce("en0");
+
+    const req = {
+      query: {
+        type: "batch",
+        types: "cpu,memory,disk,network",
+        disks: JSON.stringify(["/", "/data"]),
+      },
+    };
+    const res = createMockRes();
+
+    await handler(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({
+      cpu: { cpu: { usage: 12.34, load: 1.23 } },
+      memory: { memory: { total: 10, active: 4, available: 6 } },
+      disks: {
+        "/": { drive: { mount: "/", size: 10, available: 4 } },
+        "/data": { drive: { mount: "/data", size: 20, available: 12 } },
+      },
+      network: { network: { iface: "en0", rx_sec: 1, tx_sec: 2 }, interface: "en0" },
+    });
+  });
+
+  it("starts batch resource lookups before awaiting the first result", async () => {
+    const started: string[] = [];
+    const cpu = deferred({ currentLoad: 1, avgLoad: 0.1 });
+    const memory = deferred({ total: 10, active: 1 });
+    const cputemp = deferred({ main: 40 });
+
+    si.currentLoad.mockImplementationOnce(() => {
+      started.push("cpu");
+      return cpu.promise;
+    });
+    si.mem.mockImplementationOnce(() => {
+      started.push("memory");
+      return memory.promise;
+    });
+    si.cpuTemperature.mockImplementationOnce(() => {
+      started.push("cputemp");
+      return cputemp.promise;
+    });
+
+    const res = createMockRes();
+    const responsePromise = handler({ query: { type: "batch", types: "cpu,memory,cputemp" } }, res);
+    await Promise.resolve();
+
+    try {
+      expect(started).toEqual(["cpu", "memory", "cputemp"]);
+    } finally {
+      cpu.resolve({ currentLoad: 1, avgLoad: 0.1 });
+      memory.resolve({ total: 10, active: 1 });
+      cputemp.resolve({ main: 40 });
+    }
+
+    await responsePromise;
+    expect(res.statusCode).toBe(200);
+    expect(res.body.cpu.cpu.usage).toBe(1);
+    expect(res.body.memory.memory.total).toBe(10);
+    expect(res.body.cputemp.cputemp.main).toBe(40);
   });
 
   it("returns 404 when the default interface cannot be found in networkStats", async () => {

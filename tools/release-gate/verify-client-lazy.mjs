@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const manifestPath = path.join(root, "dist/client/.vite/manifest.json");
+const packagePath = path.join(root, "package.json");
+const lockfilePath = path.join(root, "pnpm-lock.yaml");
 const defaultBudgetKiB = 700;
 
 function parseBudgetKiB() {
@@ -124,6 +126,17 @@ function sumInitialLocalJs(manifest, initialClosure) {
 function collectProblems(manifest, clientEntryKey, budgetKiB) {
   const problems = [];
   const initialClosure = collectStaticClosure(manifest, clientEntryKey);
+
+  for (const filePath of [packagePath, lockfilePath]) {
+    const contents = readFileSync(filePath, "utf8");
+    if (/\brecharts\b/.test(contents)) {
+      problems.push(`${path.relative(root, filePath)} still references Recharts`);
+    }
+  }
+
+  if (/\brecharts\b/i.test(JSON.stringify(manifest))) {
+    problems.push("Client manifest still references Recharts");
+  }
 
   for (const key of initialClosure) {
     const entry = manifest[key];

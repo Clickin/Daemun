@@ -7,10 +7,12 @@ import type { Context, MiddlewareHandler, Next } from "hono";
 
 import bookmarks from "../pages/api/bookmarks.ts";
 import configFile from "../pages/api/config/[path].ts";
+import dockerSummary from "../pages/api/docker/summary/[...service].ts";
 import dockerStats from "../pages/api/docker/stats/[...service].ts";
 import dockerStatus from "../pages/api/docker/status/[...service].ts";
 import hash from "../pages/api/hash.ts";
 import healthcheck from "../pages/api/healthcheck.ts";
+import kubernetesSummary from "../pages/api/kubernetes/summary/[...service].ts";
 import kubernetesStats from "../pages/api/kubernetes/stats/[...service].ts";
 import kubernetesStatus from "../pages/api/kubernetes/status/[...service].ts";
 import ping from "../pages/api/ping.ts";
@@ -99,8 +101,10 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
   app.get("/api/widgets/stocks", honoApiHandler(widgetsStocks));
   app.get("/api/widgets/weather", honoApiHandler(widgetsWeather));
   app.get("/api/widgets", honoApiHandler(widgets));
+  app.get("/api/docker/summary/:service{.+}", honoApiHandler(dockerSummary, catchAllService));
   app.get("/api/docker/status/:service{.+}", honoApiHandler(dockerStatus, catchAllService));
   app.get("/api/docker/stats/:service{.+}", honoApiHandler(dockerStats, catchAllService));
+  app.get("/api/kubernetes/summary/:service{.+}", honoApiHandler(kubernetesSummary, catchAllService));
   app.get("/api/kubernetes/status/:service{.+}", honoApiHandler(kubernetesStatus, catchAllService));
   app.get("/api/kubernetes/stats/:service{.+}", honoApiHandler(kubernetesStats, catchAllService));
   app.get("/api/proxmox/stats/:service{.+}", honoApiHandler(proxmoxStats, catchAllService));

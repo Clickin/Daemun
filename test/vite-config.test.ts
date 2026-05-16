@@ -20,7 +20,7 @@ describe("clientManualChunks", () => {
     expect(clientManualChunks("G:/repo/node_modules/victory-vendor/es/d3-shape.js")).toBeUndefined();
   });
 
-  it("renames only the generated Glances chart payload file", () => {
+  it("uses default lazy chunk filenames without a Recharts-specific exception", () => {
     expect(
       clientChunkFileNames({
         moduleIds: [
@@ -29,7 +29,7 @@ describe("clientManualChunks", () => {
         ],
         name: "custom_tooltip",
       }),
-    ).toBe("assets/glances-charts-[hash].js");
+    ).toBe("assets/[name]-[hash].js");
 
     expect(
       clientChunkFileNames({

@@ -5,13 +5,23 @@ import { useApiQuery } from "utils/query/api-query";
 import Error from "../widget/error";
 import Resource from "../widget/resource";
 
-export default function Disk({ options, expanded, diskUnits = "bytes", refresh = 1500 }) {
+export default function Disk({
+  options,
+  expanded,
+  diskUnits = "bytes",
+  refresh = 1500,
+  batched = false,
+  data: batchData = undefined,
+  error: batchError = undefined,
+}) {
   const { t } = useTranslation();
   const diskUnitsName = diskUnits === "bbytes" ? "common.bbytes" : "common.bytes";
 
-  const { data, error } = useApiQuery(`/api/widgets/resources?type=disk&target=${options.disk}`, {
+  const query = useApiQuery(batched ? null : `/api/widgets/resources?type=disk&target=${options.disk}`, {
     refreshInterval: refresh,
   });
+  const data = batched ? batchData : query.data;
+  const error = batched ? batchError : query.error;
 
   if (error || data?.error) {
     return <Error options={options} />;

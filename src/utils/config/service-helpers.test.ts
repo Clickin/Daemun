@@ -93,6 +93,7 @@ vi.mock("utils/logger", () => ({
 
 describe("utils/config/service-helpers", () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     state.servicesYaml = null;
     state.dockerYaml = null;
@@ -444,6 +445,16 @@ describe("utils/config/service-helpers", () => {
     expect(serviceItem).toEqual(expect.objectContaining({ name: "S", type: "service", icon: "x" }));
     expect(Docker).not.toHaveBeenCalled();
     expect(kubeCfg.getKubeConfig).not.toHaveBeenCalled();
+  });
+
+  it("deduplicates concurrent service lookups for the same service", async () => {
+    state.servicesYaml = [{ G: [{ S: { icon: "x" } }] }];
+
+    const mod = await import("./service-helpers");
+    const [first, second] = await Promise.all([mod.getServiceItem("G", "S"), mod.getServiceItem("G", "S")]);
+
+    expect(first).toBe(second);
+    expect(fs.readFile).toHaveBeenCalledTimes(1);
   });
 
   it("getServiceItem falls back to docker then kubernetes", async () => {

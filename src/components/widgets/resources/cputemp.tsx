@@ -9,12 +9,23 @@ function convertToFahrenheit(t) {
   return (t * 9) / 5 + 32;
 }
 
-export default function CpuTemp({ expanded, units, refresh = 1500, tempmin = 0, tempmax = -1 }) {
+export default function CpuTemp({
+  expanded,
+  units,
+  refresh = 1500,
+  tempmin = 0,
+  tempmax = -1,
+  batched = false,
+  data: batchData = undefined,
+  error: batchError = undefined,
+}) {
   const { t } = useTranslation();
 
-  const { data, error } = useApiQuery(`/api/widgets/resources?type=cputemp`, {
+  const query = useApiQuery(batched ? null : `/api/widgets/resources?type=cputemp`, {
     refreshInterval: refresh,
   });
+  const data = batched ? batchData : query.data;
+  const error = batched ? batchError : query.error;
 
   if (error || data?.error) {
     return <Error />;
