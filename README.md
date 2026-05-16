@@ -32,6 +32,45 @@ runtime and project identity now belong to Daemun.
 - Docker images are built around the generated `dist` output plus only the
   native runtime dependencies that cannot be bundled.
 
+## Performance Strategy
+
+Daemun keeps upstream Homepage's configuration and widget contracts, but the
+runtime is optimized for a smaller dashboard process and fewer first-load
+waterfalls.
+
+- The production server is a compact Hono runtime instead of a Next.js server.
+  The node-only image stays the smallest option, while the nginx image trades a
+  little memory for faster static document and asset delivery.
+- The nginx image serves the baked `index.html`, `/assets/**`, and public files
+  directly, with Hono listening behind it on a Unix socket for APIs and dynamic
+  config routes. This keeps public byte serving out of the Node event loop.
+- nginx uses `sendfile on`, `tcp_nopush on`, and `tcp_nodelay on` for static
+  responses. For built assets that are already on disk and usually in the kernel
+  page cache, this path is a better fit than having Node read file bytes into
+  userland buffers and then write them back to a socket.
+- HTML and assets use different cache policies. The baked home document is
+  served with `Cache-Control: no-cache` so browsers revalidate it and pick up
+  changed modulepreload links; hashed Vite assets remain
+  `public, max-age=31536000, immutable`.
+- The baked home document is config-aware. At startup and after relevant config
+  changes, Daemun adds modulepreload links for the service and information
+  widgets that are actually configured, while leaving unused widgets lazy.
+- The client graph is deliberately smaller. Recharts was removed from Glances in
+  favor of D3 primitives, widget chunks stay lazy by default, and only core
+  built-in service widgets that benefit from early execution are promoted into
+  the initial graph.
+- Data fetching avoids avoidable waterfalls. Resource widgets use one batch API
+  call for the enabled metrics, Glances starts independent metric calls in
+  parallel, and Docker/Kubernetes built-ins use summary paths where that preserves
+  the existing UI contract.
+- The static home path does not depend on Next.js ISR. Daemun can bake and
+  refresh the home document from the current YAML/config state inside the normal
+  runtime, and it keeps serving the last good document if a refresh fails.
+
+The measured container and browser results against upstream Homepage are kept in
+[BENCHMARK.md](BENCHMARK.md). Re-run the benchmark on your target host before
+treating the numbers as portable capacity data.
+
 ## Release Versioning
 
 Release versions follow the upstream `gethomepage/homepage` family for the
