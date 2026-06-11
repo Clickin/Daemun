@@ -1,7 +1,8 @@
 # =========================
 # Builder Stage
 # =========================
-FROM node:26-alpine AS builder
+ARG NODE_IMAGE=node:26-alpine3.23
+FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
 
 RUN npm install -g pnpm@11.1.1
@@ -31,7 +32,7 @@ RUN if [ "$CI" != "true" ]; then \
 # =========================
 # Native Runtime Dependencies Stage
 # =========================
-FROM node:26-alpine AS runtime-deps
+FROM ${NODE_IMAGE} AS runtime-deps
 WORKDIR /app
 
 RUN npm install -g pnpm@11.1.1
@@ -45,7 +46,7 @@ RUN node -e "const p = require('./runtime-deps/package.json'); const deps = { ..
 # =========================
 # Runtime Stage
 # =========================
-FROM node:26-alpine AS runner
+FROM ${NODE_IMAGE} AS runner
 LABEL org.opencontainers.image.title="Daemun"
 LABEL org.opencontainers.image.description="A Hono-powered self-hosted dashboard for homelab services, widgets, and YAML-compatible Homepage configurations."
 LABEL org.opencontainers.image.url="https://github.com/Clickin/Daemun"

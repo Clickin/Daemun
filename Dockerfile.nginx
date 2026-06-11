@@ -3,7 +3,8 @@
 # =========================
 # Builder Stage
 # =========================
-FROM node:26-alpine AS builder
+ARG NODE_IMAGE=node:26-alpine3.23
+FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
 
 RUN npm install -g pnpm@11.1.1
@@ -33,7 +34,7 @@ RUN if [ "$CI" != "true" ]; then \
 # =========================
 # Native Runtime Dependencies Stage
 # =========================
-FROM node:26-alpine AS runtime-deps
+FROM ${NODE_IMAGE} AS runtime-deps
 WORKDIR /app
 
 RUN npm install -g pnpm@11.1.1
@@ -47,7 +48,7 @@ RUN node -e "const p = require('./runtime-deps/package.json'); const deps = { ..
 # =========================
 # Runtime Stage
 # =========================
-FROM node:26-alpine AS runner
+FROM ${NODE_IMAGE} AS runner
 LABEL org.opencontainers.image.title="Daemun"
 LABEL org.opencontainers.image.description="A static-first self-hosted dashboard with a localhost-only Hono API backend."
 LABEL org.opencontainers.image.url="https://github.com/Clickin/Daemun"
@@ -63,16 +64,7 @@ COPY --link --from=builder --chown=1000:1000 /app/package.json ./package.json
 COPY --link --from=builder --chown=1000:1000 /app/public ./public
 COPY --link --from=builder --chown=1000:1000 /app/src/skeleton ./src/skeleton
 
-RUN apk add --no-cache openssl curl ca-certificates \
-  && printf "%s%s%s%s\n" \
-    "@nginx " \
-    "https://nginx.org/packages/mainline/alpine/v" \
-    "$(grep -Eo '^[0-9]+\.[0-9]+' /etc/alpine-release)" \
-    "/main" \
-    >> /etc/apk/repositories \
-  && curl -fsSL -o /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub \
-  && mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/ \
-  && apk add --no-cache nginx@nginx su-exec iputils-ping shadow \
+RUN apk add --no-cache nginx su-exec iputils-ping shadow \
   && nginx -v \
   && mkdir -p /run/nginx /var/lib/nginx/tmp
 
