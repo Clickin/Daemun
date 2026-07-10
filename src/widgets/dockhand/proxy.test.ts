@@ -59,6 +59,17 @@ describe("widgets/dockhand/proxy", () => {
     expect(res.body).toEqual(Buffer.from("data"));
   });
 
+  it("uses token auth without attempting username login", async () => {
+    getServiceWidget.mockResolvedValue({ type: "dockhand", url: "http://dockhand", key: "secret" });
+    httpProxy.mockResolvedValueOnce([401, "application/json", Buffer.from("nope")]);
+
+    const req = { method: "GET", query: { group: "g", service: "svc", endpoint: "api/v1/status", index: "0" } };
+    await dockhandProxyHandler(req, createMockRes());
+
+    expect(httpProxy).toHaveBeenCalledOnce();
+    expect(httpProxy.mock.calls[0][1]).toMatchObject({ headers: { Authorization: "Bearer secret" } });
+  });
+
   it("returns a sanitized error response for HTTP errors", async () => {
     getServiceWidget.mockResolvedValue({
       type: "dockhand",

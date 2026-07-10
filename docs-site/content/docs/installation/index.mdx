@@ -9,9 +9,9 @@ Daemun can run from a container, from Kubernetes, from UNRAID, or directly from
 source. Docker is the common deployment path for homelab installs.
 
 <Aside type="caution" title="Expose it carefully">
-  Daemun can proxy data from private services. It does not include its own
-  authentication layer. Public or shared deployments should sit behind a reverse
-  proxy or VPN that enforces authentication, TLS, and strict host validation.
+  Daemun can proxy data from private services. For public or shared deployments,
+  enable built-in authentication or use a reverse proxy/VPN that enforces
+  authentication, TLS, and strict host validation.
 </Aside>
 
 <CardGrid>
@@ -39,3 +39,19 @@ is exactly present in `HOMEPAGE_ALLOWED_HOSTS`.
 
 Setting `HOMEPAGE_ALLOWED_HOSTS=*` disables the check, but this is not
 recommended outside tightly controlled local testing.
+
+## Authentication
+
+Password authentication needs these variables:
+
+```bash
+HOMEPAGE_AUTH_ENABLED=true
+HOMEPAGE_AUTH_SECRET=long-random-secret
+HOMEPAGE_AUTH_PASSWORD=your-password
+```
+
+OIDC uses the same switch and secret, plus `HOMEPAGE_OIDC_ISSUER`,
+`HOMEPAGE_OIDC_CLIENT_ID`, `HOMEPAGE_OIDC_CLIENT_SECRET`, and
+`HOMEPAGE_EXTERNAL_URL`. Register `${HOMEPAGE_EXTERNAL_URL}/api/auth/callback`
+with the provider. `HOMEPAGE_OIDC_SCOPE` is optional and defaults to
+`openid email profile`.

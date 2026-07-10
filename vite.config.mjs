@@ -93,6 +93,7 @@ export default defineConfig((configEnv) => {
     ssr: isSsrBuild
       ? {
           noExternal: true,
+          external: ["osx-temperature-sensor", "macos-temperature-sensor"],
         }
       : undefined,
   };

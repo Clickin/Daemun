@@ -11,8 +11,10 @@ async function login(widget) {
   const loginBody = `username=${encodeURIComponent(widget.username)}&password=${encodeURIComponent(widget.password)}`;
   const loginParams = {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: loginBody,
+    headers: widget.key
+      ? { "Content-Type": "application/x-www-form-urlencoded", Authorization: `Bearer ${widget.key}` }
+      : { "Content-Type": "application/x-www-form-urlencoded" },
+    body: widget.key ? undefined : loginBody,
   };
 
   const [status, , data] = await httpProxy(loginUrl, loginParams);

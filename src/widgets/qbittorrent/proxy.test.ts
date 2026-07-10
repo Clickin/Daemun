@@ -68,6 +68,24 @@ describe("widgets/qbittorrent/proxy", () => {
     expect(res.body).toEqual(Buffer.from("data"));
   });
 
+  it("supports API key login", async () => {
+    getServiceWidget.mockResolvedValue({ url: "http://qb", key: "secret" });
+    httpProxy
+      .mockResolvedValueOnce([403, "application/json", Buffer.from("nope")])
+      .mockResolvedValueOnce([204, null, Buffer.from("")])
+      .mockResolvedValueOnce([200, "application/json", Buffer.from("data")]);
+
+    await qbittorrentProxyHandler(
+      { query: { group: "g", service: "svc", endpoint: "torrents/info", index: "0" } },
+      createMockRes(),
+    );
+
+    expect(httpProxy.mock.calls[1][1]).toMatchObject({
+      headers: { Authorization: "Bearer secret" },
+      body: undefined,
+    });
+  });
+
   it("returns 401 when login succeeds but response body is not Ok.", async () => {
     getServiceWidget.mockResolvedValue({ url: "http://qb", username: "u", password: "p" });
 

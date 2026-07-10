@@ -35,7 +35,7 @@
     "@cacheable/memory": "^2.0.8",
     "@headlessui/react": "^2.2.10",
     "@hono/node-server": "^2.0.2",
-    "@kubernetes/client-node": "^1.0.0",
+    "@kubernetes/client-node": "^1.4.0",
     "@logtape/file": "^2.0.7",
     "@logtape/logtape": "^2.0.7",
     "@tailwindcss/forms": "^0.5.11",
@@ -88,5 +88,8 @@
   "optionalDependencies": {
     "osx-temperature-sensor": "^1.0.8"
   },
-  "packageManager": "pnpm@11.1.1"
+  "packageManager": "pnpm@11.1.1",
+  "dependencies": {
+    "openid-client": "^6.8.4"
+  }
 }

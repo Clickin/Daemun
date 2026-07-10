@@ -40,6 +40,8 @@ import { honoApiHandler, splitCatchAll } from "./api-handler-adapter.ts";
 import { renderHomeHtml } from "./render-home.tsx";
 import { rootView } from "./root-view.ts";
 import { browserConfigXml, robotsTxt, siteWebmanifest } from "./static-pages.ts";
+import { handleMcpRequest, mcpAuthorized, mcpEnabled } from "../utils/mcp/homepage-mcp.ts";
+import { authMiddleware, oidcCallback, passwordSignIn, signIn, signOut } from "./auth.ts";
 
 function apiHostValidation() {
   return async (c: Context, next: Next) => {
@@ -75,10 +77,28 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
   const clientRoot = path.resolve(process.cwd(), "dist/client");
 
   app.use("/api/*", apiHostValidation());
+  app.get("/auth/signin", signIn);
+  app.post("/auth/signin", passwordSignIn);
+  app.get("/api/auth/callback", oidcCallback);
+  app.post("/api/auth/signout", signOut);
+  app.use("/", authMiddleware());
+  app.use("/api/*", authMiddleware());
 
   app.get("/api/bookmarks", honoApiHandler(bookmarks));
   app.get("/api/hash", honoApiHandler(hash));
   app.get("/api/healthcheck", honoApiHandler(healthcheck));
+  app.all("/api/mcp", async (c) => {
+    if (!mcpEnabled()) return c.text("Not Found", 404);
+    if (!mcpAuthorized(c.req.raw.headers)) return c.json({ error: "Unauthorized" }, 401);
+    if (c.req.method !== "POST") return c.text("Method Not Allowed", 405, { Allow: "POST" });
+
+    try {
+      const response = handleMcpRequest(await c.req.json());
+      return response ? c.json(response) : c.body(null, 202);
+    } catch {
+      return c.json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, 400);
+    }
+  });
   app.get("/api/ping", honoApiHandler(ping));
   app.get("/api/releases", honoApiHandler(releases));
   app.all("/api/revalidate", honoApiHandler(revalidate));

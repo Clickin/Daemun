@@ -45,4 +45,17 @@ describe("widgets/dispatcharr/component", () => {
     expect(screen.getByText(/Stream1 - Clients: 2/)).toBeInTheDocument();
     expect(screen.getByText("1000kbps")).toBeInTheDocument();
   });
+
+  it("uses the v24 channel name for active streams", () => {
+    useWidgetAPI.mockReturnValueOnce({ data: [], error: undefined }).mockReturnValueOnce({
+      data: { count: 1, channels: [{ channel_name: "Channel1", clients: [], avg_bitrate: "1kbps" }] },
+      error: undefined,
+    });
+
+    renderWithProviders(<Component service={{ widget: { type: "dispatcharr", enableActiveStreams: true } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.getByText(/Channel1 - Clients: 0/)).toBeInTheDocument();
+  });
 });

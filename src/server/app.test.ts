@@ -19,12 +19,16 @@ vi.mock("./home-props", () => ({
 
 describe("Hono app", () => {
   const originalAllowedHosts = process.env.HOMEPAGE_ALLOWED_HOSTS;
+  const originalMcpEnabled = process.env.HOMEPAGE_MCP_ENABLED;
+  const originalMcpToken = process.env.HOMEPAGE_MCP_TOKEN;
   let consoleError;
 
   beforeEach(() => {
     vi.clearAllMocks();
     consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     process.env.HOMEPAGE_ALLOWED_HOSTS = originalAllowedHosts;
+    process.env.HOMEPAGE_MCP_ENABLED = originalMcpEnabled;
+    process.env.HOMEPAGE_MCP_TOKEN = originalMcpToken;
   });
 
   afterEach(() => {
@@ -49,6 +53,22 @@ describe("Hono app", () => {
 
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: "Host validation failed. See logs for more details." });
+  });
+
+  it("serves the opt-in MCP endpoint only to an authorized caller", async () => {
+    process.env.HOMEPAGE_MCP_ENABLED = "true";
+    process.env.HOMEPAGE_MCP_TOKEN = "secret";
+    const { createApp } = await import("./app");
+    const app = createApp();
+
+    expect((await app.request("/api/mcp", { method: "POST", headers: { host: "localhost:3000" } })).status).toBe(401);
+    const response = await app.request("/api/mcp", {
+      method: "POST",
+      headers: { host: "localhost:3000", authorization: "Bearer secret", "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
+    });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ result: { tools: expect.any(Array) } });
   });
 
   it("renders the home page through raw Hono JSON for API-style requests", async () => {

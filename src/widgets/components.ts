@@ -118,6 +118,7 @@ const components = {
   prowlarr: () => import("./prowlarr/component"),
   proxmox: () => import("./proxmox/component"),
   pterodactyl: () => import("./pterodactyl/component"),
+  pulse: () => import("./pulse/component"),
   pyload: () => import("./pyload/component"),
   qbittorrent: () => import("./qbittorrent/component"),
   qnap: () => import("./qnap/component"),
