@@ -40,8 +40,8 @@ import { honoApiHandler, splitCatchAll } from "./api-handler-adapter.ts";
 import { renderHomeHtml } from "./render-home.tsx";
 import { rootView } from "./root-view.ts";
 import { browserConfigXml, robotsTxt, siteWebmanifest } from "./static-pages.ts";
-import { handleMcpRequest, mcpAuthorized, mcpEnabled } from "../utils/mcp/homepage-mcp.ts";
-import { authMiddleware, oidcCallback, passwordSignIn, signIn, signOut } from "./auth.ts";
+import { handleMcpRequest, mcpEnabled, mcpTokenAuthorized } from "../utils/mcp/homepage-mcp.ts";
+import { authMiddleware, hasValidSession, oidcCallback, passwordSignIn, signIn, signOut } from "./auth.ts";
 
 function apiHostValidation() {
   return async (c: Context, next: Next) => {
@@ -89,7 +89,7 @@ export function createApp({ staticHome }: CreateAppOptions = {}) {
   app.get("/api/healthcheck", honoApiHandler(healthcheck));
   app.all("/api/mcp", async (c) => {
     if (!mcpEnabled()) return c.text("Not Found", 404);
-    if (!mcpAuthorized(c.req.raw.headers)) return c.json({ error: "Unauthorized" }, 401);
+    if (!mcpTokenAuthorized(c.req.raw.headers) && !hasValidSession(c)) return c.json({ error: "Unauthorized" }, 401);
     if (c.req.method !== "POST") return c.text("Method Not Allowed", 405, { Allow: "POST" });
 
     try {

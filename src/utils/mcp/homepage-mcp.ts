@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { join } from "node:path";
 
 import yaml from "js-yaml";
@@ -114,13 +115,24 @@ function callTool(name: unknown, args: Record<string, unknown>) {
   }
 }
 
+function tokenMatches(provided: unknown, expectedDigest: Buffer) {
+  if (typeof provided !== "string") return false;
+  const providedDigest = createHash("sha256").update(provided, "utf8").digest();
+  return timingSafeEqual(providedDigest, expectedDigest);
+}
+
 export function mcpEnabled() {
   return process.env.HOMEPAGE_MCP_ENABLED === "true";
 }
 
-export function mcpAuthorized(headers: Headers) {
+export function mcpTokenAuthorized(headers: Headers) {
   const token = process.env.HOMEPAGE_MCP_TOKEN;
-  return !token || headers.get("authorization") === `Bearer ${token}` || headers.get("x-homepage-mcp-token") === token;
+  if (!token) return false;
+
+  const authHeader = headers.get("authorization");
+  const bearerToken = typeof authHeader === "string" && authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  const expectedDigest = createHash("sha256").update(token, "utf8").digest();
+  return tokenMatches(bearerToken, expectedDigest) || tokenMatches(headers.get("x-homepage-mcp-token"), expectedDigest);
 }
 
 export function handleMcpRequest(message: unknown) {

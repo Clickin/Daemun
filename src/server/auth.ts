@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 import { getCookie, setCookie } from "hono/cookie";
 import type { Context, MiddlewareHandler } from "hono";
@@ -76,12 +76,15 @@ function externalUrl() {
 
 export function authMiddleware(): MiddlewareHandler {
   return async (c, next) => {
-    const mcpToken = process.env.HOMEPAGE_MCP_TOKEN;
-    const mcpAuthorized = c.req.header("authorization") === `Bearer ${mcpToken}` || c.req.header("x-homepage-mcp-token") === mcpToken;
-    if (!enabled() || c.req.path === "/api/healthcheck" || (c.req.path === "/api/mcp" && mcpToken && mcpAuthorized)) return next();
+    // The MCP API handler authorizes both bearer tokens and Homepage sessions.
+    if (!enabled() || c.req.path === "/api/healthcheck" || c.req.path === "/api/mcp") return next();
     assertConfiguration();
     return decode(getCookie(c, sessionCookie)) ? next() : redirectToSignIn(c);
   };
+}
+
+export function hasValidSession(c: Context) {
+  return enabled() && Boolean(decode(getCookie(c, sessionCookie)));
 }
 
 export async function signIn(c: Context) {
@@ -104,8 +107,12 @@ export async function passwordSignIn(c: Context) {
   if (oidcConfig()) return c.text("Method Not Allowed", 405);
   const body = await c.req.parseBody();
   const password = typeof body.password === "string" ? body.password : "";
+  // ponytail: digest computed per call (not module load) so env changes are honored in tests; sha256 digests are fixed length so timingSafeEqual never throws
   const expected = process.env.HOMEPAGE_AUTH_PASSWORD || "";
-  if (password.length !== expected.length || !timingSafeEqual(Buffer.from(password), Buffer.from(expected))) return c.redirect("/auth/signin?error=CredentialsSignin");
+  if (!expected) return c.redirect("/auth/signin?error=CredentialsSignin");
+  const expectedDigest = createHash("sha256").update(expected, "utf8").digest();
+  const providedDigest = createHash("sha256").update(password, "utf8").digest();
+  if (!timingSafeEqual(providedDigest, expectedDigest)) return c.redirect("/auth/signin?error=CredentialsSignin");
   setCookie(c, sessionCookie, encode({ exp: Date.now() / 1000 + maxAge }), cookieOptions());
   return c.redirect(callbackUrl(c.req.query("callbackUrl")));
 }

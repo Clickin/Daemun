@@ -7,10 +7,9 @@ Hono and static-rendering contracts are covered locally.
 
 ## Current Review
 
-- Supported baseline: `233721cc905be3a1eeb995963de14cd8d2a0d614` (`v1.13.1`).
-- Reviewed upstream head: `47553881` (`dev`, 2026-07-11 review).
-- No widget drift exists on upstream `main`; the items below are unreleased
-  upstream development changes.
+- Supported baseline: `c393e8a4` (`v1.13.2`, captured 2026-08-06).
+- Reviewed upstream head: `2b9150bc` (`dev`, 2026-08-05 review).
+- No widget drift exists on upstream `main` at the `c393e8a4` baseline.
 
 ## Tasks
 
@@ -20,6 +19,12 @@ Hono and static-rendering contracts are covered locally.
    - Add qBittorrent API-key authentication.
    - Accept Dispatcharr v24 `channel_name` responses.
    - Confirm the Seerr fallback fix is already present.
+   - Add the Duplicati, Maintainerr, Sportarr, and Syncthing widgets with
+     docs, tests, locale keys, and registry entries.
+   - Ignore archived drives in Scrutiny, accept the OMV v8 auth response,
+     expand date-only recurring iCal events, correct the WMO 80-82 shower
+     icons, simplify qBittorrent API-key handling, and prefer the `status`
+     field in Radarr/Sonarr queue details.
 2. **Shared proxy behavior — complete**
    - Confirm explicit cookie replacement and redirect/login callers are already
      present with tests in Daemun.
@@ -29,15 +34,19 @@ Hono and static-rendering contracts are covered locally.
    - Protect the Hono root and API routes while preserving healthcheck and
      token-authorized MCP access.
    - Cover redirects, signed cookies, healthcheck bypass, and static-home order.
+   - Compare passwords by SHA-256 digest (constant-time, multibyte-safe).
 4. **MCP endpoint — complete**
    - Port the read-only JSON-RPC tools and config resources independently of
      Next.js; write operations remain deliberately unavailable.
-   - Mount Hono transport with opt-in enablement and bearer/header token checks.
+   - Mount Hono transport with opt-in enablement and constant-time bearer /
+     header token checks; require a token or an authenticated session.
    - Cover protocol tool exposure and endpoint authorization.
-5. **Baseline promotion — pending upstream release**
-   - Recompare `main`, translations, docs, and page/API tests after upstream
-     releases these changes.
-   - Update the baseline and contract map only after all newly introduced tests
+5. **Baseline promotion — complete**
+   - Recompared `main` at `c393e8a4` (v1.13.2): no new widgets vs. the
+     previous baseline; the Dispatcharr v24 and Seerr fixes were already
+     ported. Ported the remaining `main` changes: reduced `/api/validate`
+     error output and the Docker HEALTHCHECK `-Y off` fix.
+   - Updated the baseline and contract map after all newly introduced tests
      have local equivalents.
 
 Dependency-only, CI-only, MkDocs, and `next-i18next` import churn are excluded;
@@ -53,4 +62,5 @@ pnpm test
 pnpm build
 pnpm gate:widgets
 pnpm gate:upstream-contracts
+pnpm gate:docs-parity
 ```

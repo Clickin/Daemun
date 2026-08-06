@@ -9,6 +9,19 @@ describe("utils/weather/openmeteo-condition-map", () => {
     expect(mapIcon(95, "night")).toBe(Icons.WiNightAltThunderstorm);
   });
 
+  it("maps rain shower and snow codes correctly", () => {
+    expect(mapIcon(80, "day")).toBe(Icons.WiDaySprinkle);
+    expect(mapIcon(80, "night")).toBe(Icons.WiNightAltSprinkle);
+    expect(mapIcon(81, "day")).toBe(Icons.WiDayShowers);
+    expect(mapIcon(81, "night")).toBe(Icons.WiNightAltShowers);
+    expect(mapIcon(82, "day")).toBe(Icons.WiDayStormShowers);
+    expect(mapIcon(82, "night")).toBe(Icons.WiNightAltStormShowers);
+    expect(mapIcon(85, "day")).toBe(Icons.WiDaySnow);
+    expect(mapIcon(85, "night")).toBe(Icons.WiNightAltSnow);
+    expect(mapIcon(86, "day")).toBe(Icons.WiDaySnow);
+    expect(mapIcon(86, "night")).toBe(Icons.WiNightAltSnow);
+  });
+
   it("falls back to a default icon for unknown codes", () => {
     expect(mapIcon(999999, "day")).toBe(Icons.WiDaySunny);
   });

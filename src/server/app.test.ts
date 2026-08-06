@@ -21,6 +21,9 @@ describe("Hono app", () => {
   const originalAllowedHosts = process.env.HOMEPAGE_ALLOWED_HOSTS;
   const originalMcpEnabled = process.env.HOMEPAGE_MCP_ENABLED;
   const originalMcpToken = process.env.HOMEPAGE_MCP_TOKEN;
+  const originalAuthEnabled = process.env.HOMEPAGE_AUTH_ENABLED;
+  const originalAuthPassword = process.env.HOMEPAGE_AUTH_PASSWORD;
+  const originalAuthSecret = process.env.HOMEPAGE_AUTH_SECRET;
   let consoleError;
 
   beforeEach(() => {
@@ -29,6 +32,14 @@ describe("Hono app", () => {
     process.env.HOMEPAGE_ALLOWED_HOSTS = originalAllowedHosts;
     process.env.HOMEPAGE_MCP_ENABLED = originalMcpEnabled;
     process.env.HOMEPAGE_MCP_TOKEN = originalMcpToken;
+    for (const [key, value] of [
+      ["HOMEPAGE_AUTH_ENABLED", originalAuthEnabled],
+      ["HOMEPAGE_AUTH_PASSWORD", originalAuthPassword],
+      ["HOMEPAGE_AUTH_SECRET", originalAuthSecret],
+    ] as const) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
   });
 
   afterEach(() => {
@@ -67,6 +78,50 @@ describe("Hono app", () => {
       headers: { host: "localhost:3000", authorization: "Bearer secret", "content-type": "application/json" },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
     });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ result: { tools: expect.any(Array) } });
+  });
+
+  it("rejects MCP requests when neither auth nor a token is configured", async () => {
+    process.env.HOMEPAGE_MCP_ENABLED = "true";
+    delete process.env.HOMEPAGE_AUTH_ENABLED;
+    delete process.env.HOMEPAGE_MCP_TOKEN;
+    const { createApp } = await import("./app");
+
+    const response = await createApp().request("/api/mcp", {
+      method: "POST",
+      headers: { host: "localhost:3000", "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
+    });
+
+    expect(response.status).toBe(401);
+    expect(await response.json()).toEqual({ error: "Unauthorized" });
+  });
+
+  it("accepts MCP requests from an authenticated Homepage session", async () => {
+    process.env.HOMEPAGE_MCP_ENABLED = "true";
+    process.env.HOMEPAGE_AUTH_ENABLED = "true";
+    process.env.HOMEPAGE_AUTH_PASSWORD = "secret";
+    process.env.HOMEPAGE_AUTH_SECRET = "signing-secret";
+    delete process.env.HOMEPAGE_MCP_TOKEN;
+    const { createApp } = await import("./app");
+    const app = createApp();
+
+    const signIn = await app.request("/auth/signin", {
+      method: "POST",
+      redirect: "manual",
+      headers: { host: "localhost:3000", "content-type": "application/x-www-form-urlencoded" },
+      body: "password=secret",
+    });
+    const session = signIn.headers.get("set-cookie");
+    expect(session).toContain("daemun_session=");
+
+    const response = await app.request("/api/mcp", {
+      method: "POST",
+      headers: { host: "localhost:3000", cookie: session || "", "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
+    });
+
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({ result: { tools: expect.any(Array) } });
   });

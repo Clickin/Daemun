@@ -85,11 +85,13 @@ function Index({ initialSettings, fallback }: Pick<HomePageProps, "fallback" | "
                 <span aria-hidden="true" className={validationErrorIconClass}>
                   !
                 </span>
-                {error.config}
+                {error.name} - {error.config}
               </div>
               <div className="p-2 text-theme-100 dark:text-theme-200">
-                <pre className="opacity-50 font-bold pb-2">{error.reason}</pre>
-                <pre className="text-sm">{error.mark.snippet}</pre>
+                <pre className="opacity-50 font-bold pb-2">
+                  Reason: "{error.reason}" at line {error.mark?.line}
+                </pre>
+                <pre className="font-italic">Check logs for details.</pre>
               </div>
             </div>
           ))}

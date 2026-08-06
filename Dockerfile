@@ -71,7 +71,7 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 HEALTHCHECK --interval=10s --timeout=3s --start-period=20s \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/healthcheck || exit 1
+  CMD wget --no-verbose --tries=1 --spider -Y off http://127.0.0.1:3000/api/healthcheck || exit 1
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "dist/server/index.mjs", "--host", "0.0.0.0", "--port", "3000"]

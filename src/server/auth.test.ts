@@ -37,8 +37,31 @@ describe("Hono authentication", () => {
     expect((await app.request("/", { headers: { cookie: session || "" } })).status).toBe(200);
   });
 
-  it("protects the static home root before its middleware runs", async () => {
+  it("compares multibyte passwords without throwing on unequal byte lengths", async () => {
     process.env.HOMEPAGE_AUTH_ENABLED = "true";
+    process.env.HOMEPAGE_AUTH_PASSWORD = "é";
+    process.env.HOMEPAGE_AUTH_SECRET = "signing-secret";
+    const app = createApp();
+
+    const wrong = await app.request("/auth/signin", {
+      method: "POST",
+      redirect: "manual",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: "password=a",
+    });
+    expect(wrong.headers.get("location")).toContain("CredentialsSignin");
+
+    const correct = await app.request("/auth/signin", {
+      method: "POST",
+      redirect: "manual",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: "password=%C3%A9",
+    });
+    expect(correct.headers.get("set-cookie")).toContain("daemun_session=");
+    expect(correct.headers.get("location")).toBe("/");
+  });
+
+  it("protects the static home root before its middleware runs", async () => {    process.env.HOMEPAGE_AUTH_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_PASSWORD = "secret";
     process.env.HOMEPAGE_AUTH_SECRET = "signing-secret";
     const handler = vi.fn(async (_c, next) => next());

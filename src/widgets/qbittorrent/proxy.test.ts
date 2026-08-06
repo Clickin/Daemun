@@ -68,22 +68,21 @@ describe("widgets/qbittorrent/proxy", () => {
     expect(res.body).toEqual(Buffer.from("data"));
   });
 
-  it("supports API key login", async () => {
-    getServiceWidget.mockResolvedValue({ url: "http://qb", key: "secret" });
-    httpProxy
-      .mockResolvedValueOnce([403, "application/json", Buffer.from("nope")])
-      .mockResolvedValueOnce([204, null, Buffer.from("")])
-      .mockResolvedValueOnce([200, "application/json", Buffer.from("data")]);
+  it("uses an API key on the WebAPI request without attempting login", async () => {
+    getServiceWidget.mockResolvedValue({ url: "http://qb", key: "abc123" });
 
-    await qbittorrentProxyHandler(
-      { query: { group: "g", service: "svc", endpoint: "torrents/info", index: "0" } },
-      createMockRes(),
-    );
+    httpProxy.mockResolvedValueOnce([403, "application/json", Buffer.from("nope")]);
 
-    expect(httpProxy.mock.calls[1][1]).toMatchObject({
-      headers: { Authorization: "Bearer secret" },
-      body: undefined,
-    });
+    const req = { query: { group: "g", service: "svc", endpoint: "torrents/info", index: "0" } };
+    const res = createMockRes();
+
+    await qbittorrentProxyHandler(req, res);
+
+    expect(httpProxy).toHaveBeenCalledTimes(1);
+    expect(httpProxy.mock.calls[0][0].toString()).toBe("http://qb/api/v2/torrents/info");
+    expect(httpProxy.mock.calls[0][1].headers.Authorization).toBe("Bearer abc123");
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toEqual(Buffer.from("nope"));
   });
 
   it("returns 401 when login succeeds but response body is not Ok.", async () => {

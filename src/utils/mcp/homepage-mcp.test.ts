@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { handleMcpRequest, mcpAuthorized, mcpEnabled } from "./homepage-mcp";
+import { handleMcpRequest, mcpEnabled, mcpTokenAuthorized } from "./homepage-mcp";
 
 describe("Homepage MCP", () => {
   const originalEnabled = process.env.HOMEPAGE_MCP_ENABLED;
@@ -16,8 +16,19 @@ describe("Homepage MCP", () => {
     process.env.HOMEPAGE_MCP_TOKEN = "secret";
 
     expect(mcpEnabled()).toBe(true);
-    expect(mcpAuthorized(new Headers({ authorization: "Bearer secret" }))).toBe(true);
-    expect(mcpAuthorized(new Headers())).toBe(false);
+    expect(mcpTokenAuthorized(new Headers({ authorization: "Bearer secret" }))).toBe(true);
+    expect(mcpTokenAuthorized(new Headers({ "x-homepage-mcp-token": "secret" }))).toBe(true);
+    expect(mcpTokenAuthorized(new Headers())).toBe(false);
+    expect(mcpTokenAuthorized(new Headers({ authorization: "Bearer wrong" }))).toBe(false);
+  });
+
+  it("requires a token and compares multibyte tokens in constant time", () => {
+    delete process.env.HOMEPAGE_MCP_TOKEN;
+    expect(mcpTokenAuthorized(new Headers())).toBe(false);
+
+    process.env.HOMEPAGE_MCP_TOKEN = "é";
+    expect(mcpTokenAuthorized(new Headers({ authorization: "Bearer a" }))).toBe(false);
+    expect(mcpTokenAuthorized(new Headers({ authorization: "Bearer é" }))).toBe(true);
   });
 
   it("lists only read-only tools", () => {
