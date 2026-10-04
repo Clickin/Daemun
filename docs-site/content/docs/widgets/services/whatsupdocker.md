@@ -11,6 +11,7 @@ Allowed fields: `["monitoring", "updates"]`.
 widget:
   type: whatsupdocker
   url: http://whatsupdocker:port
+  key: bearer-token # optional; takes precedence over username and password
   username: username # optional
   password: password # optional
 ```

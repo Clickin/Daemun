@@ -184,6 +184,7 @@ function CountBlocks({ service, countData }) {
         <Block label="jellyfin.series" />
         <Block label="jellyfin.episodes" />
         <Block label="jellyfin.songs" />
+        <Block label="jellyfin.albums" />
       </Container>
     );
   }
@@ -194,6 +195,7 @@ function CountBlocks({ service, countData }) {
       <Block label="jellyfin.series" value={t("common.number", { value: countData.SeriesCount })} />
       <Block label="jellyfin.episodes" value={t("common.number", { value: countData.EpisodeCount })} />
       <Block label="jellyfin.songs" value={t("common.number", { value: countData.SongCount })} />
+      <Block label="jellyfin.albums" value={t("common.number", { value: countData.AlbumCount })} />
     </Container>
   );
 }

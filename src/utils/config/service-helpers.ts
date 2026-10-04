@@ -331,8 +331,10 @@ export function cleanServiceGroups(groups) {
           // gamedig
           gameToken,
 
-          // authentik, beszel, glances, immich, komga, mealie, netalertx, pihole, pfsense, speedtest
+          // authentik, beszel, glances, immich, komga, mealie, netalertx, pihole, pfsense, pulse, speedtest
           version,
+          // qui
+          instance,
 
           // glances
           chart,
@@ -518,6 +520,7 @@ export function cleanServiceGroups(groups) {
         if (type === "proxmoxbackupserver") {
           if (datastore) widget.datastore = datastore;
         }
+        if (type === "qui" && instance !== undefined) widget.instance = instance;
         if (type === "komodo") {
           if (showSummary !== undefined) widget.showSummary = !!JSON.parse(showSummary);
           if (showStacks !== undefined) widget.showStacks = !!JSON.parse(showStacks);
@@ -590,6 +593,7 @@ export function cleanServiceGroups(groups) {
             "netalertx",
             "pfsense",
             "pihole",
+            "pulse",
             "speedtest",
             "wgeasy",
             "grafana",

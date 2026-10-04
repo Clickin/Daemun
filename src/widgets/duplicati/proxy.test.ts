@@ -70,6 +70,21 @@ describe("widgets/duplicati/proxy", () => {
     expect(res.body.stored).toBe(1024);
     expect(res.body.lastBackup).toBe("2026-07-12T10:00:00.000Z");
   });
+  it("treats a missing initial progressstate as no active task", async () => {
+    getServiceWidget.mockResolvedValue({ type: "duplicati", url: "http://dup", password: "secret" });
+    httpProxy
+      .mockResolvedValueOnce([200, "application/json", Buffer.from(JSON.stringify({ AccessToken: "token" }))])
+      .mockResolvedValueOnce([200, "application/json", Buffer.from(JSON.stringify([]))])
+      .mockResolvedValueOnce([200, "application/json", Buffer.from(JSON.stringify({ ActiveTask: null }))])
+      .mockResolvedValueOnce([200, "application/json", Buffer.from(JSON.stringify([]))])
+      .mockResolvedValueOnce([404, "application/json", Buffer.from("Not Found")]);
+
+    const res = createMockRes();
+    await duplicatiProxyHandler({ query: { group: "g", service: "s" } }, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject({ jobs: 0, running: 0 });
+  });
 
   it("returns 500 when login fails", async () => {
     getServiceWidget.mockResolvedValue({ type: "duplicati", url: "http://dup", password: "secret" });

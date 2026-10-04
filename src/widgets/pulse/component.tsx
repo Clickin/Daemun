@@ -22,9 +22,20 @@ function formatResourceCount(resources, type) {
 
 export default function Component({ service }) {
   const { widget } = service;
-  const { data, error } = useWidgetAPI(widget, "resources");
+  const version = widget.version ?? 1;
+  const { data, error } = useWidgetAPI(widget, version === 2 ? "summary" : "resources");
 
   if (error) return <Container service={service} error={error} />;
+
+  if (version === 2) {
+    return (
+      <Container service={service}>
+        <Block label="pulse.nodes" value={data?.nodes} />
+        <Block label="pulse.vms" value={data?.vms} />
+        <Block label="pulse.lxcs" value={data?.lxcs} />
+      </Container>
+    );
+  }
 
   const resources = { data, items: data?.resources ?? (data?.count === 0 ? [] : undefined) };
   return (

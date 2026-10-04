@@ -7,9 +7,12 @@ Hono and static-rendering contracts are covered locally.
 
 ## Current Review
 
-- Supported baseline: `c393e8a4` (`v1.13.2`, captured 2026-08-06).
-- Reviewed upstream head: `2b9150bc` (`dev`, 2026-08-05 review).
-- No widget drift exists on upstream `main` at the `c393e8a4` baseline.
+- Supported baseline: `c393e8a4` (`v1.13.2`, captured 2026-08-06); unchanged pending local contract coverage.
+- Reviewed upstream head: `666869ca` (`dev`, 2026-10-02); `main` at `6b692610` is its ancestor.
+- Ported from this review: Qui; Pulse v6; Duplicati's pre-first-job 404; What's Up Docker bearer tokens; Jellyfin album counts.
+- Deferred: Feed (XML parser dependency and feed presentation), Bookorbit (new API proxy), and Custom API info (separate endpoint and UI from the existing service widget).
+
+The upstream baseline remains pinned until the corresponding Hono and static-rendering contracts are covered locally.
 
 ## Tasks
 

@@ -5,6 +5,7 @@ const widget = {
   proxyHandler: credentialedProxyHandler,
   mappings: {
     resources: { endpoint: "api/resources" },
+    summary: { endpoint: "api/state/summary" },
   },
 };
 

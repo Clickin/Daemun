@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { cleanServiceGroups } from "./service-helpers";
+
 const { state, fs, yaml, config, Docker, dockerCfg, kubeCfg, kubeApi } = vi.hoisted(() => {
   const state = {
     servicesYaml: null,
@@ -256,6 +258,22 @@ describe("utils/config/service-helpers", () => {
     expect(svc3.widgets[0]).toEqual(expect.objectContaining({ type: "frigate", enableRecentEvents: true }));
 
     expect(state.logger.error).toHaveBeenCalled();
+  });
+
+  it("keeps Qui instance IDs and parses Pulse API versions", () => {
+    const cleaned = cleanServiceGroups([
+      {
+        name: "Media",
+        services: [
+          { name: "qui", widgets: [{ type: "qui", instance: "3" }] },
+          { name: "pulse", widgets: [{ type: "pulse", version: "2" }] },
+        ],
+        groups: [],
+      },
+    ]);
+
+    expect(cleaned[0].services[0].widgets[0].instance).toBe("3");
+    expect(cleaned[0].services[1].widgets[0].version).toBe(2);
   });
 
   it("cleanServiceGroups applies widget-type specific mappings for commonly used widgets", async () => {

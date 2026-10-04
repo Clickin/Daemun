@@ -46,11 +46,19 @@ vi.mock("widgets/widgets", () => ({
     gitlab: { api: "{url}/{endpoint}" },
     azuredevops: { api: "{url}/{endpoint}" },
     glances: { api: "{url}/{endpoint}" },
+    qui: { api: "{url}/api/{endpoint}" },
+    whatsupdocker: { api: "{url}/{endpoint}" },
     withheaders: { api: "{url}/{endpoint}", headers: { "X-Widget": "1" } },
   },
 }));
 
 import credentialedProxyHandler from "./credentialed";
+import widgets from "widgets/widgets";
+import quiWidget from "widgets/qui/widget";
+import whatsupdockerWidget from "widgets/whatsupdocker/widget";
+
+widgets.qui = quiWidget;
+widgets.whatsupdocker = whatsupdockerWidget;
 
 function createMockRes() {
   const res = {
@@ -131,6 +139,56 @@ describe("utils/proxy/handlers/credentialed", () => {
     expect(params.headers.Authorization).toBe("Bearer token");
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ ok: true });
+  });
+
+  it("substitutes the configured Qui instance in the upstream request", async () => {
+    getServiceWidget.mockResolvedValue({ type: "qui", url: "http://qui", key: "token", instance: "3" });
+    httpProxy.mockResolvedValue([200, "application/json", { stats: {} }]);
+
+    const req = {
+      method: "GET",
+      query: { group: "g", service: "s", endpoint: quiWidget.mappings.torrents.endpoint, index: 0 },
+    };
+    const res = createMockRes();
+    await quiWidget.proxyHandler(req, res);
+
+    expect(httpProxy.mock.calls[0][0].toString()).toBe("http://qui/api/instances/3/torrents?limit=1");
+    expect(httpProxy.mock.calls[0][1].headers["X-API-Key"]).toBe("token");
+  });
+
+  it("uses What's Up Docker bearer auth when a key is configured", async () => {
+    getServiceWidget.mockResolvedValue({
+      type: "whatsupdocker",
+      url: "http://whatsupdocker",
+      key: "bearer-token",
+      username: "ignored",
+      password: "ignored",
+    });
+    httpProxy.mockResolvedValue([200, "application/json", { ok: true }]);
+
+    const req = { method: "GET", query: { group: "g", service: "s", endpoint: "api/containers", index: 0 } };
+    const res = createMockRes();
+    await whatsupdockerWidget.proxyHandler(req, res);
+
+    const [, params] = httpProxy.mock.calls[0];
+    expect(params.headers.Authorization).toBe("Bearer bearer-token");
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("uses Basic auth for What's Up Docker when the bearer key is absent", async () => {
+    getServiceWidget.mockResolvedValue({
+      type: "whatsupdocker",
+      url: "http://whatsupdocker",
+      username: "user",
+      password: "pass",
+    });
+    httpProxy.mockResolvedValue([200, "application/json", { ok: true }]);
+
+    const req = { method: "GET", query: { group: "g", service: "s", endpoint: "api/containers", index: 0 } };
+    await credentialedProxyHandler(req, createMockRes());
+
+    const [, params] = httpProxy.mock.calls[0];
+    expect(params.headers.Authorization).toBe(`Basic ${Buffer.from("user:pass").toString("base64")}`);
   });
 
   it("uses NC-Token auth for nextcloud widgets when key is provided", async () => {

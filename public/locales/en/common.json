@@ -129,7 +129,8 @@
     "movies": "Movies",
     "series": "Series",
     "episodes": "Episodes",
-    "songs": "Songs"
+    "songs": "Songs",
+    "albums": "Albums"
   },
   "esphome": {
     "offline": "Offline",
@@ -252,6 +253,16 @@
     "poolUsage": "Pool Usage",
     "volumeUsage": "Volume Usage",
     "invalid": "Invalid"
+  },
+  "qui": {
+    "leech": "Leech",
+    "download": "Download",
+    "seed": "Seed",
+    "upload": "Upload",
+    "total": "Total",
+    "errored": "Errored",
+    "ratio": "Ratio",
+    "freeSpace": "Free"
   },
   "deluge": {
     "download": "Download",

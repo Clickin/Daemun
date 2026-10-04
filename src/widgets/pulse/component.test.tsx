@@ -28,3 +28,21 @@ it("renders active and total Pulse resources", () => {
   expect(screen.getByText("1 / 1")).toBeInTheDocument();
   expect(screen.getByText("0 / 0")).toBeInTheDocument();
 });
+
+it("renders Pulse v6 summary totals", () => {
+  useWidgetAPI.mockImplementation((_widget, endpoint) => ({
+    data:
+      endpoint === "summary"
+        ? { nodes: 2, vms: 4, lxcs: 6 }
+        : { resources: [{ type: "node", status: "online" }] },
+    error: undefined,
+  }));
+
+  renderWithProviders(<Component service={{ widget: { type: "pulse", version: 2 } }} />, {
+    settings: { hideErrors: false },
+  });
+
+  expect(screen.getByText("2")).toBeInTheDocument();
+  expect(screen.getByText("4")).toBeInTheDocument();
+  expect(screen.getByText("6")).toBeInTheDocument();
+});

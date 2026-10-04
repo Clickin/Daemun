@@ -124,6 +124,7 @@ const components = {
   pyload: () => import("./pyload/component"),
   qbittorrent: () => import("./qbittorrent/component"),
   qnap: () => import("./qnap/component"),
+  qui: () => import("./qui/component"),
   radarr: () => import("./radarr/component"),
   readarr: () => import("./readarr/component"),
   romm: () => import("./romm/component"),
