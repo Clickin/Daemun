@@ -1,0 +1,252 @@
+name: Upstream Widget Sync
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: upstream-widget-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
+        with:
+          version: 11.1.1
+          run_install: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 26
+          cache: pnpm
+
+      - name: Fetch upstream
+        id: upstream
+        run: |
+          git remote add upstream https://github.com/gethomepage/homepage.git
+          git fetch --no-tags upstream main
+          echo "sha=$(git rev-parse refs/remotes/upstream/main)" >> "$GITHUB_OUTPUT"
+
+      - name: Merge widget-owned paths and preserve Daemun core
+        id: sync
+        env:
+          UPSTREAM_SHA: ${{ steps.upstream.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch=automation/upstream-widgets
+
+          if git merge-base --is-ancestor "$UPSTREAM_SHA" HEAD; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "branch=$branch" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git switch -c "$branch"
+          if git merge --no-commit --no-ff "$UPSTREAM_SHA"; then
+            :
+          elif ! git rev-parse --verify -q MERGE_HEAD >/dev/null; then
+            echo "Upstream merge failed before producing a merge state." >&2
+            exit 1
+          fi
+
+          # Daemun owns the server, API handlers, auth, config/proxy contracts,
+          # build/deploy setup, and non-widget docs.
+          git restore --source=HEAD --staged --worktree -- \
+            .github Dockerfile README.md package.json pnpm-lock.yaml pnpm-workspace.yaml vite.config.mjs \
+            src/pages src/server src/components src/utils docs-site/content/docs/configs tools/release-gate
+
+          # Re-import the small shared helpers consumed by upstream widgets.
+          for widget_support_path in src/utils/widget-fields.js src/utils/hooks/use-current-time.js src/utils/hooks/use-current-time.test.jsx; do
+            if git cat-file -e "$UPSTREAM_SHA:$widget_support_path" 2>/dev/null; then
+              git restore --source="$UPSTREAM_SHA" --staged --worktree -- "$widget_support_path"
+            fi
+          done
+
+          # These widget files bridge upstream behavior to Daemun's Hono routes
+          # or Vite's React loader; preserve those adapters and port other widget code.
+          git restore --source=HEAD --staged --worktree -- \
+            src/widgets/calendar/component.tsx src/widgets/calendar/date.ts \
+            src/widgets/docker/component.tsx src/widgets/kubernetes/component.jsx \
+            src/widgets/proxmoxvm/component.tsx src/widgets/healthchecks/component.tsx \
+            src/widgets/jellyfin/component.tsx src/widgets/dockhand/proxy.ts src/widgets/frigate/proxy.ts
+          for widget_support_path in src/utils/widget-fields.js src/utils/hooks/use-current-time.js src/utils/hooks/use-current-time.test.jsx; do
+            if git cat-file -e "$UPSTREAM_SHA:$widget_support_path" 2>/dev/null; then
+              git restore --source="$UPSTREAM_SHA" --staged --worktree -- "$widget_support_path"
+            fi
+          done
+
+          is_upstream_owned() {
+            case "$1" in
+              src/widgets/*|public/locales/*|public/images/*|docs-site/content/docs/widgets/*|\
+              src/utils/widget-fields.js|src/utils/hooks/use-current-time.js|\
+              src/utils/hooks/use-current-time.test.jsx)
+                return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          # Resolve only file-level conflicts using the same ownership rule.
+          while IFS= read -r -d '' path; do
+            if is_upstream_owned "$path" && git cat-file -e ":3:$path" 2>/dev/null; then
+              git checkout --theirs -- "$path"
+            elif git cat-file -e ":2:$path" 2>/dev/null; then
+              git checkout --ours -- "$path"
+            else
+              git rm -f -- "$path"
+            fi
+            git add -- "$path" 2>/dev/null || true
+          done < <(git diff --name-only --diff-filter=U -z)
+
+          if test -n "$(git diff --name-only --diff-filter=U)"; then
+            echo "Unresolved upstream merge conflicts remain." >&2
+            exit 1
+          fi
+
+          # Drop cleanly merged changes outside upstream-owned widget paths.
+          while IFS= read -r -d '' path; do
+            if ! is_upstream_owned "$path"; then
+              git restore --source=HEAD --staged --worktree -- "$path"
+            fi
+          done < <(git diff --cached --name-only --no-renames -z HEAD)
+
+          # These upstream registries depend on Next.js and shadow Daemun's Vite registries.
+          rm -f src/widgets/components.js src/widgets/widgets.js
+
+          # Keep the widget sources on Daemun's React/i18next and lazy-loading seams,
+          # and reuse clsx instead of adding classnames.
+          node --input-type=module <<'NODE'
+          import { readdir, readFile, writeFile } from "node:fs/promises";
+          import path from "node:path";
+
+          async function visit(directory) {
+            for (const entry of await readdir(directory, { withFileTypes: true })) {
+              const file = path.join(directory, entry.name);
+              if (entry.isDirectory()) {
+                await visit(file);
+                continue;
+              }
+              if (!/\.(?:js|jsx|ts|tsx)$/.test(entry.name)) continue;
+              const original = await readFile(file, "utf8");
+              const updated = original
+                .replaceAll('"next-i18next/pages"', '"react-i18next"')
+                .replaceAll("'next-i18next/pages'", "'react-i18next'")
+                .replaceAll('from "next/dynamic"', 'from "utils/dynamic"')
+                .replaceAll("from 'next/dynamic'", "from 'utils/dynamic'")
+                .replaceAll('import classNames from "classnames";', 'import clsx from "clsx";')
+                .replaceAll("import classNames from 'classnames';", "import clsx from 'clsx';")
+                .replaceAll("classNames(", "clsx(")
+                .replaceAll(
+                  'import { i18n } from "../../../next-i18next.config";',
+                  'import i18n from "utils/i18n";',
+                );
+              if (updated !== original) await writeFile(file, updated);
+            }
+          }
+
+          await visit("src/widgets");
+          NODE
+
+          git add -A
+          if git diff --cached --quiet HEAD; then
+            git merge --abort
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "branch=$branch" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git diff --cached --check
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Sync upstream widgets from ${UPSTREAM_SHA:0:12}"
+          git push --force origin "$branch"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+      - name: Validate sync candidate
+        id: validate
+        if: steps.sync.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          validation=passed
+          pnpm install --frozen-lockfile || validation=failed
+          if [ "$validation" = passed ]; then pnpm gate:widgets || validation=failed; fi
+          if [ "$validation" = passed ]; then pnpm gate:upstream-contracts || validation=failed; fi
+          if [ "$validation" = passed ]; then pnpm gate:docs-parity || validation=failed; fi
+          if [ "$validation" = passed ]; then pnpm test || validation=failed; fi
+          if [ "$validation" = passed ]; then pnpm build || validation=failed; fi
+          echo "result=$validation" >> "$GITHUB_OUTPUT"
+          [ "$validation" = passed ]
+
+      - name: Create or update sync PR
+        if: steps.sync.outputs.changed == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          UPSTREAM_SHA: ${{ steps.upstream.outputs.sha }}
+          VALIDATION_RESULT: ${{ steps.validate.outputs.result }}
+          SYNC_BRANCH: ${{ steps.sync.outputs.branch }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const head = `${owner}:${process.env.SYNC_BRANCH}`;
+            const validation = process.env.VALIDATION_RESULT || 'not run';
+            const body = [
+              'ASLOP-PR-VERIFY',
+              '',
+              '## Proposed change',
+              `Automated widget sync from gethomepage/homepage/main at \`${process.env.UPSTREAM_SHA}\`.`,
+              'Daemun-owned Hono server/API/auth/static-rendering paths and adapter-owned widget files remain local.',
+              'Merge with a merge commit (not squash) to retain upstream ancestry.',
+              'The installed GitHub App performs the separate AI review; this workflow does not call an AI API.',
+              '',
+              '## Type of change',
+              '- [x] Other (automated upstream widget sync)',
+              '',
+              '## Checklist:',
+              `- [${validation === 'passed' ? 'x' : ' '}] Widget, upstream-contract, docs, test, and build checks passed (validation: ${validation}).`,
+              '- [x] Upstream widget documentation and locale updates are included when present.',
+              '',
+              `Validation: ${validation}. See the Upstream Widget Sync workflow run for details.`,
+            ].join('\n');
+
+            const { data: pulls } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'all',
+              head,
+              base: 'main',
+              per_page: 100,
+            });
+            const existing = pulls.find((pull) => !pull.merged_at);
+            if (existing) {
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: existing.number,
+                state: 'open',
+                title: `Sync upstream widgets (${process.env.UPSTREAM_SHA.slice(0, 12)})`,
+                body,
+              });
+              core.notice(`Updated upstream widget sync PR #${existing.number}`);
+            } else {
+              const { data: pull } = await github.rest.pulls.create({
+                owner,
+                repo,
+                head: process.env.SYNC_BRANCH,
+                base: 'main',
+                title: `Sync upstream widgets (${process.env.UPSTREAM_SHA.slice(0, 12)})`,
+                body,
+              });
+              core.notice(`Created upstream widget sync PR #${pull.number}`);
+            }
