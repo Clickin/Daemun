@@ -1,6 +1,6 @@
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
-import { formatApiCall, sanitizeErrorURL } from "utils/proxy/api-helpers";
+import { formatApiCall } from "utils/proxy/api-helpers";
 import { httpProxy } from "utils/proxy/http";
 import widgets from "widgets/widgets";
 
@@ -37,14 +37,18 @@ export default async function dockhandProxyHandler(req, res) {
   }
 
   const url = new URL(formatApiCall(widgets[widget.type].api, { endpoint, ...widget }));
-  const headers = widget.key ? { Authorization: `Bearer ${widget.key}` } : {};
+
+  const headers = {};
+  if (widget.key) {
+    headers.Authorization = `Bearer ${widget.key}`;
+  }
 
   let [status, contentType, data] = await httpProxy(url, {
     method: req.method,
     headers,
   });
 
-  // Attempt username/password login and retry once when token auth is not configured.
+  // Attempt login (username + password only) and retry once
   if (status === 401 && !widget.key) {
     const loggedIn = await login(widget);
     if (loggedIn) {
@@ -61,7 +65,7 @@ export default async function dockhandProxyHandler(req, res) {
     return res.status(status).json({
       error: {
         message: "HTTP Error",
-        url: sanitizeErrorURL(url),
+        url: `${url.hostname} (see logs for details)`,
         data: Buffer.isBuffer(resultData) ? Buffer.from(resultData).toString() : resultData,
       },
     });

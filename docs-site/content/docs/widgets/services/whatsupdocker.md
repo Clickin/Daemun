@@ -14,4 +14,5 @@ widget:
   key: bearer-token # optional; takes precedence over username and password
   username: username # optional
   password: password # optional
+  key: bearer-token # optional, takes precedence over username/password
 ```

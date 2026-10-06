@@ -47,7 +47,7 @@ describe("widgets/calendar/date", () => {
     expect(toCalendarDateKey(addCalendarMonths(selected, 1))).toBe("2099-02-02");
   });
 
-  it("falls back to local dates when a configured timezone is invalid", () => {
-    expect(() => toCalendarDateKey(parseCalendarDate("2099-01-02T00:00:00.000Z", "Not/AZone"))).not.toThrow();
+  it("falls back to the parsed date when a configured timezone is invalid", () => {
+    expect(toCalendarDateKey(parseCalendarDate("2099-01-02T00:00:00.000Z", "Not/AZone"))).toBe("2099-01-02");
   });
 });

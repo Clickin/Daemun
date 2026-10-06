@@ -14,6 +14,24 @@ Hono and static-rendering contracts are covered locally.
 
 The upstream baseline remains pinned until the corresponding Hono and static-rendering contracts are covered locally.
 
+- Synced `main` at `6b692610` (`v2.4.0`) into the integration branch, retaining
+  Daemun's Hono/auth/static-rendering core. `dev` remains fetched at `8ec79250`
+  for review; the supported baseline remains `c393e8a4` pending contract coverage.
+
+## Ongoing Sync
+
+- Keep `origin` for Daemun and `upstream` for `gethomepage/homepage`; sync from
+  `upstream/main`, and review newer `upstream/dev` changes separately.
+- Integrate upstream in one sync branch/merge, not one cherry-pick per upstream
+  commit. Resolve by ownership: take upstream widget behavior and tests, retain
+  Daemun's Hono server, API routing, authentication, static rendering, and
+  deployment runtime. Adapt widget/API contract changes at the Hono seam.
+- Do not use a blanket `ours` strategy: it can silently discard widget changes.
+  Do not mark an upstream revision integrated until its widget changes are
+  either ported or deliberately deferred and recorded below.
+- Check `pnpm gate:widgets`, `pnpm gate:upstream-contracts`, focused tests, and
+  an actual server smoke before completing a sync.
+
 ## Tasks
 
 1. **Portable widget changes — complete**

@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 export default function Component({ service }) {
@@ -39,7 +39,7 @@ export default function Component({ service }) {
   const queue = parseInt(table1Count, 10) + parseInt(table4Count, 10);
   const processed = parseInt(table2Count, 10) + parseInt(table5Count, 10);
   const errored = parseInt(table3Count, 10) + parseInt(table6Count, 10);
-  const saved = parseFloat(String(tdarrData.sizeDiff)) * 1000000000;
+  const saved = parseFloat(tdarrData.sizeDiff, 10) * 1000000000;
 
   return (
     <Container service={service}>

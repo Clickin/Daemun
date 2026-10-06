@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 export default function Component({ service }) {
@@ -27,7 +27,6 @@ export default function Component({ service }) {
   }
 
   // uptime info
-  // oxlint-disable-next-line no-unused-vars
   const [hour, minutes, seconds] = infoData.data.up_time.split(":");
   const days = Math.floor(hour / 24);
   const uptime = `${t("common.number", { value: days })} ${t("diskstation.days")}`;

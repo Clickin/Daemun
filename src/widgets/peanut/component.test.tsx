@@ -34,12 +34,13 @@ describe("widgets/peanut/component", () => {
   });
 
   it("renders legacy field mapping and status translation", () => {
+    const data = {
+      "battery.charge": 55,
+      "ups.load": 12,
+      "ups.status": "OL",
+    };
     useWidgetAPI.mockReturnValue({
-      data: {
-        "battery.charge": 55,
-        "ups.load": 12,
-        "ups.status": "OL",
-      },
+      data,
       error: undefined,
     });
 
@@ -48,5 +49,17 @@ describe("widgets/peanut/component", () => {
     expect(screen.getByText("55")).toBeInTheDocument();
     expect(screen.getByText("12")).toBeInTheDocument();
     expect(screen.getByText("peanut.online")).toBeInTheDocument();
+    expect(data).toEqual({ "battery.charge": 55, "ups.load": 12, "ups.status": "OL" });
+  });
+
+  it("renders dashes when readings are missing", () => {
+    useWidgetAPI.mockReturnValue({
+      data: { "device.model": "OR500LCDRM1Ua", "ups.status": 0 },
+      error: undefined,
+    });
+
+    renderWithProviders(<Component service={{ widget: { type: "peanut" } }} />, { settings: { hideErrors: false } });
+
+    expect(screen.getAllByText("-")).toHaveLength(3);
   });
 });

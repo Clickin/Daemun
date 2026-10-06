@@ -1,8 +1,8 @@
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-
 import { formatProxyUrl } from "utils/proxy/api-helpers";
 
 export default function Component({ service }) {
@@ -54,7 +54,7 @@ export default function Component({ service }) {
   const lastDownLog = logs.find((log) => log.type === 1);
 
   let status;
-  let uptime: number | string = 0;
+  let uptime = 0;
 
   switch (monitor.status) {
     case 0:

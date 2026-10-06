@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
 
 // Avoid pulling Next/Image + ThemeContext requirements into these unit tests.
@@ -103,5 +103,6 @@ describe("widgets/glances/metrics/containers", () => {
     expect(screen.getByText("item-0")).toBeInTheDocument();
     expect(screen.getByText("item-4")).toBeInTheDocument();
     expect(screen.queryByText("item-5")).not.toBeInTheDocument();
+    expect(data).toHaveLength(6);
   });
 });

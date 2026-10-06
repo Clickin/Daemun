@@ -1,9 +1,8 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { DateTime } from "luxon";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
-
-import { formatCalendarEventLabel, sameCalendarDay } from "./date";
 
 export default function Event({ event, colorVariants, showDate = false, showTime = false, showDateColumn = true }) {
   const [hover, setHover] = useState(false);
@@ -13,7 +12,12 @@ export default function Event({ event, colorVariants, showDate = false, showTime
     <>
       {showDateColumn && (
         <span className="ml-2 w-12">
-          <span>{(showDate || showTime) && formatCalendarEventLabel(event.date, i18n.language, showTime)}</span>
+          <span>
+            {(showDate || showTime) &&
+              event.date
+                .setLocale(i18n.language)
+                .toLocaleString(showTime ? DateTime.TIME_24_SIMPLE : { month: "short", day: "numeric" })}
+          </span>
         </span>
       )}
       <span className="ml-2 h-2 w-2">
@@ -50,4 +54,5 @@ export default function Event({ event, colorVariants, showDate = false, showTime
     </div>
   );
 }
-export const compareDateTimezone = (date, event) => sameCalendarDay(date, event.date);
+export const compareDateTimezone = (date, event) =>
+  date.startOf("day").toISODate() === event.date.startOf("day").toISODate();

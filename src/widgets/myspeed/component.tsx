@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 export default function Component({ service }) {
@@ -14,7 +14,7 @@ export default function Component({ service }) {
     if (data && data[0] && data[0].error) {
       try {
         finalError = JSON.parse(data[0].error);
-      } catch {
+      } catch (e) {
         finalError = data[0].error;
       }
     }

@@ -5,11 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn<VitestMockProcedure>() }));
-
-vi.mock("utils/query/api-query", () => ({
-  useApiQuery: useApiQueryMock,
-}));
+const { useApiQueryMock } = vi.hoisted(() => ({ useApiQueryMock: vi.fn() }));
+vi.mock("utils/query/api-query", () => ({ useApiQuery: useApiQueryMock }));
 
 import Component from "./component";
 
@@ -18,67 +15,87 @@ describe("widgets/docker/component", () => {
     vi.clearAllMocks();
   });
 
-  it("renders offline status when container is not running", () => {
-    useApiQueryMock
-      .mockReturnValueOnce({ data: { status: "exited" }, error: undefined }) // status
-      .mockReturnValueOnce({ data: undefined, error: undefined }); // stats
+  it("uses Daemun's per-container routes and renders placeholders while loading", () => {
+    useApiQueryMock.mockReturnValue({ data: undefined, error: undefined });
+
+    const { container } = renderWithProviders(
+      <Component service={{ widget: { type: "docker", container: "c", server: "s" } }} />,
+      { settings: { hideErrors: false } },
+    );
+
+    expect(useApiQueryMock.mock.calls.map(([url]) => url)).toEqual([
+      "/api/docker/status/c/s",
+      "/api/docker/stats/c/s",
+    ]);
+    expect(container.querySelectorAll(".service-block")).toHaveLength(4);
+  });
+
+  it("shows offline status when the container is stopped", () => {
+    useApiQueryMock.mockReturnValueOnce({ data: { status: "exited" }, error: undefined });
+    useApiQueryMock.mockReturnValueOnce({ data: undefined, error: undefined });
 
     renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
       settings: { hideErrors: false },
     });
 
-    expect(useApiQueryMock).toHaveBeenCalledTimes(2);
-    expect(useApiQueryMock).toHaveBeenNthCalledWith(1, "/api/docker/status/c/", {
-      refetchOnReconnect: "always",
-      refetchOnWindowFocus: "always",
-    });
-    expect(useApiQueryMock).toHaveBeenNthCalledWith(2, "/api/docker/stats/c/", {
-      refetchOnReconnect: "always",
-      refetchOnWindowFocus: "always",
-    });
-    expect(screen.getByText("widget.status")).toBeInTheDocument();
     expect(screen.getByText("docker.offline")).toBeInTheDocument();
   });
 
-  it("renders cpu/mem/rx/tx values when stats are available", () => {
-    useApiQueryMock
-      .mockReturnValueOnce({ data: { status: "running" }, error: undefined }) // status
-      .mockReturnValueOnce({
-        data: {
-          stats: {
-            cpu_stats: { cpu_usage: { total_usage: 200 }, system_cpu_usage: 2000, online_cpus: 2 },
-            precpu_stats: { cpu_usage: { total_usage: 100 }, system_cpu_usage: 1000 },
-            memory_stats: { usage: 1000, total_inactive_file: 100 },
-            networks: { eth0: { rx_bytes: 1, tx_bytes: 2 }, eth1: { rx_bytes: 3, tx_bytes: 4 } },
-          },
+  it("formats CPU, memory and network stats returned by the Hono route", () => {
+    useApiQueryMock.mockReturnValueOnce({ data: { status: "running" }, error: undefined });
+    useApiQueryMock.mockReturnValueOnce({
+      data: {
+        stats: {
+          cpu_stats: { cpu_usage: { total_usage: 120 }, system_cpu_usage: 200, online_cpus: 1 },
+          precpu_stats: { cpu_usage: { total_usage: 100 }, system_cpu_usage: 100 },
+          memory_stats: { usage: 1000, total_inactive_file: 100 },
+          networks: { eth0: { rx_bytes: 4, tx_bytes: 6 } },
         },
-        error: undefined,
-      });
+      },
+      error: undefined,
+    });
 
     const { container } = renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
       settings: { hideErrors: false },
     });
 
-    // cpu: (100/1000)*2*100=20
     expect(container.textContent).toContain("20");
-    // mem used: 1000-100=900
     expect(container.textContent).toContain("900");
-    // rx=4, tx=6
     expect(container.textContent).toContain("4");
     expect(container.textContent).toContain("6");
   });
 
-  it("renders the upstream error UI when only stats collection fails", () => {
-    useApiQueryMock
-      .mockReturnValueOnce({ data: { status: "running" }, error: undefined }) // status
-      .mockReturnValueOnce({ data: { error: "Unable to retrieve stats" }, error: undefined }); // stats
+  it("omits memory and network blocks when Docker provides no such stats", () => {
+    useApiQueryMock.mockReturnValueOnce({ data: { status: "running" }, error: undefined });
+    useApiQueryMock.mockReturnValueOnce({
+      data: {
+        stats: {
+          cpu_stats: { cpu_usage: { total_usage: 120 }, system_cpu_usage: 200, online_cpus: 1 },
+          precpu_stats: { cpu_usage: { total_usage: 100 }, system_cpu_usage: 100 },
+          memory_stats: {},
+        },
+      },
+      error: undefined,
+    });
 
     renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
       settings: { hideErrors: false },
     });
 
-    expect(screen.getByText("widget.api_error widget.information")).toBeInTheDocument();
-    expect(screen.getByText("Unable to retrieve stats")).toBeInTheDocument();
-    expect(screen.queryByText("docker.cpu")).not.toBeInTheDocument();
+    expect(screen.getByText("docker.cpu")).toBeInTheDocument();
+    expect(screen.queryByText("docker.mem")).not.toBeInTheDocument();
+    expect(screen.queryByText("docker.rx")).not.toBeInTheDocument();
+  });
+
+  it("surfaces API errors instead of treating them as an offline container", () => {
+    useApiQueryMock.mockReturnValueOnce({ data: undefined, error: undefined });
+    useApiQueryMock.mockReturnValueOnce({ data: { error: { message: "socket unreachable" } }, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.queryByText("docker.offline")).not.toBeInTheDocument();
+    expect(useApiQueryMock).toHaveBeenCalledTimes(2);
   });
 });

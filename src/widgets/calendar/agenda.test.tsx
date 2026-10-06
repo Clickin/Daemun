@@ -12,7 +12,7 @@ const { EventStub, compareDateTimezoneStub } = vi.hoisted(() => ({
     </div>
   )),
   compareDateTimezoneStub: vi.fn<VitestMockProcedure>(
-    (date, event) => date.format("YYYY-MM-DD") === event.date.format("YYYY-MM-DD"),
+    (date, event) => date.toISODate() === event.date.toISODate(),
   ),
 }));
 

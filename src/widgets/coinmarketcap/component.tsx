@@ -1,10 +1,10 @@
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
+
 import Dropdown from "components/services/dropdown";
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 export default function Component({ service }) {
@@ -25,7 +25,7 @@ export default function Component({ service }) {
 
   const [dateRange, setDateRange] = useState(interval);
 
-  const params: Record<string, string> = {
+  const params = {
     convert: `${currencyCode}`,
   };
 

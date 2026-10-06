@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 export default function Component({ service }) {
@@ -38,8 +38,8 @@ export default function Component({ service }) {
   const lan = defaultSite.health.find((h) => h.subsystem === "lan");
   const wlan = defaultSite.health.find((h) => h.subsystem === "wlan");
   [wan, lan, wlan].forEach((s) => {
-    s.up = s.status === "ok"; // oxlint-disable-line no-param-reassign
-    s.show = s.status !== "unknown"; // oxlint-disable-line no-param-reassign
+    s.up = s.status === "ok";
+    s.show = s.status !== "unknown";
   });
 
   const uptime = wan["gw_system-stats"]

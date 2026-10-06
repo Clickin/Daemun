@@ -7,12 +7,14 @@ Learn more about [Jellyfin](https://github.com/jellyfin/jellyfin).
 
 You can create an API key from inside the Jellyfin Administration Dashboard under `Advanced > API Keys`.
 
-As of v0.6.11 the widget supports the count fields `["movies", "series", "episodes", "songs", "albums"]`. These blocks are disabled by default but can be enabled with the `enableBlocks` option, and the "Now Playing" feature (enabled by default) can be disabled with the `enableNowPlaying` option.
+By default blocks are disabled and 'Now Playing' is enabled. You can toggle these settings using the enableBlocks and enableNowPlaying options.
+
+Allowed fields: `["movies", "series", "episodes", "songs", "albums"]`.
 
 | Jellyfin Version | Homepage Widget Version |
 | ---------------- | ----------------------- |
-| < 10.12          | 1 (default)             |
-| >= 10.12         | 2                       |
+| < 12 (10.12)     | 1 (default)             |
+| >= 12 (10.12)    | 2                       |
 
 ```yaml
 widget:

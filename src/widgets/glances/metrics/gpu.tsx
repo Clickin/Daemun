@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import dynamic from "utils/dynamic";
+import { useCallback } from "react";
 
 import Block from "../components/block";
 import Container from "../components/container";
+
+import useDataPoints from "./use-data-points";
 
 import { parseVersionForUrl } from "utils/proxy/api-helpers";
 import useWidgetAPI from "utils/proxy/use-widget-api";
@@ -20,28 +22,26 @@ export default function Component({ service }) {
   const apiVersion = parseVersionForUrl(version, 3);
   const [, gpuName] = widget.metric.split(":");
 
-  const [dataPoints, setDataPoints] = useState(Array.from({ length: pointsLimit }, () => ({ a: 0, b: 0 })));
+  const [dataPoints, addDataPoint] = useDataPoints(pointsLimit, { a: 0, b: 0 });
 
-  const { data, error } = useWidgetAPI(widget, `${apiVersion}/gpu`, {
-    refreshInterval: Math.max(defaultInterval, refreshInterval),
-  });
-
-  useEffect(() => {
-    if (data && !data.error) {
-      // oxlint-disable-next-line eqeqeq
-      const gpuData = data.find((item) => item[item.key] == gpuName);
-
-      if (gpuData) {
-        setDataPoints((prevDataPoints) => {
-          const newDataPoints = [...prevDataPoints, { a: gpuData.mem, b: gpuData.proc }];
-          if (newDataPoints.length > pointsLimit) {
-            newDataPoints.shift();
-          }
-          return newDataPoints;
-        });
+  const handleData = useCallback(
+    (newData) => {
+      if (!newData?.error) {
+        const gpuData = newData.find((item) => item[item.key] == gpuName);
+        if (gpuData) addDataPoint({ a: gpuData.mem, b: gpuData.proc });
       }
-    }
-  }, [data, gpuName, pointsLimit]);
+    },
+    [addDataPoint, gpuName],
+  );
+
+  const { data, error } = useWidgetAPI(
+    widget,
+    `${apiVersion}/gpu`,
+    {
+      refreshInterval: Math.max(defaultInterval, refreshInterval),
+    },
+    { onSuccess: handleData },
+  );
 
   if (error || (data && data.error)) {
     const finalError = error || data.error;
@@ -56,7 +56,6 @@ export default function Component({ service }) {
     );
   }
 
-  // oxlint-disable-next-line eqeqeq
   const gpuData = data.find((item) => item[item.key] == gpuName);
 
   if (!gpuData) {

@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import * as shvl from "utils/config/shvl";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
@@ -142,7 +142,7 @@ function getColor(mapping, customData) {
       try {
         const number = parseFloat(value);
         return number > 0 ? "text-emerald-300" : "text-rose-300";
-      } catch {
+      } catch (e) {
         return "";
       }
     case "black":
@@ -269,14 +269,14 @@ export default function Component({ service }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <div className="font-thin pl-2">{String(itemName)}</div>
+                    <div className="font-thin pl-2">{itemName}</div>
                     <div className="flex flex-row text-right">
                       <div className="font-bold mr-2">{formatValue(t, mappings, itemLabel)}</div>
                     </div>
                   </a>
                 ) : (
                   <div key={`${itemName}-${index}`} className={className}>
-                    <div className="font-thin pl-2">{String(itemName)}</div>
+                    <div className="font-thin pl-2">{itemName}</div>
                     <div className="flex flex-row text-right">
                       <div className="font-bold mr-2">{formatValue(t, mappings, itemLabel)}</div>
                     </div>

@@ -141,7 +141,7 @@ Each widget can optionally provide a list of which fields should be visible via 
 
 ### Block Highlighting
 
-Widgets can tint their metric block text automatically based on rules defined alongside the service. Attach a `highlight` section to the widget configuration and map each block to one or more numeric or string rules using the field key (for example, `queued`, `lan_users`).
+Widgets can tint their metric block text automatically based on rules defined alongside the service. Attach a `highlight` section to the widget configuration and map each block to one or more numeric or string rules using the field key (for example, `queued`, `lan_users`). The custom api widget does not support highlighting.
 
 ```yaml
 - Sonarr:
@@ -223,6 +223,8 @@ You can also specify prefixed icons from:
 - [selfh.st/icons](https://selfh.st/icons/) with `sh-XX` to use the png version or `sh-XX.svg/png/webp` for a specific version
 
 You can specify a custom color for `mdi` and `si` icons by adding a hex color code as a suffix e.g. `mdi-XX-#f0d453` or `si-XX-#a712a2`.
+
+Note that these icon sets are not bundled with Homepage, they are fetched in the browser from remote CDN servers. To use the icons offline you may download the icons and serve them locally, or rely on browser caching when applicable.
 
 To use a remote icon, use the absolute URL (e.g. `https://...`).
 

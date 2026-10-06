@@ -1,19 +1,13 @@
-import Container from "components/services/widget/container";
-import { useContext, useEffect, useMemo, useState } from "react";
-import { SettingsContext } from "utils/contexts/settings";
+import { DateTime } from "luxon";
+import { useTranslation } from "react-i18next";
 import dynamic from "utils/dynamic";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import Agenda from "./agenda";
-import { addCalendarMonths, createCurrentCalendarDate, subtractCalendarMonths, toCalendarDateKey } from "./date";
 import Monthly from "./monthly";
 
-const integrationComponents = {
-  ical: dynamic(() => import("./integrations/ical")),
-  lidarr: dynamic(() => import("./integrations/lidarr")),
-  radarr: dynamic(() => import("./integrations/radarr")),
-  readarr: dynamic(() => import("./integrations/readarr")),
-  sonarr: dynamic(() => import("./integrations/sonarr")),
-};
+import Container from "components/services/widget/container";
+import { SettingsContext } from "utils/contexts/settings";
 
 const colorVariants = {
   // https://tailwindcss.com/docs/content-configuration#dynamic-class-names
@@ -44,15 +38,17 @@ const colorVariants = {
 
 export default function Component({ service }) {
   const { widget } = service;
-  const [showDate, setShowDate] = useState(null);
+  const { i18n } = useTranslation();
   const [events, setEvents] = useState({});
-  const currentDate = createCurrentCalendarDate(widget?.timezone);
+  const nowDate = DateTime.now().setLocale(i18n.language);
+  const currentDate = widget?.timezone ? nowDate.setZone(widget?.timezone).startOf("day") : nowDate;
+  const [showDate, setShowDate] = useState(null);
   const { settings } = useContext(SettingsContext);
 
   useEffect(() => {
-    if (!showDate) {
-      setShowDate(currentDate);
-    }
+    // seeded after mount, not during render: "today" is client-only and would break hydration
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!showDate) setShowDate(currentDate);
   }, [showDate, currentDate]);
 
   // params for API fetch
@@ -64,8 +60,8 @@ export default function Component({ service }) {
     };
 
     if (showDate) {
-      constructedParams.start = toCalendarDateKey(subtractCalendarMonths(showDate, 3));
-      constructedParams.end = toCalendarDateKey(addCalendarMonths(showDate, 3));
+      constructedParams.start = showDate.minus({ months: 3 }).toFormat("yyyy-MM-dd");
+      constructedParams.end = showDate.plus({ months: 3 }).toFormat("yyyy-MM-dd");
     }
 
     return constructedParams;
@@ -75,9 +71,16 @@ export default function Component({ service }) {
   const integrations = useMemo(
     () =>
       widget.integrations
-        ?.filter((integration) => integration?.type && integrationComponents[integration.type])
+        ?.filter((integration) => integration?.type)
         .map((integration) => ({
-          service: integrationComponents[integration.type],
+          // Include the extension so Vite/Vitest can statically validate the import base.
+          service: dynamic(
+            () =>
+              import(
+                /* webpackExclude: /\.test\.jsx$/ */
+                `./integrations/${integration.type}.jsx`
+              ),
+          ),
           widget: { ...widget, ...integration },
         })) ?? [],
     [widget],
@@ -106,22 +109,25 @@ export default function Component({ service }) {
         </div>
         {(!widget?.view || widget?.view === "monthly") && (
           <Monthly
-            key={`monthly-${showDate ? toCalendarDateKey(showDate) : ""}`}
+            key={`monthly-${showDate?.toFormat("yyyy-MM-dd")}`}
             service={service}
             colorVariants={colorVariants}
             events={events}
             showDate={showDate}
             setShowDate={setShowDate}
             currentDate={currentDate}
+            className="flex"
           />
         )}
         {widget?.view === "agenda" && (
           <Agenda
-            key={`agenda-${showDate ? toCalendarDateKey(showDate) : ""}`}
+            key={`agenda-${showDate?.toFormat("yyyy-MM-dd")}`}
             service={service}
             colorVariants={colorVariants}
             events={events}
             showDate={showDate}
+            setShowDate={setShowDate}
+            className="flex"
           />
         )}
       </div>

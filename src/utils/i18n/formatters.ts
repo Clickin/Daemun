@@ -114,7 +114,7 @@ export function addDaemunFormatters(i18next) {
 
     const dm = options.decimals ? options.decimals : 0;
 
-    const i = options.binary ? 2 : Math.floor(Math.log(value) / Math.log(k));
+    const i = Math.max(0, Math.min(Math.floor(Math.log(Math.abs(value)) / Math.log(k)), sizes.length - 1));
 
     const formatted = new Intl.NumberFormat(lng, { maximumFractionDigits: dm, minimumFractionDigits: dm }).format(
       value / k ** i,

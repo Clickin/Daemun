@@ -18,11 +18,11 @@ vi.mock("utils/dynamic", () => ({
 }));
 
 vi.mock("./monthly", () => ({
-  default: ({ showDate }) => <div data-testid="calendar-monthly" data-show={showDate?.format?.("YYYY-MM-DD") || ""} />,
+  default: ({ showDate }) => <div data-testid="calendar-monthly" data-show={showDate?.toFormat?.("yyyy-MM-dd") || ""} />,
 }));
 
 vi.mock("./agenda", () => ({
-  default: ({ showDate }) => <div data-testid="calendar-agenda" data-show={showDate?.format?.("YYYY-MM-DD") || ""} />,
+  default: ({ showDate }) => <div data-testid="calendar-agenda" data-show={showDate?.toFormat?.("yyyy-MM-dd") || ""} />,
 }));
 
 import Component from "./component";

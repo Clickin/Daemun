@@ -5,11 +5,11 @@ import createMockRes from "test-utils/create-mock-res";
 const { UrbackupServer, state, getServiceWidget } = vi.hoisted(() => {
   const state = { instances: [] };
 
-  const UrbackupServer = vi.fn<VitestMockProcedure>((opts) => {
+  const UrbackupServer = vi.fn(function UrbackupServer(opts) {
     const instance = {
       opts,
-      getStatus: vi.fn<VitestMockProcedure>(),
-      getUsage: vi.fn<VitestMockProcedure>(),
+      getStatus: vi.fn(),
+      getUsage: vi.fn(),
     };
     state.instances.push(instance);
     return instance;
@@ -18,7 +18,7 @@ const { UrbackupServer, state, getServiceWidget } = vi.hoisted(() => {
   return {
     UrbackupServer,
     state,
-    getServiceWidget: vi.fn<VitestMockProcedure>(),
+    getServiceWidget: vi.fn(),
   };
 });
 
@@ -46,11 +46,11 @@ describe("widgets/urbackup/proxy", () => {
       maxDays: 5,
     });
 
-    UrbackupServer.mockImplementationOnce((opts) => {
+    UrbackupServer.mockImplementationOnce(function UrbackupServer(opts) {
       const instance = {
         opts,
-        getStatus: vi.fn<VitestMockProcedure>().mockResolvedValue([{ id: 1 }]),
-        getUsage: vi.fn<VitestMockProcedure>(),
+        getStatus: vi.fn().mockResolvedValue([{ id: 1 }]),
+        getUsage: vi.fn(),
       };
       state.instances.push(instance);
       return instance;
@@ -76,11 +76,11 @@ describe("widgets/urbackup/proxy", () => {
       fields: ["totalUsed"],
     });
 
-    UrbackupServer.mockImplementationOnce((opts) => {
+    UrbackupServer.mockImplementationOnce(function UrbackupServer(opts) {
       const instance = {
         opts,
-        getStatus: vi.fn<VitestMockProcedure>().mockResolvedValue([{ id: 1 }]),
-        getUsage: vi.fn<VitestMockProcedure>().mockResolvedValue({ totalUsed: 123 }),
+        getStatus: vi.fn().mockResolvedValue([{ id: 1 }]),
+        getUsage: vi.fn().mockResolvedValue({ totalUsed: 123 }),
       };
       state.instances.push(instance);
       return instance;
@@ -99,11 +99,11 @@ describe("widgets/urbackup/proxy", () => {
   it("returns 500 on server errors", async () => {
     getServiceWidget.mockResolvedValue({ url: "http://ur", username: "u", password: "p" });
 
-    UrbackupServer.mockImplementationOnce((opts) => {
+    UrbackupServer.mockImplementationOnce(function UrbackupServer(opts) {
       const instance = {
         opts,
-        getStatus: vi.fn<VitestMockProcedure>().mockRejectedValue(new Error("nope")),
-        getUsage: vi.fn<VitestMockProcedure>(),
+        getStatus: vi.fn().mockRejectedValue(new Error("nope")),
+        getUsage: vi.fn(),
       };
       state.instances.push(instance);
       return instance;

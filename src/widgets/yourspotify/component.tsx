@@ -1,8 +1,8 @@
+import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
+
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 function getStartDate(interval) {

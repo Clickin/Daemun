@@ -1,11 +1,14 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 import { BsCpu, BsFillCpuFill, BsFillPlayFill, BsPauseFill, BsVolumeMuteFill } from "react-icons/bs";
 import { MdOutlineSmartDisplay } from "react-icons/md";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import { getURLSearchParams } from "utils/proxy/api-helpers";
 import useWidgetAPI from "utils/proxy/use-widget-api";
+import withWidgetFields from "utils/widget-fields";
+
+const DEFAULT_FIELDS = ["movies", "series", "episodes", "songs", "albums"];
 
 function ticksToTime(ticks) {
   const milliseconds = ticks / 10000;
@@ -176,6 +179,7 @@ function SessionEntry({ playCommand, session, enableUser, showEpisodeNumber, ena
 
 function CountBlocks({ service, countData }) {
   const { t } = useTranslation();
+  const { widget } = service;
 
   if (!countData) {
     return (
@@ -200,9 +204,10 @@ function CountBlocks({ service, countData }) {
   );
 }
 
-export default function Component({ service }) {
+export default function Component({ service: configuredService }) {
   const { t } = useTranslation();
 
+  const service = withWidgetFields(configuredService, DEFAULT_FIELDS, 5);
   const { widget } = service;
   const version = widget?.version ?? 1;
   const useJellyfinV2 = version === 2;

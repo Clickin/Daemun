@@ -1,21 +1,21 @@
+import { useTranslation } from "react-i18next";
+import { useApiQuery } from "utils/query/api-query";
+import { DOCKER_REVALIDATE_OPTIONS, dockerStatsUrl, dockerStatusUrl } from "utils/docker-api";
+import { calculateCPUPercent, calculateThroughput, calculateUsedMemory } from "./stats-helpers";
+
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
-import { useTranslation } from "react-i18next";
-import { DOCKER_REVALIDATE_OPTIONS, dockerStatsUrl, dockerStatusUrl } from "utils/docker-api";
-import { useApiQuery } from "utils/query/api-query";
-
-import { calculateCPUPercent, calculateThroughput, calculateUsedMemory } from "./stats-helpers";
 
 export default function Component({ service }) {
   const { t } = useTranslation();
 
   const { widget } = service;
+  
 
   const { data: statusData, error: statusError } = useApiQuery(
     dockerStatusUrl(widget.container, widget.server),
     DOCKER_REVALIDATE_OPTIONS,
   );
-
   const { data: statsData, error: statsError } = useApiQuery(
     dockerStatsUrl(widget.container, widget.server),
     DOCKER_REVALIDATE_OPTIONS,
@@ -34,7 +34,13 @@ export default function Component({ service }) {
     );
   }
 
-  if (!statsData || !statusData) {
+  // A running Swarm service may have no stats when its task is on another node.
+  if (statusData && statsData && !statsData.stats) {
+    return <Container service={service} error="not found" />;
+  }
+
+  if (!statsData?.stats || !statusData) {
+  
     return (
       <Container service={service}>
         <Block label="docker.cpu" />
@@ -45,17 +51,18 @@ export default function Component({ service }) {
     );
   }
 
-  const { rxBytes, txBytes } = calculateThroughput(statsData.stats);
-  const cpuPercent = calculateCPUPercent(statsData.stats);
-  const usedMemory = calculateUsedMemory(statsData.stats);
+  const { stats } = statsData;
+  const { rxBytes, txBytes } = calculateThroughput(stats);
+  const cpuPercent = calculateCPUPercent(stats);
+  const usedMemory = calculateUsedMemory(stats);
 
   return (
     <Container service={service}>
       <Block label="docker.cpu" value={t("common.percent", { value: cpuPercent })} highlightValue={cpuPercent} />
-      {statsData.stats.memory_stats.usage && (
+      {stats.memory_stats.usage !== undefined && (
         <Block label="docker.mem" value={t("common.bytes", { value: usedMemory })} highlightValue={usedMemory} />
       )}
-      {statsData.stats.networks && (
+      {stats.networks && (
         <>
           <Block label="docker.rx" value={t("common.bytes", { value: rxBytes })} highlightValue={rxBytes} />
           <Block label="docker.tx" value={t("common.bytes", { value: txBytes })} highlightValue={txBytes} />

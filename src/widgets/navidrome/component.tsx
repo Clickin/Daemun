@@ -1,6 +1,6 @@
-import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 function SinglePlayingEntry({ entry }) {

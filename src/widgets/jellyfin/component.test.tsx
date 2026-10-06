@@ -91,4 +91,29 @@ describe("widgets/jellyfin/component", () => {
     expect(screen.getByText(/00:00/)).toBeInTheDocument();
     expect(screen.getByText(/01:00/)).toBeInTheDocument();
   });
+
+  it("renders the album count and preserves configured five-field layouts", () => {
+    useWidgetAPI
+      .mockReturnValueOnce({ data: [], error: undefined, mutate: vi.fn() }) // sessions
+      .mockReturnValueOnce({
+        data: { MovieCount: 1, SeriesCount: 2, EpisodeCount: 3, SongCount: 4, AlbumCount: 5 },
+        error: undefined,
+      }); // count
+
+    const service = {
+      widget: {
+        type: "jellyfin",
+        url: "http://x",
+        enableBlocks: true,
+        fields: ["movies", "series", "episodes", "albums", "songs"],
+      },
+    };
+
+    renderWithProviders(<Component service={service} />);
+
+    expect(service.widget.fields).toEqual(["movies", "series", "episodes", "albums", "songs"]);
+    expect(screen.getByText("jellyfin.albums")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByText("jellyfin.songs")).toBeInTheDocument();
+  });
 });

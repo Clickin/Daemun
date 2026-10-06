@@ -1,4 +1,4 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { expectWidgetConfigShape } from "test-utils/widget-config";
 
@@ -8,4 +8,5 @@ describe("syncthing widget config", () => {
   it("exports a valid widget config", () => {
     expectWidgetConfigShape(widget);
   });
+
 });

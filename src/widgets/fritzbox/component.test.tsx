@@ -6,11 +6,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "test-utils/render-with-providers";
 import { expectBlockValue } from "test-utils/widget-assertions";
 
-const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn() }));
 vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
 
 import Component from "./component";
-import { fritzboxDefaultFields } from "./fields";
 
 describe("widgets/fritzbox/component", () => {
   beforeEach(() => {
@@ -20,10 +19,10 @@ describe("widgets/fritzbox/component", () => {
   it("defaults fields and filters to 4 blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "fritzbox", url: "http://x", fields: undefined as string[] | undefined } };
+    const service = { widget: { type: "fritzbox", url: "http://x" } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
-    expect(service.widget.fields).toEqual(fritzboxDefaultFields);
+    expect(service.widget.fields).toBeUndefined();
     expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expect(screen.getByText("fritzbox.connectionStatus")).toBeInTheDocument();
     expect(screen.getByText("fritzbox.uptime")).toBeInTheDocument();
@@ -44,7 +43,14 @@ describe("widgets/fritzbox/component", () => {
 
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
-    expect(service.widget.fields).toEqual(["down", "up", "received", "sent"]);
+    expect(service.widget.fields).toEqual([
+      "down",
+      "up",
+      "received",
+      "sent",
+      "externalIPAddress",
+      "externalIPv6Prefix",
+    ]);
     expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expect(screen.getByText("fritzbox.down")).toBeInTheDocument();
     expect(screen.getByText("fritzbox.up")).toBeInTheDocument();
