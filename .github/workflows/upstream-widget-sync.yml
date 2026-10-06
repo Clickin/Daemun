@@ -55,6 +55,8 @@ jobs:
           fi
 
           git switch -c "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git merge --no-commit --no-ff "$UPSTREAM_SHA"; then
             :
           elif ! git rev-parse --verify -q MERGE_HEAD >/dev/null; then
