@@ -36,6 +36,14 @@ const colorVariants = {
   zinc: "bg-zinc-500",
 };
 
+const integrationLoaders = {
+  ical: () => import("./integrations/ical.tsx"),
+  lidarr: () => import("./integrations/lidarr.tsx"),
+  radarr: () => import("./integrations/radarr.tsx"),
+  readarr: () => import("./integrations/readarr.tsx"),
+  sonarr: () => import("./integrations/sonarr.tsx"),
+};
+
 export default function Component({ service }) {
   const { widget } = service;
   const { i18n } = useTranslation();
@@ -71,16 +79,9 @@ export default function Component({ service }) {
   const integrations = useMemo(
     () =>
       widget.integrations
-        ?.filter((integration) => integration?.type)
+        ?.filter((integration) => Object.hasOwn(integrationLoaders, integration?.type))
         .map((integration) => ({
-          // Include the extension so Vite/Vitest can statically validate the import base.
-          service: dynamic(
-            () =>
-              import(
-                /* webpackExclude: /\.test\.jsx$/ */
-                `./integrations/${integration.type}.jsx`
-              ),
-          ),
+          service: dynamic(integrationLoaders[integration.type]),
           widget: { ...widget, ...integration },
         })) ?? [],
     [widget],

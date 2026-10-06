@@ -5,17 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "test-utils/render-with-providers";
 
-vi.mock("utils/dynamic", () => ({
-  default: () => (props) => (
-    <div
-      data-testid="calendar-integration"
-      data-type={props.config.type}
-      data-start={props.params.start}
-      data-end={props.params.end}
-      data-timezone={props.timezone || ""}
-    />
-  ),
-}));
+const { useWidgetAPI } = vi.hoisted(() => ({ useWidgetAPI: vi.fn<VitestMockProcedure>() }));
+vi.mock("utils/proxy/use-widget-api", () => ({ default: useWidgetAPI }));
 
 vi.mock("./monthly", () => ({
   default: ({ showDate }) => <div data-testid="calendar-monthly" data-show={showDate?.toFormat?.("yyyy-MM-dd") || ""} />,
@@ -55,7 +46,9 @@ describe("widgets/calendar/component", () => {
     });
   });
 
-  it("loads configured integrations and passes calculated params", async () => {
+  it("loads a configured integration through the real lazy loader", async () => {
+    useWidgetAPI.mockReturnValue({ data: [], error: undefined });
+
     renderWithProviders(
       <Component
         service={{
@@ -76,14 +69,16 @@ describe("widgets/calendar/component", () => {
       { settings: { hideErrors: false } },
     );
 
-    const integration = screen.getByTestId("calendar-integration");
-    expect(integration.getAttribute("data-type")).toBe("sonarr");
-    expect(integration.getAttribute("data-timezone")).toBe("UTC");
-
     await waitFor(() => {
-      // start/end should be yyyy-MM-dd after showDate is set.
-      expect(integration.getAttribute("data-start")).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(integration.getAttribute("data-end")).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(useWidgetAPI).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "sonarr", service_name: "Sonarr" }),
+        "calendar",
+        expect.objectContaining({
+          start: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+          end: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+          includeSeries: "true",
+        }),
+      );
     });
   });
 });
