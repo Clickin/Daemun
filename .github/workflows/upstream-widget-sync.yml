@@ -63,6 +63,34 @@ jobs:
             echo "Upstream merge failed before producing a merge state." >&2
             exit 1
           fi
+          is_upstream_owned() {
+            case "$1" in
+              src/widgets/*|public/locales/*|public/images/*|docs-site/content/docs/widgets/*|\
+              src/utils/widget-fields.js|src/utils/hooks/use-current-time.js|\
+              src/utils/hooks/use-current-time.test.jsx)
+                return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          # Resolve conflicts before restoring Daemun-owned paths; Git cannot
+          # restore a path while its index entries are unmerged.
+          while IFS= read -r -d '' path; do
+            if is_upstream_owned "$path" && git cat-file -e ":3:$path" 2>/dev/null; then
+              git checkout --theirs -- "$path"
+            elif git cat-file -e ":2:$path" 2>/dev/null; then
+              git checkout --ours -- "$path"
+            else
+              git rm -f -- "$path"
+            fi
+            git add -- "$path" 2>/dev/null || true
+          done < <(git diff --name-only --diff-filter=U -z)
+
+          if test -n "$(git diff --name-only --diff-filter=U)"; then
+            echo "Unresolved upstream merge conflicts remain." >&2
+            exit 1
+          fi
+
 
           # Daemun owns the server, API handlers, auth, config/proxy contracts,
           # build/deploy setup, and non-widget docs.
@@ -90,32 +118,6 @@ jobs:
             fi
           done
 
-          is_upstream_owned() {
-            case "$1" in
-              src/widgets/*|public/locales/*|public/images/*|docs-site/content/docs/widgets/*|\
-              src/utils/widget-fields.js|src/utils/hooks/use-current-time.js|\
-              src/utils/hooks/use-current-time.test.jsx)
-                return 0 ;;
-              *) return 1 ;;
-            esac
-          }
-
-          # Resolve only file-level conflicts using the same ownership rule.
-          while IFS= read -r -d '' path; do
-            if is_upstream_owned "$path" && git cat-file -e ":3:$path" 2>/dev/null; then
-              git checkout --theirs -- "$path"
-            elif git cat-file -e ":2:$path" 2>/dev/null; then
-              git checkout --ours -- "$path"
-            else
-              git rm -f -- "$path"
-            fi
-            git add -- "$path" 2>/dev/null || true
-          done < <(git diff --name-only --diff-filter=U -z)
-
-          if test -n "$(git diff --name-only --diff-filter=U)"; then
-            echo "Unresolved upstream merge conflicts remain." >&2
-            exit 1
-          fi
 
           # Drop cleanly merged changes outside upstream-owned widget paths.
           while IFS= read -r -d '' path; do
