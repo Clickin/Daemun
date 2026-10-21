@@ -256,6 +256,16 @@
         "leech": "Seier",
         "seed": "Vul"
     },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
+    },
     "qnap": {
         "cpuUsage": "SVE Gebruik",
         "memUsage": "MEM Gebruik",
@@ -780,7 +790,8 @@
         "queue": "Tou",
         "processing": "Verwerking",
         "processed": "Verwerk",
-        "time": "Tyd"
+        "time": "Tyd",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Netto Waarde",
@@ -858,6 +869,14 @@
         "books": "Boeke",
         "reading": "Lees",
         "finished": "Klaar"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Tou",
@@ -1258,5 +1277,8 @@
         "wanted": "Gesoek",
         "queued": "In ry",
         "leagues": "Ligas"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

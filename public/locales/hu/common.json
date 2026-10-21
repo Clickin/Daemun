@@ -256,6 +256,16 @@
         "leech": "Leech",
         "seed": "Seed"
     },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
+    },
     "qnap": {
         "cpuUsage": "Processzor Használat",
         "memUsage": "Memória Használat",
@@ -780,7 +790,8 @@
         "queue": "Sorban",
         "processing": "Feldolgozás alatt",
         "processed": "Feldolgozott",
-        "time": "Idő"
+        "time": "Idő",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Nettó érték",
@@ -856,6 +867,14 @@
     "booklore": {
         "libraries": "Libraries",
         "books": "Books",
+        "reading": "Reading",
+        "finished": "Finished"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
         "reading": "Reading",
         "finished": "Finished"
     },
@@ -1258,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }
