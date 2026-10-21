@@ -33,6 +33,9 @@ runtime and project identity now belong to Daemun.
   native runtime dependencies that cannot be bundled.
 - Both Docker variants pin Node.js `26.12.1-alpine3.23`, including the
   [CVE-2026-111497 security fix](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
+- App bundles build on the builder's native platform to avoid QEMU Node.js
+  crashes during dependency installation. Native runtime dependencies and final
+  images still build separately for each target architecture.
 
 ## Performance Strategy
 
