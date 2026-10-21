@@ -31,6 +31,15 @@ The upstream baseline remains pinned until the corresponding Hono and static-ren
   either ported or deliberately deferred and recorded below.
 - Check `pnpm gate:widgets`, `pnpm gate:upstream-contracts`, focused tests, and
   an actual server smoke before completing a sync.
+- The scheduled `Upstream Widget Sync` workflow opens or updates
+  `automation/upstream-widgets` as a PR; it does not merge into `main`.
+  Repository Actions settings must allow GitHub Actions to create pull requests
+  (`can_approve_pull_request_reviews: true`). Keep default token permissions
+  read-only; the workflow requests its own contents/PR write permissions.
+- Before committing a candidate, normalize Markdown links to Starlight routes
+  and map `memory-cache` imports to `utils/cache`. When Feed is imported, add
+  its `sax` and `xml-js` dependencies to the candidate manifest and lockfile.
+  Retain the frozen install, widget/docs/API gates, tests, and build validation.
 
 ## Tasks
 

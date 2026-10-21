@@ -3,7 +3,7 @@
 # =========================
 # Builder Stage
 # =========================
-ARG NODE_IMAGE=node:26-alpine3.23
+ARG NODE_IMAGE=node:26.12.1-alpine3.23
 FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
 

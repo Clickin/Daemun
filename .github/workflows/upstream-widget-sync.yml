@@ -129,8 +129,7 @@ jobs:
           # These upstream registries depend on Next.js and shadow Daemun's Vite registries.
           rm -f src/widgets/components.js src/widgets/widgets.js
 
-          # Keep the widget sources on Daemun's React/i18next and lazy-loading seams,
-          # and reuse clsx instead of adding classnames.
+          # Reuse Daemun's React/i18next, lazy-loading, cache, and class-name helpers.
           node --input-type=module <<'NODE'
           import { readdir, readFile, writeFile } from "node:fs/promises";
           import path from "node:path";
@@ -149,6 +148,8 @@ jobs:
                 .replaceAll("'next-i18next/pages'", "'react-i18next'")
                 .replaceAll('from "next/dynamic"', 'from "utils/dynamic"')
                 .replaceAll("from 'next/dynamic'", "from 'utils/dynamic'")
+                .replaceAll('from "memory-cache"', 'from "utils/cache"')
+                .replaceAll("from 'memory-cache'", "from 'utils/cache'")
                 .replaceAll('import classNames from "classnames";', 'import clsx from "clsx";')
                 .replaceAll("import classNames from 'classnames';", "import clsx from 'clsx';")
                 .replaceAll("classNames(", "clsx(")
@@ -162,6 +163,14 @@ jobs:
 
           await visit("src/widgets");
           NODE
+
+          # Upstream Markdown links need Starlight routes before validation.
+          node tools/docs/normalize-starlight-links.mjs
+
+          # Feed brings XML parsers that are not part of Daemun's base dependencies.
+          if [ -f src/widgets/feed/utils.js ]; then
+            pnpm add --workspace-root --save-dev 'sax@^1.6.1' 'xml-js@^1.6.11'
+          fi
 
           git add -A
           if git diff --cached --quiet HEAD; then

@@ -31,6 +31,8 @@ runtime and project identity now belong to Daemun.
   listen on port `80`.
 - Docker images are built around the generated `dist` output plus only the
   native runtime dependencies that cannot be bundled.
+- Both Docker variants pin Node.js `26.12.1-alpine3.23`, including the
+  [CVE-2026-111497 security fix](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
 
 ## Performance Strategy
 

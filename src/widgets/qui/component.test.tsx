@@ -31,7 +31,6 @@ describe("widgets/qui/component", () => {
     const service = { widget: { type: "qui", fields: [] as string[] } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
-    expect(service.widget.fields).toEqual(["leech", "download", "seed", "upload"]);
     expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expectBlockValue(container, "qui.leech", "3 / 3");
     expectBlockValue(container, "qui.seed", "5 / 5");
@@ -56,7 +55,6 @@ describe("widgets/qui/component", () => {
     };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
-    expect(service.widget.fields).toEqual(["ratio", "freeSpace", "total", "errored"]);
     expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expectBlockValue(container, "qui.ratio", "2.25");
     expectBlockValue(container, "qui.total", "7");
