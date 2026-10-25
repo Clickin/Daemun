@@ -256,6 +256,16 @@
         "leech": "المُستهلكون",
         "seed": "المُزوِّدين"
     },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
+    },
     "qnap": {
         "cpuUsage": "استهلاك المعالج",
         "memUsage": "استخدام الذاكرة العشوائية",
@@ -780,7 +790,8 @@
         "queue": "الطابور",
         "processing": "قيد المعالجة",
         "processed": "مُعَالَج",
-        "time": "الوقت"
+        "time": "الوقت",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "صافي القيمة",
@@ -858,6 +869,14 @@
         "books": "الكتب",
         "reading": "أقرأُه",
         "finished": "منتهي"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "الطابور",
@@ -1258,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

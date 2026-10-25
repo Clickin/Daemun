@@ -256,6 +256,16 @@
         "leech": "Sangonera",
         "seed": "Sembrat"
     },
+    "qui": {
+        "leech": "Sangonera",
+        "download": "Baixada",
+        "seed": "Sembrat",
+        "upload": "Pujada",
+        "total": "Total",
+        "errored": "Errors",
+        "ratio": "Ràtio",
+        "freeSpace": "Lliure"
+    },
     "qnap": {
         "cpuUsage": "Ús de CPU",
         "memUsage": "Ús de Memòria",
@@ -780,7 +790,8 @@
         "queue": "Cua",
         "processing": "Processant",
         "processed": "Processat",
-        "time": "Temps"
+        "time": "Temps",
+        "failed": "Error"
     },
     "firefly": {
         "networth": "Valor Net",
@@ -856,6 +867,14 @@
     "booklore": {
         "libraries": "Biblioteques",
         "books": "Llibres",
+        "reading": "Llegint",
+        "finished": "Acabats"
+    },
+    "bookorbit": {
+        "books": "Llibres",
+        "authors": "Autors",
+        "series": "Sèries",
+        "storage": "Emmagatzematge",
         "reading": "Llegint",
         "finished": "Acabats"
     },
@@ -1258,5 +1277,8 @@
         "wanted": "Pendents",
         "queued": "En cua",
         "leagues": "Lligues"
+    },
+    "feed": {
+        "noItems": "Sense elements"
     }
 }

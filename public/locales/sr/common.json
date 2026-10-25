@@ -256,6 +256,16 @@
         "leech": "Leech",
         "seed": "Seed"
     },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
+    },
     "qnap": {
         "cpuUsage": "Искоришћеност процесора",
         "memUsage": "Заузеће меморије",
@@ -780,7 +790,8 @@
         "queue": "Ред",
         "processing": "Обрада",
         "processed": "Обрада",
-        "time": "Време"
+        "time": "Време",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Нето вредност",
@@ -858,6 +869,14 @@
         "books": "Књиге",
         "reading": "Читање",
         "finished": "Завршено"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Ред",
@@ -1258,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

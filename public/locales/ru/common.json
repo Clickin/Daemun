@@ -256,6 +256,16 @@
         "leech": "Лич",
         "seed": "Сид"
     },
+    "qui": {
+        "leech": "Лич",
+        "download": "Скачивание",
+        "seed": "Сид",
+        "upload": "Загрузка",
+        "total": "Всего",
+        "errored": "Ошибок",
+        "ratio": "Соотношение",
+        "freeSpace": "Свободно"
+    },
     "qnap": {
         "cpuUsage": "Использование ЦП",
         "memUsage": "Использование ОЗУ",
@@ -780,7 +790,8 @@
         "queue": "Очередь",
         "processing": "Обрабатывается",
         "processed": "Обработано",
-        "time": "Время"
+        "time": "Время",
+        "failed": "Неудачно"
     },
     "firefly": {
         "networth": "Общая средства",
@@ -857,6 +868,14 @@
         "libraries": "Библиотеки",
         "books": "Книги",
         "reading": "Читаю",
+        "finished": "Завершено"
+    },
+    "bookorbit": {
+        "books": "Книги",
+        "authors": "Авторы",
+        "series": "Серии",
+        "storage": "Память",
+        "reading": "Чтение",
         "finished": "Завершено"
     },
     "jdownloader": {
@@ -1258,5 +1277,8 @@
         "wanted": "Требуется",
         "queued": "В очереди",
         "leagues": "Лиги"
+    },
+    "feed": {
+        "noItems": "Ничего нет"
     }
 }
