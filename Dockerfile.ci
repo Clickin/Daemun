@@ -1,0 +1,34 @@
+# syntax=docker/dockerfile:1.7
+ARG NODE_IMAGE=node:26.12.1-alpine3.23
+FROM ${NODE_IMAGE} AS runner
+
+LABEL org.opencontainers.image.title="Daemun"
+LABEL org.opencontainers.image.description="A Hono-powered self-hosted dashboard for homelab services, widgets, and YAML-compatible Homepage configurations."
+LABEL org.opencontainers.image.url="https://github.com/Clickin/Daemun"
+LABEL org.opencontainers.image.documentation="https://github.com/Clickin/Daemun"
+LABEL org.opencontainers.image.source="https://github.com/Clickin/Daemun"
+LABEL org.opencontainers.image.licenses="GPL-3.0-only"
+
+WORKDIR /app
+
+COPY runtime-deps/package.json ./runtime-deps/package.json
+RUN node -e "const p = require('./runtime-deps/package.json'); const deps = { ...(p.dependencies || {}), ...(p.optionalDependencies || {}) }; if (Object.keys(deps).length) { console.error('CI Dockerfile requires empty runtime-deps; build the standard Dockerfile when runtime dependencies exist'); process.exit(1) }" \
+  && mkdir node_modules
+
+COPY --link --chown=1000:1000 dist ./dist
+COPY --link --chown=1000:0 package.json ./package.json
+COPY --link --chown=1000:1000 public ./public
+COPY --link --chown=1000:1000 src/skeleton ./src/skeleton
+COPY --link --chmod=755 docker-entrypoint.sh /usr/local/bin/
+
+RUN apk add --no-cache su-exec iputils-ping shadow
+
+USER root
+ENV NODE_ENV=production
+EXPOSE 3000
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=20s \
+  CMD wget --no-verbose --tries=1 --spider -Y off http://127.0.0.1:3000/api/healthcheck || exit 1
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["node", "dist/server/index.mjs", "--host", "0.0.0.0", "--port", "3000"]

@@ -8,7 +8,7 @@ COPY --link package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 RUN <<EOF
     set -xe
     apk add --virtual .gyp python3 make g++
-    npm install -g pnpm@10.32.1
+    npm install -g pnpm@12.15.0
 EOF
 
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm fetch | grep -v "cross-device link not permitted\|Falling back to copying packages from store"

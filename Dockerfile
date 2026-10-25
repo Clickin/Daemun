@@ -5,7 +5,7 @@ ARG NODE_IMAGE=node:26.12.1-alpine3.23
 FROM --platform=$BUILDPLATFORM ${NODE_IMAGE} AS builder
 WORKDIR /app
 
-RUN npm install -g pnpm@11.1.1
+RUN npm install -g pnpm@12.15.0
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY docs-site/package.json ./docs-site/package.json
@@ -35,7 +35,7 @@ RUN if [ "$CI" != "true" ]; then \
 FROM ${NODE_IMAGE} AS runtime-deps
 WORKDIR /app
 
-RUN npm install -g pnpm@11.1.1
+RUN npm install -g pnpm@12.15.0
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY runtime-deps/package.json ./runtime-deps/package.json
