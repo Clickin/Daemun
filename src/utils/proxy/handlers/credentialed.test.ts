@@ -42,6 +42,7 @@ vi.mock("widgets/widgets", () => ({
     tubearchivist: { api: "{url}/{endpoint}" },
     autobrr: { api: "{url}/{endpoint}" },
     jellystat: { api: "{url}/{endpoint}" },
+    netbird: { api: "{url}/api/{endpoint}" },
     trilium: { api: "{url}/{endpoint}" },
     gitlab: { api: "{url}/{endpoint}" },
     azuredevops: { api: "{url}/{endpoint}" },
@@ -381,6 +382,7 @@ describe("utils/proxy/handlers/credentialed", () => {
     ];
 
     for (const [widget, expected] of cases) {
+      httpProxy.mockClear();
       getServiceWidget.mockResolvedValue(widget);
       httpProxy.mockResolvedValue([200, "application/json", { ok: true }]);
 
