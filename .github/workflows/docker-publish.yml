@@ -67,6 +67,22 @@ jobs:
           flavor: |
             latest=false
 
+      - name: Extract nginx-caged Docker metadata
+        id: meta-nginx-caged
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=schedule,pattern=nightly-nginx-caged
+            type=ref,event=branch,suffix=-nginx-caged
+            type=ref,event=tag,suffix=-nginx-caged
+            type=raw,value=latest-nginx-caged,enable={{is_default_branch}}
+            type=semver,pattern=v{{version}},suffix=-nginx-caged
+            type=semver,pattern=v{{major}}.{{minor}},suffix=-nginx-caged
+            type=semver,pattern=v{{major}},suffix=-nginx-caged
+          flavor: |
+            latest=false
+
       - name: Install pnpm
         uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
         with:
@@ -136,10 +152,30 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache-nginx
           cache-to: type=local,dest=/tmp/.buildx-cache-new-nginx,mode=max
 
+      - name: Build and push nginx-caged Docker image
+        id: build-and-push-nginx-caged
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7
+        with:
+          context: .
+          file: Dockerfile.nginx.ci
+          build-args: |
+            NODE_IMAGE=platformatic/node-caged:26.12.1-alpine@sha256:fe8ec90570374d012cc8a61a5f19e7fadd8621b97f9690126de15425549ae02f
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-nginx-caged.outputs.tags }}
+          labels: ${{ steps.meta-nginx-caged.outputs.labels }}
+          annotations: |
+            index:org.opencontainers.image.description=${{ env.IMAGE_DESCRIPTION }}
+          platforms: linux/amd64,linux/arm64
+          provenance: false
+          cache-from: type=local,src=/tmp/.buildx-cache-nginx-caged
+          cache-to: type=local,dest=/tmp/.buildx-cache-new-nginx-caged,mode=max
+
       # https://github.com/docker/build-push-action/issues/252 / https://github.com/moby/buildkit/issues/1896
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
           rm -rf /tmp/.buildx-cache-nginx
+          rm -rf /tmp/.buildx-cache-nginx-caged
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new-nginx /tmp/.buildx-cache-nginx
+          mv /tmp/.buildx-cache-new-nginx-caged /tmp/.buildx-cache-nginx-caged

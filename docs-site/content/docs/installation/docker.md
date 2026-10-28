@@ -25,9 +25,67 @@ The default image runs the direct Node/Hono runtime on port `3000`. If you want
 nginx to serve the baked home page and static assets in front of Daemun, use
 `ghcr.io/clickin/daemun:latest-nginx` and expose `80:80`.
 
-Pre-release branch images are tagged as `main` and `main-nginx`. Release tags
-publish both `latest`/`latest-nginx` and versioned tags such as
-`v1.14.0`/`v1.14.0-nginx`.
+Pre-release branch images are tagged as `main`, `main-nginx`, and
+`main-nginx-caged`. The default branch also publishes `latest`, `latest-nginx`,
+and `latest-nginx-caged`. Releases publish versioned tags such as `v1.14.0`,
+`v1.14.0-nginx`, and `v1.14.0-nginx-caged`.
+
+### Experimental nginx + node-caged image
+
+Use `ghcr.io/clickin/daemun:latest-nginx-caged` for nginx with
+[Platformatic's pointer-compressed Node.js](https://github.com/platformatic/node-caged).
+It uses the same configuration, mounts, and port `80` as the nginx image:
+
+```yaml
+services:
+  daemun:
+    image: ghcr.io/clickin/daemun:latest-nginx-caged
+    ports:
+      - 3000:80
+    volumes:
+      - /path/to/config:/app/config
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: localhost:3000
+```
+
+The published variant pins `platformatic/node-caged:26.12.1-alpine` by digest,
+retaining the Node.js 26.12.1 security baseline rather than following a floating
+`26-alpine` tag. Docker Hub publishes this version for both `linux/amd64` and
+`linux/arm64`. The upstream image uses Alpine 3.21 and is **experimental**;
+the regular nginx image remains on the official Node.js Alpine 3.23 image.
+Alpine keeps the existing `apk` packages and `su-exec` entrypoint compatible
+without introducing a separate Dockerfile.
+
+Limitations:
+
+- Pointer compression limits each V8 isolate's heap to about 4 GiB. It can
+  reduce JavaScript heap usage, but total container memory savings depend on
+  the workload.
+- Native addons using V8 directly or NAN, including `better-sqlite3`, can
+  crash under this runtime. Do not add those addons to the caged image or
+  mount a host `node_modules` directory into it. N-API compatibility still
+  depends on the addon's platform and libc support.
+- Daemun currently has no `better-sqlite3` dependency and its
+  `runtime-deps/package.json` dependencies are empty. CI images copy the
+  bundled application, not build-time `node_modules`, and reject nonempty
+  runtime dependencies. The lockfile's optional `ssh2` NAN/`cpu-features`
+  entries do not mean those native binaries are shipped: Vite replaces
+  `cpu-features` with a JavaScript shim, while `ssh2` falls back when its
+  optional `sshcrypto.node` binary is absent. Recheck the final image for
+  native binaries and exercise affected integrations whenever dependencies
+  change; use the regular nginx image if a required addon is incompatible.
+
+To build this variant locally with the existing nginx Dockerfile:
+
+```bash
+docker build -f Dockerfile.nginx \
+  --build-arg NODE_IMAGE=platformatic/node-caged:26.12.1-alpine@sha256:fe8ec90570374d012cc8a61a5f19e7fadd8621b97f9690126de15425549ae02f \
+  -t daemun:nginx-caged .
+```
+
+For prebuilt `dist` output, use `Dockerfile.nginx.ci` with the same build argument.
+Both Dockerfiles reject caged runtimes older than Node.js 26.12.1 or built
+without V8 pointer compression.
 
 ### Static Files
 

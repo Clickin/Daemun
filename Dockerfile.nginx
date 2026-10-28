@@ -49,6 +49,11 @@ RUN node -e "const p = require('./runtime-deps/package.json'); const deps = { ..
 # Runtime Stage
 # =========================
 FROM ${NODE_IMAGE} AS runner
+ARG NODE_IMAGE
+RUN case "$NODE_IMAGE" in platformatic/node-caged:*) \
+      node -e "const assert = require('node:assert/strict'); const [major, minor, patch] = process.versions.node.split('.').map(Number); assert(major > 26 || (major === 26 && (minor > 12 || (minor === 12 && patch >= 1))), 'node-caged requires Node.js >=26.12.1'); assert.equal(Number(process.config.variables.v8_enable_pointer_compression), 1, 'node-caged requires V8 pointer compression'); console.log('Verified node-caged', process.version)"; \
+    esac
+
 LABEL org.opencontainers.image.title="Daemun"
 LABEL org.opencontainers.image.description="A static-first self-hosted dashboard with a localhost-only Hono API backend."
 LABEL org.opencontainers.image.url="https://github.com/Clickin/Daemun"

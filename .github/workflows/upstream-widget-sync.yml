@@ -75,6 +75,7 @@ jobs:
 
           # Resolve conflicts before restoring Daemun-owned paths; Git cannot
           # restore a path while its index entries are unmerged.
+          # The diff runs concurrently with checkout; disable its optional index refresh.
           while IFS= read -r -d '' path; do
             if is_upstream_owned "$path" && git cat-file -e ":3:$path" 2>/dev/null; then
               git checkout --theirs -- "$path"
@@ -84,7 +85,7 @@ jobs:
               git rm -f -- "$path"
             fi
             git add -- "$path" 2>/dev/null || true
-          done < <(git diff --name-only --diff-filter=U -z)
+          done < <(git --no-optional-locks diff --name-only --diff-filter=U -z)
 
           if test -n "$(git diff --name-only --diff-filter=U)"; then
             echo "Unresolved upstream merge conflicts remain." >&2
@@ -108,6 +109,7 @@ jobs:
           # These widget files bridge upstream behavior to Daemun's Hono routes
           # or Vite's React loader; preserve those adapters and port other widget code.
           git restore --source=HEAD --staged --worktree -- \
+            src/widgets/components.ts \
             src/widgets/calendar/component.tsx src/widgets/calendar/date.ts \
             src/widgets/docker/component.tsx src/widgets/kubernetes/component.jsx \
             src/widgets/proxmoxvm/component.tsx src/widgets/healthchecks/component.tsx \
