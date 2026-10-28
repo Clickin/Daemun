@@ -109,6 +109,7 @@ jobs:
           # These widget files bridge upstream behavior to Daemun's Hono routes
           # or Vite's React loader; preserve those adapters and port other widget code.
           git restore --source=HEAD --staged --worktree -- \
+            src/widgets/components.ts \
             src/widgets/calendar/component.tsx src/widgets/calendar/date.ts \
             src/widgets/docker/component.tsx src/widgets/kubernetes/component.jsx \
             src/widgets/proxmoxvm/component.tsx src/widgets/healthchecks/component.tsx \
