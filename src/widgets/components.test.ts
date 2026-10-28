@@ -15,4 +15,10 @@ describe("widgets/components loader registry", () => {
 
     expect(loaderSource).toContain("/plex/component");
   });
+
+  it("loads the NetBird component through the Vite registry", async () => {
+    const { default: Component } = await components.netbird();
+
+    expect(Component).toBeTypeOf("function");
+  });
 });

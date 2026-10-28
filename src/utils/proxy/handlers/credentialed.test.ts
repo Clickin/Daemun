@@ -362,6 +362,7 @@ describe("utils/proxy/handlers/credentialed", () => {
       [{ type: "proxmox", url: "http://x", username: "u", password: "p" }, { Authorization: "PVEAPIToken=u=p" }],
       [{ type: "autobrr", url: "http://x", key: "k" }, { "X-API-Token": "k" }],
       [{ type: "jellystat", url: "http://x", key: "k" }, { "X-API-Token": "k" }],
+      [{ type: "netbird", url: "http://x", key: "k" }, { Authorization: "Token k" }],
       [{ type: "tubearchivist", url: "http://x", key: "k" }, { Authorization: "Token k" }],
       [{ type: "miniflux", url: "http://x", key: "k" }, { "X-Auth-Token": "k" }],
       [{ type: "trilium", url: "http://x", key: "k" }, { Authorization: "k" }],

@@ -17,6 +17,10 @@ The upstream baseline remains pinned until the corresponding Hono and static-ren
 - Synced `main` at `6b692610` (`v2.4.0`) into the integration branch, retaining
   Daemun's Hono/auth/static-rendering core. `dev` remains fetched at `8ec79250`
   for review; the supported baseline remains `c393e8a4` pending contract coverage.
+- The October sync candidate targets `main` at `2e5f10134ae3`, the revision from
+  failed workflow run `40354867053`: NetBird, the Prometheus four-metric rendering
+  fix, and locale updates. NetBird's Vite loader and `Token` authorization are
+  ported into Daemun-owned adapters; later syncs retain those local adapters.
 
 ## Ongoing Sync
 
@@ -36,6 +40,9 @@ The upstream baseline remains pinned until the corresponding Hono and static-ren
   Repository Actions settings must allow GitHub Actions to create pull requests
   (`can_approve_pull_request_reviews: true`). Keep default token permissions
   read-only; the workflow requests its own contents/PR write permissions.
+  Conflict enumeration uses `git --no-optional-locks diff` because Bash process
+  substitution runs alongside checkout; a read-only diff must not refresh and
+  lock the index while the resolver writes it.
 - Before committing a candidate, normalize Markdown links to Starlight routes
   and map `memory-cache` imports to `utils/cache`. When Feed is imported, add
   its `sax` and `xml-js` dependencies to the candidate manifest and lockfile.

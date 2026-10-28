@@ -91,6 +91,7 @@ const components = {
   myspeed: () => import("./myspeed/component"),
   navidrome: () => import("./navidrome/component"),
   netalertx: netalertxLoader,
+  netbird: () => import("./netbird/component"),
   netdata: () => import("./netdata/component"),
   nextcloud: () => import("./nextcloud/component"),
   nextdns: () => import("./nextdns/component"),
