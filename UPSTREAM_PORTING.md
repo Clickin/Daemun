@@ -36,6 +36,9 @@ The upstream baseline remains pinned until the corresponding Hono and static-ren
   Repository Actions settings must allow GitHub Actions to create pull requests
   (`can_approve_pull_request_reviews: true`). Keep default token permissions
   read-only; the workflow requests its own contents/PR write permissions.
+  Conflict enumeration uses `git --no-optional-locks diff` because Bash process
+  substitution runs alongside checkout; a read-only diff must not refresh and
+  lock the index while the resolver writes it.
 - Before committing a candidate, normalize Markdown links to Starlight routes
   and map `memory-cache` imports to `utils/cache`. When Feed is imported, add
   its `sax` and `xml-js` dependencies to the candidate manifest and lockfile.

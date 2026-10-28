@@ -75,6 +75,7 @@ jobs:
 
           # Resolve conflicts before restoring Daemun-owned paths; Git cannot
           # restore a path while its index entries are unmerged.
+          # The diff runs concurrently with checkout; disable its optional index refresh.
           while IFS= read -r -d '' path; do
             if is_upstream_owned "$path" && git cat-file -e ":3:$path" 2>/dev/null; then
               git checkout --theirs -- "$path"
@@ -84,7 +85,7 @@ jobs:
               git rm -f -- "$path"
             fi
             git add -- "$path" 2>/dev/null || true
-          done < <(git diff --name-only --diff-filter=U -z)
+          done < <(git --no-optional-locks diff --name-only --diff-filter=U -z)
 
           if test -n "$(git diff --name-only --diff-filter=U)"; then
             echo "Unresolved upstream merge conflicts remain." >&2
