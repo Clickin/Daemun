@@ -3,10 +3,10 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  // Vitest uses Vite/esbuild, so enable the modern JSX runtime
+  // Vitest transforms with Vite's oxc; use the modern JSX runtime
   // to avoid requiring `import React from "react"` in every TSX file.
-  esbuild: {
-    jsx: "automatic",
+  oxc: {
+    jsx: { runtime: "automatic" },
   },
   resolve: {
     alias: {
@@ -27,7 +27,6 @@ export default defineConfig({
     exclude: ["src/server/browserless-smoke.test.tsx"],
     coverage: {
       provider: "v8",
-      all: true,
       reporter: ["text", "lcov", "json-summary"],
       include: ["src/**/*.{ts,tsx}"],
       exclude: [

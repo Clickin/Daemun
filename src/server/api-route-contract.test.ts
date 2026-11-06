@@ -59,7 +59,9 @@ const { coreApi, getKubeConfig, MetricsCtor, metricsApi } = vi.hoisted(() => {
     getKubeConfig: vi.fn<VitestMockProcedure>(() => ({
       makeApiClient: () => coreApi,
     })),
-    MetricsCtor: vi.fn<VitestMockProcedure>(() => metricsApi),
+    MetricsCtor: vi.fn<VitestMockProcedure>(function () {
+      return metricsApi;
+    }),
     metricsApi,
   };
 });
