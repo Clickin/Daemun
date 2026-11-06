@@ -199,6 +199,7 @@ jobs:
           if [ "$validation" = passed ]; then pnpm gate:widgets || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm gate:upstream-contracts || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm gate:docs-parity || validation=failed; fi
+          if [ "$validation" = passed ]; then pnpm docs:build || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm test || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm build || validation=failed; fi
           echo "result=$validation" >> "$GITHUB_OUTPUT"
