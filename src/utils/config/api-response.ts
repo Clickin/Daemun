@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-import yaml from "js-yaml";
+import { loadYaml } from "utils/config/yaml";
 
 import checkAndCopyConfig, { CONF_DIR, getSettings, substituteEnvironmentVars } from "utils/config/config";
 import {
@@ -30,7 +30,7 @@ export async function bookmarksResponse(settings = undefined) {
   const bookmarksYaml = path.join(CONF_DIR, "bookmarks.yaml");
   const rawFileContents = await fs.readFile(bookmarksYaml, "utf8");
   const fileContents = substituteEnvironmentVars(rawFileContents);
-  const bookmarks = yaml.load(fileContents);
+  const bookmarks = loadYaml(fileContents);
 
   if (!bookmarks) return [];
 

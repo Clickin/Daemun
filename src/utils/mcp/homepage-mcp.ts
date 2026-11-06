@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { join } from "node:path";
 
-import yaml from "js-yaml";
+import { loadYaml } from "utils/config/yaml";
 
 import { CONF_DIR } from "utils/config/config";
 
@@ -47,7 +47,7 @@ function readConfig(file: ConfigFile) {
 function validateYaml(file: ConfigFile, content: string) {
   if (!yamlConfigFiles.has(file)) return { valid: true };
   try {
-    yaml.load(content);
+    loadYaml(content);
     return { valid: true };
   } catch (error) {
     const yamlError = error as { mark?: { line: number; column: number; snippet?: string }; message: string };
