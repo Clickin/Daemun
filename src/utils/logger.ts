@@ -122,7 +122,7 @@ function getFileLogger() {
   });
 }
 
-function configuredSinks() {
+function configuredSinks(): Record<string, Sink> {
   const configuredTargets = process.env.LOG_TARGETS || "both";
 
   switch (configuredTargets) {
@@ -167,7 +167,7 @@ function init() {
   checkAndCopyConfig("settings.yaml");
 
   const sinks = configuredSinks();
-  const sinkIds = Object.keys(sinks) as Array<keyof typeof sinks>;
+  const sinkIds = Object.keys(sinks);
 
   configureSync({
     reset: true,

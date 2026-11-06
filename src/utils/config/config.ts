@@ -50,7 +50,7 @@ export default function checkAndCopyConfig(config) {
 }
 
 function getCachedEnvironmentVars() {
-  let cachedVars = cache.get(cacheKey);
+  let cachedVars = cache.get<[string, string][]>(cacheKey);
   if (!cachedVars) {
     // initialize cache
     cachedVars = Object.entries(process.env).filter(

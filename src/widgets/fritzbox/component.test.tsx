@@ -19,7 +19,9 @@ describe("widgets/fritzbox/component", () => {
   it("defaults fields and filters to 4 blocks while loading", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "fritzbox", url: "http://x" } };
+    const service: { widget: { type: string; url: string; fields?: string[] } } = {
+      widget: { type: "fritzbox", url: "http://x" },
+    };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toBeUndefined();

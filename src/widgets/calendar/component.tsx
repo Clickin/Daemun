@@ -117,7 +117,6 @@ export default function Component({ service }) {
             showDate={showDate}
             setShowDate={setShowDate}
             currentDate={currentDate}
-            className="flex"
           />
         )}
         {widget?.view === "agenda" && (
@@ -127,8 +126,6 @@ export default function Component({ service }) {
             colorVariants={colorVariants}
             events={events}
             showDate={showDate}
-            setShowDate={setShowDate}
-            className="flex"
           />
         )}
       </div>

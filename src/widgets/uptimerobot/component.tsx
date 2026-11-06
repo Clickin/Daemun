@@ -54,7 +54,7 @@ export default function Component({ service }) {
   const lastDownLog = logs.find((log) => log.type === 1);
 
   let status;
-  let uptime = 0;
+  let uptime: number | string = 0;
 
   switch (monitor.status) {
     case 0:

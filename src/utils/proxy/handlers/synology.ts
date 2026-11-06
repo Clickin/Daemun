@@ -42,7 +42,7 @@ async function login(loginUrl) {
 
 async function getApiInfo(serviceWidget, apiName, serviceName) {
   const cacheKey = `${proxyName}__${apiName}__${serviceName}`;
-  let { cgiPath, maxVersion } = cache.get(cacheKey) ?? {};
+  let { cgiPath, maxVersion } = cache.get<{ cgiPath?: string; maxVersion?: number }>(cacheKey) ?? {};
   if (cgiPath && maxVersion) {
     return [cgiPath, maxVersion];
   }

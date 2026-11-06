@@ -83,7 +83,7 @@ export default async function plexProxyHandler(req, res) {
     streams = apiData.MediaContainer._attributes.size;
   }
 
-  let libraries = cache.get(`${librariesCacheKey}.${service}.${index}`);
+  let libraries = cache.get<Array<{ _attributes: Record<string, string> }>>(`${librariesCacheKey}.${service}.${index}`);
   if (libraries === null) {
     logger.debug("Getting libraries from Plex API");
     [status, apiData] = await fetchFromPlexAPI("/library/sections", widget);
@@ -93,9 +93,9 @@ export default async function plexProxyHandler(req, res) {
     }
   }
 
-  let albums = cache.get(`${albumsCacheKey}.${service}.${index}`);
-  let movies = cache.get(`${moviesCacheKey}.${service}.${index}`);
-  let tv = cache.get(`${tvCacheKey}.${service}.${index}`);
+  let albums = cache.get<number>(`${albumsCacheKey}.${service}.${index}`);
+  let movies = cache.get<number>(`${moviesCacheKey}.${service}.${index}`);
+  let tv = cache.get<number>(`${tvCacheKey}.${service}.${index}`);
   if (albums === null || movies === null || tv === null) {
     albums = 0;
     movies = 0;

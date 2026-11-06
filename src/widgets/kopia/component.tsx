@@ -5,7 +5,7 @@ import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 function relativeDate(date) {
-  const seconds = Math.abs(Math.floor((new Date() - date) / 1000));
+  const seconds = Math.abs(Math.floor((Date.now() - date) / 1000));
 
   let interval = Math.abs(seconds / 31536000);
 

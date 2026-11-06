@@ -130,7 +130,7 @@ export default async function omadaProxyHandler(req, res) {
       }
 
       const sessionCacheId = getSessionCacheId(group, service, index);
-      let session = cache.get(sessionCacheId);
+      let session = cache.get<{ token: string; cookieHeader: string }>(sessionCacheId);
 
       for (let attempt = 0; attempt < 2; attempt += 1) {
         try {
@@ -151,7 +151,7 @@ export default async function omadaProxyHandler(req, res) {
               });
             }
 
-            session = cache.get(sessionCacheId);
+            session = cache.get<{ token: string; cookieHeader: string }>(sessionCacheId);
           }
 
           const { token, cookieHeader } = session;

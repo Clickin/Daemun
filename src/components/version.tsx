@@ -23,7 +23,7 @@ export default function Version({ disableUpdateCheck = false }) {
     return new Intl.DateTimeFormat(i18n.language, options).format(new Date(date));
   };
 
-  let latestRelease = cache.get(LATEST_RELEASE_CACHE_KEY);
+  let latestRelease = cache.get<{ tag_name: string; html_url: string }>(LATEST_RELEASE_CACHE_KEY);
 
   const { data: releaseData } = useApiQuery(latestRelease || disableUpdateCheck ? null : "/api/releases");
 

@@ -25,7 +25,7 @@ export default function Component({ service }) {
 
   const [dateRange, setDateRange] = useState(interval);
 
-  const params = {
+  const params: Record<string, string> = {
     convert: `${currencyCode}`,
   };
 

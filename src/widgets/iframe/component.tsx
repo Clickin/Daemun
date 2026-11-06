@@ -17,8 +17,6 @@ export default function Component({ service }) {
     }
   }, [refreshTimer, widget?.refreshInterval]);
 
-  const scrollingDisableStyle = widget?.allowScrolling === "no" ? { pointerEvents: "none", overflow: "hidden" } : {};
-
   const classes = widget?.classes || "h-60 sm:h-60 md:h-60 lg:h-60 xl:h-60 2xl:h-72";
 
   return (
@@ -37,9 +35,6 @@ export default function Component({ service }) {
           referrerPolicy={widget?.referrerPolicy}
           loading={widget?.loadingStrategy}
           scrolling={widget?.allowScrolling}
-          style={{
-            scrollingDisableStyle,
-          }}
           className={`rounded-sm w-full ${classes}`}
         />
       </div>

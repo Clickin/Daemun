@@ -197,6 +197,7 @@ jobs:
           validation=passed
           pnpm install --frozen-lockfile || validation=failed
           if [ "$validation" = passed ]; then pnpm gate:widgets || validation=failed; fi
+          if [ "$validation" = passed ]; then pnpm typecheck || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm gate:upstream-contracts || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm gate:docs-parity || validation=failed; fi
           if [ "$validation" = passed ]; then pnpm docs:build || validation=failed; fi
@@ -230,7 +231,7 @@ jobs:
               '- [x] Other (automated upstream widget sync)',
               '',
               '## Checklist:',
-              `- [${validation === 'passed' ? 'x' : ' '}] Widget, upstream-contract, docs, test, and build checks passed (validation: ${validation}).`,
+              `- [${validation === 'passed' ? 'x' : ' '}] Widget, typecheck, upstream-contract, docs, test, and build checks passed (validation: ${validation}).`,
               '- [x] Upstream widget documentation and locale updates are included when present.',
               '',
               `Validation: ${validation}. See the Upstream Widget Sync workflow run for details.`,

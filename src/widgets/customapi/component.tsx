@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { formatValue, getColor, getValue } from "./utils";
@@ -99,7 +100,7 @@ export default function Component({ service }) {
               </div>
             ) : (
               listItems.map((item, index) => {
-                const itemName = shvl.get(item, name, item[name]) ?? "";
+                const itemName = (shvl.get(item, name, item[name]) ?? "") as ReactNode;
                 const itemLabel = shvl.get(item, label, item[label]) ?? "";
 
                 const itemUrl = target

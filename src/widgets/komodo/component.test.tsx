@@ -49,7 +49,9 @@ describe("widgets/komodo/component", () => {
   it("defaults fields for the containers view without modifying the service", () => {
     useWidgetAPI.mockReturnValue({ data: undefined, error: undefined });
 
-    const service = { widget: { type: "komodo", showStacks: false, showSummary: false } };
+    const service: { widget: { type: string; showStacks: boolean; showSummary: boolean; fields?: string[] } } = {
+      widget: { type: "komodo", showStacks: false, showSummary: false },
+    };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
     expect(service.widget.fields).toBeUndefined();

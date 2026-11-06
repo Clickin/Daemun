@@ -27,6 +27,7 @@
     "gate:widgets": "node tools/release-gate/verify-widget-registry.mjs",
     "lint": "oxlint --quiet --react-plugin --jsx-a11y-plugin --vitest-plugin -D no-explicit-any src test tools vite.config.mjs vitest.config.mjs vitest.setup.mjs docs-site/astro.config.mjs",
     "test": "vitest run",
+    "typecheck": "tsc --noEmit -p .",
     "test:coverage": "vitest run --coverage",
     "test:smoke": "vitest run --config vitest.smoke.config.mjs",
     "test:watch": "vitest"
@@ -41,7 +42,7 @@
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/vite": "^4.3.4",
     "@tanstack/react-query": "^5.106.0",
-    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
     "@types/d3-array": "^3.2.1",
     "@types/d3-scale": "^4.0.9",

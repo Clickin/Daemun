@@ -1,4 +1,5 @@
 interface TooltipPayload {
+  dataKey?: string | number;
   name?: string;
   value: unknown;
 }

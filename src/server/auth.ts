@@ -98,7 +98,7 @@ export async function signIn(c: Context) {
   const nonce = randomBytes(32).toString("base64url");
   const client = await oidc.discovery(new URL(config.issuer), config.clientId, undefined, oidc.ClientSecretBasic(config.clientSecret));
   const url = oidc.buildAuthorizationUrl(client, { redirect_uri: `${externalUrl()}/api/auth/callback`, scope: process.env.HOMEPAGE_OIDC_SCOPE || "openid email profile", state, nonce, code_challenge: await oidc.calculatePKCECodeChallenge(verifier), code_challenge_method: "S256" });
-  setCookie(c, stateCookie, encode<OidcState>({ exp: Date.now() / 1000 + 600, state, nonce, verifier, callbackUrl: destination }), cookieOptions(600));
+  setCookie(c, stateCookie, encode({ exp: Date.now() / 1000 + 600, state, nonce, verifier, callbackUrl: destination } satisfies OidcState), cookieOptions(600));
   return c.redirect(url.toString());
 }
 

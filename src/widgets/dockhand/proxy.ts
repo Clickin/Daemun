@@ -38,7 +38,7 @@ export default async function dockhandProxyHandler(req, res) {
 
   const url = new URL(formatApiCall(widgets[widget.type].api, { endpoint, ...widget }));
 
-  const headers = {};
+  const headers: Record<string, string> = {};
   if (widget.key) {
     headers.Authorization = `Bearer ${widget.key}`;
   }
