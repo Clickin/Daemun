@@ -1,20 +1,10 @@
 import clsx from "clsx";
-import { type ReactNode, useContext } from "react";
+import { useContext } from "react";
+import { SettingsContext } from "utils/contexts/settings";
 
 import Error from "./error";
 
-import { SettingsContext } from "utils/contexts/settings";
-
-interface ContainerProps {
-  children?: ReactNode;
-  widget?: { hideErrors?: boolean } | null;
-  service?: unknown;
-  error?: unknown;
-  chart?: boolean;
-  className?: string;
-}
-
-export default function Container({ children, widget, error = null, chart = true, className = "" }: ContainerProps) {
+export default function Container({ children, widget, error = null, chart = true, className = "" }) {
   const { settings } = useContext(SettingsContext);
   const hideErrors = settings.hideErrors || widget?.hideErrors;
 

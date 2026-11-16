@@ -1,11 +1,10 @@
 import clsx from "clsx";
-import type { ReactNode } from "react";
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 
 import { formatValue, getColor, getValue } from "./utils";
 
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import * as shvl from "utils/config/shvl";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
@@ -100,7 +99,7 @@ export default function Component({ service }) {
               </div>
             ) : (
               listItems.map((item, index) => {
-                const itemName = (shvl.get(item, name, item[name]) ?? "") as ReactNode;
+                const itemName = shvl.get(item, name, item[name]) ?? "";
                 const itemLabel = shvl.get(item, label, item[label]) ?? "";
 
                 const itemUrl = target

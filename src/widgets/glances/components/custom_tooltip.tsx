@@ -1,23 +1,13 @@
-interface TooltipPayload {
-  dataKey?: string | number;
-  name?: string;
-  value: unknown;
-}
+export default function Tooltip({ active, payload, formatter }) {
+  const entries = payload?.filter((pld) => pld.value != null);
 
-interface TooltipProps {
-  active?: boolean;
-  formatter: (value: unknown) => string;
-  payload?: TooltipPayload[];
-}
-
-export default function Tooltip({ active, payload, formatter }: TooltipProps) {
-  if (active && payload && payload.length) {
+  if (active && entries?.length) {
     return (
       <div className="bg-theme-800/80 rounded-md text-theme-200 px-2 py-0">
-        {payload.map((pld, id) => (
+        {entries.map((pld, id) => (
           <div key={`${pld.dataKey ?? pld.name ?? "series"}-${id}`} className="first-of-type:pt-0 pt-0.5">
             <div>
-              {formatter(pld.value)} {payload[id].name}
+              {formatter(pld.value)} {pld.name}
             </div>
           </div>
         ))}
