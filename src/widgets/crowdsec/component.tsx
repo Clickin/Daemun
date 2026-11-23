@@ -1,7 +1,7 @@
-import { useTranslation } from "react-i18next";
-
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
+import { useTranslation } from "react-i18next";
+
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 const ALERTS_LIMIT = 500;
