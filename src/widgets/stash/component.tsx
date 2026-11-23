@@ -1,8 +1,8 @@
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { formatProxyUrl } from "utils/proxy/api-helpers";
 import withWidgetFields from "utils/widget-fields";
 
